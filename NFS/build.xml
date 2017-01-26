@@ -1,0 +1,282 @@
+<project name="NFS" default="rpm" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+
+	<property name="product.name" value="NFS" />
+
+	<property name="TomEE.version" value="1.7.4" />
+	
+	<property name="TomEE.name" value="apache-tomee-plus-${TomEE.version}" />
+	<property name="TomEE.file" value="apache-tomee-${TomEE.version}-plus.zip" />
+	<property name="TomEE.url.file" 
+		value="http://mirror.nohup.it/apache/tomee/tomee-${TomEE.version}/${TomEE.file}" />
+	<property name="TomEE.zip" value="server/${TomEE.file}" />
+	
+	<property name="src.dir" value="src" />
+	<property name="build.dir" value="build" />
+	<property name="conf.dir" value="conf" />
+	<property name="lib.dir" value="lib" />
+	<property name="dist.dir" value="dist" />
+	<property name="scripts.dir" value="scripts" />
+	<property name="prod.dir" value="prod" />
+	<property name="web.dir" value="WebContent" />
+	<property name="local.dir" value="local" />
+	<property name="local.lib.dir" value="${local.dir}/lib" />
+
+	<property name="prod.rpms.dir" value="${prod.dir}/rpms" />
+	<property name="prod.war.dir" value="${prod.dir}/war" />
+	<property name="prod.jar.dir" value="${prod.dir}/jar" />
+	<property name="prod.war.file" value="${prod.war.dir}/${product.name}.war" />
+	<property name="prod.jar.gatekeeperValve" value="${prod.jar.dir}/gatekeeperAuthenticationValve.jar" />
+
+	<property name="dist.scripts" value="${dist.dir}/scripts" />
+	<property name="dist.TomEE" value="${dist.dir}/${TomEE.name}" />
+	<property name="dist.TomEE.bin" value="${dist.TomEE}/bin" />
+	<property name="dist.TomEE.lib" value="${dist.TomEE}/lib" />
+	<property name="dist.TomEE.conf" value="${dist.TomEE}/conf" />
+	<property name="dist.TomEE.webapps" value="${dist.TomEE}/webapps" />
+	<property name="dist.TomEE.endorsed" value="${dist.TomEE}/endorsed" />
+	<property name="dist.var.db" value="${dist.dir}/var/db" />
+	<property name="dist.var.log" value="${dist.dir}/var/log" />
+	<property name="dist.var.run" value="${dist.dir}/var/run" />
+	<property name="dist.var.tmp" value="${dist.dir}/var/tmp" />
+	<property name="dist.certs" value="${dist.dir}/certs" />
+
+	<property name="local.server.dir" value="/usr/local/nfs" />
+
+	<property name="conf.build" value="${conf.dir}/build" />
+	<property name="conf.TomEE" value="${conf.dir}/tomee" />
+	<property name="conf.certs" value="${conf.dir}/certs" />
+	<property name="conf.nfs" value="${conf.dir}/nfs" />
+
+	<loadproperties srcFile="${conf.build}/env.rpm.properties" />
+
+	<target name="proxy-file-check">
+	   	<available file="proxy.properties" property="proxy.properties.found"/>
+	</target>
+	<target name="probe-proxy" depends="proxy-file-check" if="proxy.properties.found">
+   		<loadproperties srcFile="proxy.properties" />
+	    <condition property="proxy.enabled">
+	      <and>
+	        <isset property="proxy.host"/>
+	        <!--isreachable host="${proxy.host}"/-->
+	      </and>
+	    </condition>
+	  </target>
+	<target name="proxy" depends="probe-proxy" if="proxy.enabled">
+		<setproxy proxyhost="${proxy.host}" proxyport="${proxy.port}"
+	      		  proxyuser="${proxy.user}" proxypassword="${proxy.pass}"/>
+	</target>	
+	
+	<target name="clean">
+		<delete dir="${build.dir}" />
+		<delete dir="${dist.dir}" />
+	</target>
+
+	<target name="init" depends="clean">
+		<mkdir dir="${build.dir}/classes/META-INF" />
+		<mkdir dir="${prod.rpms.dir}" />
+		<mkdir dir="${prod.war.dir}" />
+		<mkdir dir="${prod.jar.dir}" />
+        <mkdir dir="${prod.jar.dir}/NFSTest_lib"/>
+		<mkdir dir="${dist.var.db}" />
+		<mkdir dir="${dist.var.log}" />
+		<mkdir dir="${dist.var.run}" />
+		<mkdir dir="${dist.var.tmp}" />
+		<mkdir dir="${dist.certs}" />
+	</target>
+
+	<target name="resolve" depends="proxy" description="--> retreive dependencies with ivy">
+		<property name="ivy.lib.dir" value="${lib.dir}"/>
+        <ivy:resolve transitive="false" />
+		<ivy:retrieve/>
+		<ivy:report todir="${build.dir}/ivy-report" graph="true"/>
+		<copy todir="lib.no.deploy" verbose="true" overwrite="true" force="true">
+		    <fileset dir="${lib.dir}">
+		      	<include name="**/slf4j*.jar"/>
+		    </fileset>
+		</copy>
+		<copy todir="${web.dir}/WEB-INF/lib" verbose="true" overwrite="true" force="true">
+		    <fileset dir="${lib.dir}">
+		     	<include name="**/primefaces*.jar"/>
+		     	<include name="**/gson*.jar"/>
+		    </fileset>
+		</copy>
+		<delete>
+		    <fileset dir="${lib.dir}">
+		      	<include name="**/slf4j*.jar"/>
+		     	<include name="**/primefaces*.jar"/>
+		     	<include name="**/gson*.jar"/>
+		    </fileset>
+		</delete>
+	</target>
+
+	<target name="server-file-check">
+	   	<available file="${TomEE.zip}" property="TomEE.found" value="True"/>
+	</target>
+	<target name="server-file" depends="server-file-check, proxy" unless="TomEE.found">
+    	<get src="${TomEE.url.file}" dest="${TomEE.zip}" verbose="true" usetimestamp="true"/>
+	</target>
+	<target name="server" depends="init, resolve, server-file">
+		<unzip src="${TomEE.zip}" dest="${dist.dir}" />
+		<copy todir="${dist.TomEE.lib}" verbose="true" overwrite="true">
+			<fileset dir="${lib.dir}" />
+		</copy>
+		<path id="tomee.conf.files">
+			<fileset dir="${conf.TomEE}">
+				<include name="**/*"/>
+			</fileset>
+		</path>
+		<copy todir="${dist.TomEE.conf}" verbose="true" overwrite="true">
+			<fileset dir="${conf.TomEE}" defaultexcludes="no">
+		    </fileset>
+		</copy>
+		<copy todir="${dist.certs}" verbose="true" overwrite="true">
+			<fileset dir="${conf.certs}" />
+		</copy>		
+		<chmod dir="${dist.TomEE.webapps}" perm="755" includes="**/*"/>
+		<chmod perm="755">
+			<fileset dir="${dist.TomEE.webapps}"/>
+		</chmod>
+		<chmod dir="${dist.TomEE.lib}" perm="644" includes="**/*"/>
+		<chmod perm="644">
+			<fileset dir="${dist.TomEE.lib}"/>
+		</chmod>
+	</target>
+
+	<target name="build" depends="server">
+		<echo message="${ant.project.name}: ${ant.file}"/>
+		<path id="build.class.path">
+			<fileset dir="${dist.TomEE.lib}">
+				<include name="**/*.jar"/>
+			</fileset>
+			<fileset dir="${web.dir}/WEB-INF/lib">
+				<include name="**/*.jar"/>
+			</fileset>
+		</path>
+		<javac destdir="${build.dir}/classes" 
+				debug="true" debuglevel="lines,vars,source" encoding="iso8859-1" 
+				verbose="no" includeAntRuntime="false" source="1.7" target="1.7">
+            <src path="src"/>
+            <src path="test"/>
+			<compilerarg value="-XDignore.symbol.file" />
+			<classpath refid="build.class.path"/>
+	    </javac>
+	</target>
+
+	<target name="war" depends="build">
+		<war destfile="${prod.war.file}" webxml="${web.dir}/WEB-INF/web.xml">
+		   	<fileset dir="${web.dir}" excludes="WEB-INF/**"/>
+			<webinf dir="${web.dir}/WEB-INF">
+				<exclude name="web.xml"/>
+			</webinf>
+		   	<classes dir="${build.dir}/classes" excludes="**/valves/*"/>
+			<classes dir="${src.dir}" excludes="**/*.java" />		
+		</war>
+		<copy todir="${dist.TomEE.webapps}" overwrite="true">
+			<fileset file="${prod.war.file}" />
+		</copy>
+	</target>
+
+    <target name="valve" depends="build">
+		<jar jarfile="${prod.jar.gatekeeperValve}">
+		    <fileset dir="${build.dir}/classes">
+		        <include name="**/valves/*" />
+		        <include name="**/producers/Env*" />
+		        <include name="**/exception/*" />
+		    </fileset>
+		</jar>    
+		<chmod file="${prod.jar.gatekeeperValve}" perm="644"/>
+		<copy file="${prod.jar.gatekeeperValve}" todir="${dist.TomEE.lib}"/>
+ 	</target>
+
+    <target name="client" depends="build">
+		<delete>
+		    <fileset dir="${prod.jar.dir}/NFSTest_lib" includes="**/*.jar"/>
+		</delete>
+		<copy todir="${prod.jar.dir}/NFSTest_lib">
+			<fileset dir="${dist.TomEE.lib}">
+				<include name="**/commons-cli*.jar"/>
+				<include name="**/commons-io*.jar"/>
+				<include name="**/commons-lang3*.jar"/>
+				<include name="**/commons-logging*.jar"/>
+				<include name="**/commons-pool*.jar"/>
+				<include name="**/cxf-api*.jar"/>
+				<include name="**/cxf-rt*.jar"/>
+				<include name="**/el-api*.jar"/>
+				<include name="**/geronimo*.jar"/>
+				<include name="**/javaee-api*.jar"/>
+				<include name="**/jaxb-core*.jar"/>
+				<include name="**/mimepull*.jar"/>
+				<include name="**/neethi*.jar"/>
+				<include name="**/openws*.jar"/>
+				<include name="**/saaj-impl*.jar"/>
+				<include name="**/servlet-api*.jar"/>
+				<include name="**/stax2-api*.jar"/>
+				<include name="**/sxc*.jar"/>
+				<include name="**/websocket-api*.jar"/>
+				<include name="**/woodstox-core-asl*.jar"/>
+				<include name="**/wsdl4j*.jar"/>
+				<include name="**/wss4j*.jar"/>
+				<include name="**/xml-resolver*.jar"/>
+				<include name="**/xmlschema-core*.jar"/>
+			</fileset>				
+		</copy>
+    	<path id="NFSTest.classpath">
+    	   <fileset dir="${prod.jar.dir}/NFSTest_lib">
+    	      <include name="*.jar"/>
+    	   </fileset>
+    	</path>
+    	<pathconvert property="manifest.classpath" pathsep=" ">
+    	  	<path refid="NFSTest.classpath"/>
+    	  	<mapper>
+    	    	<chainedmapper>
+    	       		<flattenmapper/>
+    	       		<globmapper from="*.jar" to="NFSTest_lib/*.jar"/>
+    	    	</chainedmapper>
+    	  	</mapper>
+		</pathconvert>
+        <jar destfile="${prod.jar.dir}/NFSVnfd.jar">
+            <manifest>
+                <attribute name="Main-Class" value="eu.tnova.nfs.client.NFSVnfd"/>
+            	<attribute name="Class-Path" value=". ${manifest.classpath}"/>
+            </manifest>
+            <fileset dir="${build.dir}/classes"/>
+        </jar>
+        <jar destfile="${prod.jar.dir}/NFSFile.jar">
+            <manifest>
+                <attribute name="Main-Class" value="eu.tnova.nfs.client.NFSFile"/>
+            	<attribute name="Class-Path" value=". ${manifest.classpath}"/>
+            </manifest>
+            <fileset dir="${build.dir}/classes"/>
+        </jar>
+   </target>
+
+	<target name="rpm" depends="server,war,valve">
+		<path id="build-rpm.class.path">
+			<fileset dir="lib.no.deploy">
+				<include name="**/*.jar"/>
+			</fileset>
+		</path>
+		<taskdef name="build-rpm" classname="org.redline_rpm.ant.RedlineTask" >
+			<classpath refid="build-rpm.class.path"/>
+		</taskdef>
+		<build-rpm description="$[rpm.description}" 
+				name="${rpm.name}" version="${rpm.version}" release="${rpm.release}" 
+				distribution="${rpm.distro}" architecture="${rpm.arch}" 
+		 		license="${rpm.license}" group="${rpm.group}" 
+				preInstallScript="${conf.build}/preInstall.sh" 
+				postInstallScript="${conf.build}/postInstall.sh"
+				preUninstallScript="${conf.build}/preUninstall.sh" 
+				postUninstallScript="${conf.build}/postUninstall.sh"
+				destination="prod/rpms" >
+		  	<rpmfileset prefix="${local.server.dir}/${TomEE.name}/bin" dir="${dist.TomEE.bin}" filemode="777"/>
+		  	<rpmfileset prefix="${local.server.dir}" dir="dist" filemode="755" />
+		  	<rpmfileset prefix="${local.server.dir}/bin" file="${scripts.dir}/nfsMonitor" filemode="777" />
+		  	<rpmfileset prefix="${local.server.dir}/bin" file="${conf.nfs}/nfs.conf" />
+		  	<rpmfileset prefix="/etc/init.d" file="${scripts.dir}/nfs" filemode="777" />
+			<!-- 	<depends name="java" version=">= 1.7"/>		-->
+		</build-rpm>
+	</target>
+
+	<target name="all" depends="client,rpm"/>
+
+</project>

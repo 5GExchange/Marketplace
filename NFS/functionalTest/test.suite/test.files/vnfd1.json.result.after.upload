@@ -1,0 +1,31 @@
+{
+	"provider": "Italtel",
+	"descriptor_version": "1.0",
+	"version": "1.0",
+	"description": "VNFD 1",
+	"billing_model":{
+		"model":"RS",
+		"period":"Period A",
+		"price":{
+			"unit":"EUR",
+			"min_per_period":"5",
+			"max_per_period":"10",
+			"setup":"0"
+		}
+		
+	},
+	"vdu": [
+		{
+			"id": "VDU-1",
+			"vm_image": "https://apis.t-nova.eu/NFS/files/file1.img",
+			"vm_image_md5": "6ecd7d34b032851b2557ba362da863b5",
+			"vm_image_format": "qcow"
+		},
+		{
+			"id": "VDU-2",
+			"vm_image": "https://apis.t-nova.eu/NFS/files/file2.img",
+			"vm_image_md5": "5466787fdda27b850292621ec71a890e",
+			"vm_image_format": "iso"
+		}
+	]
+}

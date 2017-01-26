@@ -1,0 +1,1123 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 1px solid black;
+}
+th, td {
+  border: 1px solid black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+  width: 12em;
+}
+td.colspan4, th.colspan4 {
+    width: 48em;
+}
+td.colspan3, th.colspan3 {
+    width: 36em;
+}
+td.colspan2, th.colspan2 {
+    width: 24em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  height: 1.7em;
+  font-weight: bold;
+  text-align: center;
+  letter-spacing: 0.1em;
+}
+td.name {
+  background-color: rgb(240, 240, 240);
+  letter-spacing: 0.1em;
+}
+td.name, th.name {
+  width: 10em;
+}
+</style>
+<title>VNF files operations</title>
+</head>
+<body>
+<h1>VNF files operations</h1>
+<table border="1" id="setting">
+<tr>
+<th class="name" colspan="5">Settings</th>
+</tr>
+<tr>
+<td class="name">Suite Setup</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Library</td>
+<td>RequestsLibrary</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Library</td>
+<td>Collections</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Library</td>
+<td>String</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Library</td>
+<td>OperatingSystem</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Resource</td>
+<td>../../user.library/rest_lib.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Resource</td>
+<td>../Global Setting.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Resource</td>
+<td>../Server Setting.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Resource</td>
+<td>../File Operations.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Library</td>
+<td>../../python.lib/md5/md5.py</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+<table border="1" id="variable">
+<tr>
+<th class="name" colspan="5">Variables</th>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+<table border="1" id="testcase">
+<tr>
+<th class="name" colspan="5">Test Cases</th>
+</tr>
+<tr>
+<td class="name"><a name="test_Remove All">Remove All</a></td>
+<td>Delete All VNFD</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Delete All VNF files</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Get List when NFS empty">Get List when NFS empty</a></td>
+<td>[Tags]</td>
+<td>FILESOP</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${expectedFile}=</td>
+<td>Create Dictionary</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Get VNF file List</td>
+<td>${expectedFile}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Upload image without MD5SUM">Upload image without MD5SUM</a></td>
+<td>[Tags]</td>
+<td>FILESOP</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${fileName}=</td>
+<td>Get From List</td>
+<td>${VNFImageList}</td>
+<td>0</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${file}=</td>
+<td>Get Binary File</td>
+<td>${FILE_DIR}${/}${filename}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Upload file</td>
+<td>${fileName}</td>
+<td>${file}</td>
+<td>${EMPTY}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>0</td>
+<td></td>
+<td>400</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Upload image with wrong MD5SUM">Upload image with wrong MD5SUM</a></td>
+<td>[Tags]</td>
+<td>FILESOP</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${fileName}=</td>
+<td>Get From List</td>
+<td>${VNFImageList}</td>
+<td>0</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${file}=</td>
+<td>Get Binary File</td>
+<td>${FILE_DIR}${/}${filename}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${md5sum}=</td>
+<td>md5_for_file</td>
+<td>${FILE_DIR}</td>
+<td>${fileName}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Upload file</td>
+<td>${fileName}</td>
+<td>${file}</td>
+<td>1${md5sum}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>0</td>
+<td></td>
+<td>409</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Upload image without type">Upload image without type</a></td>
+<td>[Tags]</td>
+<td>FILESOP</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${fileName}=</td>
+<td>Get From List</td>
+<td>${VNFImageList}</td>
+<td>0</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${file}=</td>
+<td>Get Binary File</td>
+<td>${FILE_DIR}${/}${filename}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${md5sum}=</td>
+<td>md5_for_file</td>
+<td>${FILE_DIR}</td>
+<td>${fileName}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Upload file</td>
+<td>${fileName}</td>
+<td>${file}</td>
+<td>${md5sum}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>0</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Upload image with type">Upload image with type</a></td>
+<td>[Tags]</td>
+<td>FILESOP</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${fileName}=</td>
+<td>Get From List</td>
+<td>${VNFImageList}</td>
+<td>1</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${file}=</td>
+<td>Get Binary File</td>
+<td>${FILE_DIR}${/}${filename}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${md5sum}=</td>
+<td>md5_for_file</td>
+<td>${FILE_DIR}</td>
+<td>${fileName}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Upload file</td>
+<td>${fileName}</td>
+<td>${file}</td>
+<td>${md5sum}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>1</td>
+<td>qcow</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Head images">Head images</a></td>
+<td>[Tags]</td>
+<td>FILESOP</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${fileName}=</td>
+<td>Get From List</td>
+<td>${VNFImageList}</td>
+<td>0</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${file}=</td>
+<td>Get Binary File</td>
+<td>${FILE_DIR}${/}${fileName}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Head VNF file</td>
+<td>${fileName}</td>
+<td>${file}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${fileName}=</td>
+<td>Get From List</td>
+<td>${VNFImageList}</td>
+<td>1</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${file}=</td>
+<td>Get Binary File</td>
+<td>${FILE_DIR}${/}${fileName}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Head VNF file</td>
+<td>${fileName}</td>
+<td>${file}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Get List after image upload">Get List after image upload</a></td>
+<td>[Tags]</td>
+<td>FILESOP</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${filename1}=</td>
+<td>Get From List</td>
+<td>${VNFImageList}</td>
+<td>0</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${filename2}=</td>
+<td>Get From List</td>
+<td>${VNFImageList}</td>
+<td>1</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${expectedFile}=</td>
+<td>Create Dictionary</td>
+<td>${filename1}</td>
+<td>${EMPTY}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${filename2}</td>
+<td>${EMPTY}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Get VNF file List</td>
+<td>${expectedFile}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Get image without type after upload">Get image without type after upload</a></td>
+<td>[Tags]</td>
+<td>FILESOP</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${fileName}=</td>
+<td>Get From List</td>
+<td>${VNFImageList}</td>
+<td>0</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${file}=</td>
+<td>Get Binary File</td>
+<td>${FILE_DIR}${/}${fileName}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${md5sum}=</td>
+<td>md5_for_file</td>
+<td>${FILE_DIR}</td>
+<td>${fileName}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Download file</td>
+<td>${fileName}</td>
+<td>${file}</td>
+<td>${md5sum}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>0</td>
+<td>unknown</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Get image with type after upload">Get image with type after upload</a></td>
+<td>[Tags]</td>
+<td>FILESOP</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${fileName}=</td>
+<td>Get From List</td>
+<td>${VNFImageList}</td>
+<td>1</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${file}=</td>
+<td>Get Binary File</td>
+<td>${FILE_DIR}${/}${fileName}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${md5sum}=</td>
+<td>md5_for_file</td>
+<td>${FILE_DIR}</td>
+<td>${fileName}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Download file</td>
+<td>${fileName}</td>
+<td>${file}</td>
+<td>${md5sum}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>1</td>
+<td>qcow</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Upload image when image already available">Upload image when image already available</a></td>
+<td>[Tags]</td>
+<td>FILESOP</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${fileName}=</td>
+<td>Get From List</td>
+<td>${VNFImageList}</td>
+<td>1</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${file}=</td>
+<td>Get Binary File</td>
+<td>${FILE_DIR}${/}${filename}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${md5sum}=</td>
+<td>md5_for_file</td>
+<td>${FILE_DIR}</td>
+<td>${fileName}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Upload file</td>
+<td>${fileName}</td>
+<td>${file}</td>
+<td>${md5sum}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>1</td>
+<td>qcow</td>
+<td>400</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Update image without MD5SUM">Update image without MD5SUM</a></td>
+<td>[Tags]</td>
+<td>FILESOP</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${fileName}=</td>
+<td>Get From List</td>
+<td>${VNFImageList}</td>
+<td>0</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${fileName2}=</td>
+<td>Get From List</td>
+<td>${VNFImageList}</td>
+<td>2</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${file}=</td>
+<td>Get Binary File</td>
+<td>${FILE_DIR}${/}${fileName2}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Update file</td>
+<td>${fileName}</td>
+<td>${file}</td>
+<td>${EMPTY}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>1</td>
+<td>raw</td>
+<td>400</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Get image after update without MD5SUM">Get image after update without MD5SUM</a></td>
+<td>[Tags]</td>
+<td>FILESOP</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${fileName}=</td>
+<td>Get From List</td>
+<td>${VNFImageList}</td>
+<td>0</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${file}=</td>
+<td>Get Binary File</td>
+<td>${FILE_DIR}${/}${fileName}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${md5sum}=</td>
+<td>md5_for_file</td>
+<td>${FILE_DIR}</td>
+<td>${fileName}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Download file</td>
+<td>${fileName}</td>
+<td>${file}</td>
+<td>${md5sum}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>0</td>
+<td>unknown</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Update image with wrong MD5SUM">Update image with wrong MD5SUM</a></td>
+<td>[Tags]</td>
+<td>FILESOP</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${fileName}=</td>
+<td>Get From List</td>
+<td>${VNFImageList}</td>
+<td>0</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${fileName2}=</td>
+<td>Get From List</td>
+<td>${VNFImageList}</td>
+<td>2</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${file}=</td>
+<td>Get Binary File</td>
+<td>${FILE_DIR}${/}${fileName2}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${md5sum}=</td>
+<td>md5_for_file</td>
+<td>${FILE_DIR}</td>
+<td>${fileName2}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Update file</td>
+<td>${fileName}</td>
+<td>${file}</td>
+<td>1${md5sum}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>1</td>
+<td></td>
+<td>409</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Get image after update with wrong MD5SUM">Get image after update with wrong MD5SUM</a></td>
+<td>[Tags]</td>
+<td>FILESOP</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${fileName}=</td>
+<td>Get From List</td>
+<td>${VNFImageList}</td>
+<td>0</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${file}=</td>
+<td>Get Binary File</td>
+<td>${FILE_DIR}${/}${fileName}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${md5sum}=</td>
+<td>md5_for_file</td>
+<td>${FILE_DIR}</td>
+<td>${fileName}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Download file</td>
+<td>${fileName}</td>
+<td>${file}</td>
+<td>${md5sum}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>0</td>
+<td>unknown</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Update image">Update image</a></td>
+<td>[Tags]</td>
+<td>FILESOP</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${fileName}=</td>
+<td>Get From List</td>
+<td>${VNFImageList}</td>
+<td>0</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${fileName2}=</td>
+<td>Get From List</td>
+<td>${VNFImageList}</td>
+<td>2</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${file}=</td>
+<td>Get Binary File</td>
+<td>${FILE_DIR}${/}${fileName2}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${md5sum}=</td>
+<td>md5_for_file</td>
+<td>${FILE_DIR}</td>
+<td>${fileName2}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Update file</td>
+<td>${fileName}</td>
+<td>${file}</td>
+<td>${md5sum}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>50</td>
+<td>raw</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Get List after image update">Get List after image update</a></td>
+<td>[Tags]</td>
+<td>FILESOP</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${filename1}=</td>
+<td>Get From List</td>
+<td>${VNFImageList}</td>
+<td>0</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${filename2}=</td>
+<td>Get From List</td>
+<td>${VNFImageList}</td>
+<td>1</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${expectedFile}=</td>
+<td>Create Dictionary</td>
+<td>${filename1}</td>
+<td>${EMPTY}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${filename2}</td>
+<td>${EMPTY}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Get VNF file List</td>
+<td>${expectedFile}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Get image after update">Get image after update</a></td>
+<td>[Tags]</td>
+<td>FILESOP</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${fileName}=</td>
+<td>Get From List</td>
+<td>${VNFImageList}</td>
+<td>0</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${fileName2}=</td>
+<td>Get From List</td>
+<td>${VNFImageList}</td>
+<td>2</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${file}=</td>
+<td>Get Binary File</td>
+<td>${FILE_DIR}${/}${fileName2}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${md5sum}=</td>
+<td>md5_for_file</td>
+<td>${FILE_DIR}</td>
+<td>${fileName2}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Download file</td>
+<td>${fileName}</td>
+<td>${file}</td>
+<td>${md5sum}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>50</td>
+<td>raw</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Remove images">Remove images</a></td>
+<td>[Tags]</td>
+<td>FILESOP</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${filename}=</td>
+<td>Get From List</td>
+<td>${VNFImageList}</td>
+<td>0</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${resp}=</td>
+<td>Delete VNF file</td>
+<td>${filename}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal As Strings</td>
+<td>${resp.status_code}</td>
+<td>204</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal As Strings</td>
+<td>${resp.reason}</td>
+<td>No Content</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Run Keyword If</td>
+<td>'${NFS_ADDRESS}'=='${LOCALHOST}'</td>
+<td>File Should Not Exist</td>
+<td>${STORE_DIR}${/}${filename}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${filename}=</td>
+<td>Get From List</td>
+<td>${VNFImageList}</td>
+<td>1</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${resp}=</td>
+<td>Delete VNF file</td>
+<td>${filename}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal As Strings</td>
+<td>${resp.status_code}</td>
+<td>204</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal As Strings</td>
+<td>${resp.reason}</td>
+<td>No Content</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Run Keyword If</td>
+<td>'${NFS_ADDRESS}'=='${LOCALHOST}'</td>
+<td>File Should Not Exist</td>
+<td>${STORE_DIR}${/}${filename}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Get List after remove">Get List after remove</a></td>
+<td>[Tags]</td>
+<td>FILESOP</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${expectedFile}=</td>
+<td>Create Dictionary</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Get VNF file List</td>
+<td>${expectedFile}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+<table border="1" id="keyword">
+<tr>
+<th class="name" colspan="5">Keywords</th>
+</tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,4252 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 1px solid black;
+}
+th, td {
+  border: 1px solid black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+  width: 12em;
+}
+td.colspan4, th.colspan4 {
+    width: 48em;
+}
+td.colspan3, th.colspan3 {
+    width: 36em;
+}
+td.colspan2, th.colspan2 {
+    width: 24em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  height: 1.7em;
+  font-weight: bold;
+  text-align: center;
+  letter-spacing: 0.1em;
+}
+td.name {
+  background-color: rgb(240, 240, 240);
+  letter-spacing: 0.1em;
+}
+td.name, th.name {
+  width: 10em;
+}
+</style>
+<title>Rest Lib</title>
+</head>
+<body>
+<h1>Rest Lib</h1>
+<table border="1" id="setting">
+<tr>
+<th class="name" colspan="5">Setting</th>
+</tr>
+<tr>
+<td class="name">Library</td>
+<td>String</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Library</td>
+<td>OperatingSystem</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Library</td>
+<td>RequestsLibrary</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Library</td>
+<td>Collections</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+<table border="1" id="variable">
+<tr>
+<th class="name" colspan="5">Variable</th>
+</tr>
+<tr>
+<td class="name">${partSeparator}</td>
+<td>-------------------------------------------------</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+<table border="1" id="keyword">
+<tr>
+<th class="name" colspan="5">Keyword</th>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Upload VNF files">Upload VNF files</a></td>
+<td>[Arguments]</td>
+<td>${files}</td>
+<td>${responseCode}=201</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Documentation]</td>
+<td class="colspan3" colspan="3">files is a dictionary composed by\n<br>
+- file name\n<br>
+- binary file image</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>==================== \ Upload Images ${files}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>====================</td>
+<td>Prepare and send http request</td>
+<td>====================</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Create NFS Session</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${headers}=</td>
+<td>Create Dictionary</td>
+<td>Content-Type</td>
+<td>multipart/form-data</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${resp}=</td>
+<td>Post Request</td>
+<td>NFS_SESSION</td>
+<td>/files</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td></td>
+<td>headers=${headers}</td>
+<td>files=${files}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Delete All Sessions</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>====================</td>
+<td>Check Response</td>
+<td>====================</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>status=${resp.status_code}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>content=${resp.content}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal As Strings</td>
+<td>${resp.status_code}</td>
+<td>${responseCode}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Not Be Equal</td>
+<td>${resp.content}</td>
+<td>${EMPTY}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Return]</td>
+<td>${resp}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Update VNF file">Update VNF file</a></td>
+<td>[Arguments]</td>
+<td>${fileName}</td>
+<td>${file}</td>
+<td>${responseCode}=200</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Documentation]</td>
+<td class="colspan3" colspan="3">files is a dictionary composed by\n<br>
+- file name\n<br>
+- binary file image</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>==================== \ Update file ${fileName}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>====================</td>
+<td>Prepare and send http request</td>
+<td>====================</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Create NFS Session</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${headers}=</td>
+<td>Create Dictionary</td>
+<td>Content-Type</td>
+<td>multipart/form-data</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${resp}=</td>
+<td>Put Request2</td>
+<td>NFS_SESSION</td>
+<td>/files/${fileName}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td></td>
+<td>headers=${headers}</td>
+<td>files=${file}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Delete All Sessions</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>====================</td>
+<td>Check Response</td>
+<td>====================</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal As Strings</td>
+<td>${resp.status_code}</td>
+<td>${responseCode}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Not Be Equal</td>
+<td>${resp.content}</td>
+<td>${EMPTY}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Return]</td>
+<td>${resp}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Update VNF files">Update VNF files</a></td>
+<td>[Arguments]</td>
+<td>${files}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Documentation]</td>
+<td class="colspan3" colspan="3">files is a dictionary composed by\n<br>
+- file name\n<br>
+- binary file image</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>==================== \ Upgrade Images ${files}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>====================</td>
+<td>Prepare and send http request</td>
+<td>====================</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Create NFS Session</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${headers}=</td>
+<td>Create Dictionary</td>
+<td>Content-Type</td>
+<td>multipart/form-data</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${resp}=</td>
+<td>Put Request2</td>
+<td>NFS_SESSION</td>
+<td>/files</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td></td>
+<td>headers=${headers}</td>
+<td>files=${files}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Delete All Sessions</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>====================</td>
+<td>Check Response</td>
+<td>====================</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal As Strings</td>
+<td>${resp.status_code}</td>
+<td>200</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Not Be Equal</td>
+<td>${resp.content}</td>
+<td>${EMPTY}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Return]</td>
+<td>${resp}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Get VNF file">Get VNF file</a></td>
+<td>[Arguments]</td>
+<td>${fileName}</td>
+<td>${file}=${EMPTY}</td>
+<td>${possibleCode}=${EMPTY}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>==================== \ Get file ${fileName}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>====================</td>
+<td>Prepare and send http request</td>
+<td>====================</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Create NFS Session</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${resp}=</td>
+<td>Get Request</td>
+<td>NFS_SESSION</td>
+<td>/files/${fileName}?contentType=multipart</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Delete All Sessions</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>====================</td>
+<td>Check Response</td>
+<td>====================</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Return From Keyword If</td>
+<td>'${possibleCode}'=='${resp.status_code}'</td>
+<td>${resp}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>Return From Keyword If</td>
+<td>'200'!='${resp.status_code}'</td>
+<td>${resp}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal As Strings</td>
+<td>${resp.status_code}</td>
+<td>200</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal As Strings</td>
+<td>${resp.reason}</td>
+<td>OK</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${content}=</td>
+<td>Get From Dictionary</td>
+<td>${resp.headers}</td>
+<td>content-type</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Contain</td>
+<td>${content}</td>
+<td>multipart/form-data</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${fileLen}=</td>
+<td>Get Length</td>
+<td>${file}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Return From Keyword If</td>
+<td>"${fileLen}" == "0"</td>
+<td>${resp}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>============== RESPONSE CONTENT ============== \n<br>
+${resp.content}\n<br>
+========================================= \n<br>
+</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>@{parts}=</td>
+<td>Get Parts</td>
+<td>${resp.content}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log List</td>
+<td>${parts}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${partNr}=</td>
+<td>Get Length</td>
+<td>${parts}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal As Strings</td>
+<td>${partNr}</td>
+<td>1</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>====================</td>
+<td>Check Parts</td>
+<td>====================</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${part}=</td>
+<td>Get From List</td>
+<td>${parts}</td>
+<td>0</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${headerPart}</td>
+<td>${dataPart}</td>
+<td>Get Attachment Part</td>
+<td>${part}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Field</td>
+<td>${headerPart}</td>
+<td>filename</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${partFileName}=</td>
+<td>Get Field Value</td>
+<td>${headerPart}</td>
+<td>filename</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Not Be Empty</td>
+<td>${partFileName}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${fileName}</td>
+<td>${partFileName}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Field</td>
+<td>${headerPart}</td>
+<td>Content-Type</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Field</td>
+<td>${headerPart}</td>
+<td>Content-Transfer-Encoding</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Field</td>
+<td>${headerPart}</td>
+<td>Content-ID</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Field</td>
+<td>${headerPart}</td>
+<td>Content-Disposition</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Field</td>
+<td>${headerPart}</td>
+<td>filename</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Field</td>
+<td>${headerPart}</td>
+<td>name</td>
+<td>file</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal As Strings</td>
+<td>${file}</td>
+<td>${dataPart}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Return]</td>
+<td>${resp}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Get VNF files">Get VNF files</a></td>
+<td>[Arguments]</td>
+<td>${files}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Documentation]</td>
+<td class="colspan3" colspan="3">files is a dictionary composed by\n<br>
+- file name\n<br>
+- binary file image</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>==================== \ Get files ${files}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>====================</td>
+<td>Prepare and send http request</td>
+<td>====================</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${fileNames}=</td>
+<td>Get Dictionary Keys</td>
+<td>${files}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${par}=</td>
+<td>Get par</td>
+<td>${EMPTY}</td>
+<td>@{fileNames}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Create NFS Session</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${resp}=</td>
+<td>Get Request</td>
+<td>NFS_SESSION</td>
+<td>/files${par}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Delete All Sessions</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>====================</td>
+<td>Check Response</td>
+<td>====================</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal As Strings</td>
+<td>${resp.status_code}</td>
+<td>200</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal As Strings</td>
+<td>${resp.reason}</td>
+<td>OK</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${content}=</td>
+<td>Get From Dictionary</td>
+<td>${resp.headers}</td>
+<td>content-type</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal As Strings</td>
+<td>${content}</td>
+<td>multipart/form-data</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>============== RESPONSE CONTENT ============== \n<br>
+${resp.content}\n<br>
+========================================= \n<br>
+</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>@{parts}=</td>
+<td>Get Parts</td>
+<td>${resp.content}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log List</td>
+<td>${parts}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${partNr}=</td>
+<td>Get Length</td>
+<td>${parts}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${file_nr}=</td>
+<td>Get Length</td>
+<td>${filenames}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal As Strings</td>
+<td>${partNr}</td>
+<td>${file_nr}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>====================</td>
+<td>Check Parts</td>
+<td>====================</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>: FOR</td>
+<td>${part}</td>
+<td>IN</td>
+<td>@{parts}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>${headerPart}</td>
+<td>${dataPart}</td>
+<td>Get Attachment Part</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>${part}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Check Field</td>
+<td>${headerPart}</td>
+<td>filename</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>${fileName}=</td>
+<td>Get Field Value</td>
+<td>${headerPart}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>filename</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Should Not Be Empty</td>
+<td>${fileName}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Dictionary Should Contain Key</td>
+<td>${files}</td>
+<td>${fileName}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Check Field</td>
+<td>${headerPart}</td>
+<td>Content-Type</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Check Field</td>
+<td>${headerPart}</td>
+<td>Content-Transfer-Encoding</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Check Field</td>
+<td>${headerPart}</td>
+<td>Content-ID</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Check Field</td>
+<td>${headerPart}</td>
+<td>Content-Disposition</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Check Field</td>
+<td>${headerPart}</td>
+<td>filename</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Check Field</td>
+<td>${headerPart}</td>
+<td>name</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>${fileName}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>${file}=</td>
+<td>Get From Dictionary</td>
+<td>${files}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>${fileName}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Should Be Equal As Strings</td>
+<td>${file}</td>
+<td>${dataPart}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Return]</td>
+<td>${resp}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Get VNF files by VNFD">Get VNF files by VNFD</a></td>
+<td>[Arguments]</td>
+<td>${vnfdId}</td>
+<td>${expectedFiles}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Documentation]</td>
+<td class="colspan3" colspan="3">files is a dictionary composed by\n<br>
+- file name\n<br>
+- binary file image</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>==================== \ Get Files by VNFD ID ${vnfdId}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>====================</td>
+<td>Prepare and send http request</td>
+<td>====================</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${fileNames}=</td>
+<td>Get Dictionary Keys</td>
+<td>${expectedFiles}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Create NFS Session</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${resp}=</td>
+<td>Get Request</td>
+<td>NFS_SESSION</td>
+<td>files?vnfd=${vnfdId}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Delete All Sessions</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>====================</td>
+<td>Check Response</td>
+<td>====================</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal As Strings</td>
+<td>${resp.status_code}</td>
+<td>200</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal As Strings</td>
+<td>${resp.reason}</td>
+<td>OK</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${content}=</td>
+<td>Get From Dictionary</td>
+<td>${resp.headers}</td>
+<td>content-type</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal As Strings</td>
+<td>${content}</td>
+<td>multipart/form-data</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>============== RESPONSE CONTENT ============== \n<br>
+${resp.content}\n<br>
+========================================= \n<br>
+</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>@{parts}=</td>
+<td>Get Parts</td>
+<td>${resp.content}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log List</td>
+<td>${parts}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${partNr}=</td>
+<td>Get Length</td>
+<td>${parts}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${file_nr}=</td>
+<td>Get Length</td>
+<td>${filenames}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal As Strings</td>
+<td>${partNr}</td>
+<td>${file_nr}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>====================</td>
+<td>Check Parts</td>
+<td>====================</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>: FOR</td>
+<td>${part}</td>
+<td>IN</td>
+<td>@{parts}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>${headerPart}</td>
+<td>${dataPart}</td>
+<td>Get Attachment Part</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>${part}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Check Field</td>
+<td>${headerPart}</td>
+<td>filename</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>${fileName}=</td>
+<td>Get Field Value</td>
+<td>${headerPart}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>filename</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Should Not Be Empty</td>
+<td>${fileName}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Dictionary Should Contain Key</td>
+<td>${files}</td>
+<td>${fileName}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Check Field</td>
+<td>${headerPart}</td>
+<td>Content-Type</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Check Field</td>
+<td>${headerPart}</td>
+<td>Content-Transfer-Encoding</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Check Field</td>
+<td>${headerPart}</td>
+<td>Content-ID</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Check Field</td>
+<td>${headerPart}</td>
+<td>Content-Disposition</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Check Field</td>
+<td>${headerPart}</td>
+<td>filename</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Check Field</td>
+<td>${headerPart}</td>
+<td>name</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>${fileName}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>@{fileInfo}=</td>
+<td>Get From Dictionary</td>
+<td>${expectedFiles}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>${fileName}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>${file}=</td>
+<td>Get From List</td>
+<td>${fileInfo}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>1</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Comment</td>
+<td>${data}=</td>
+<td>Replace String</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>${dataPart}</td>
+<td>"</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>${EMPTY}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Comment</td>
+<td>Should Be Equal As Strings</td>
+<td>${file}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>${dataPart}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Return]</td>
+<td>${resp}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Delete VNF file">Delete VNF file</a></td>
+<td>[Arguments]</td>
+<td>${fileName}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>==================== \ Delete files ${fileName}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Create NFS Session</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${resp}=</td>
+<td>Delete Request</td>
+<td>NFS_SESSION</td>
+<td>/files/${fileName}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Delete All Sessions</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Return]</td>
+<td>${resp}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Delete All VNF files">Delete All VNF files</a></td>
+<td>Log</td>
+<td>==================== \ Delete All files</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Create NFS Session</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${resp}=</td>
+<td>Delete Request</td>
+<td>NFS_SESSION</td>
+<td>/files</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Delete All Sessions</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Return]</td>
+<td>${resp}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Delete VNF files">Delete VNF files</a></td>
+<td>[Arguments]</td>
+<td>@{files}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Documentation]</td>
+<td class="colspan3" colspan="3">files is a dictionary composed by\n<br>
+- file name\n<br>
+- binary file image</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>==================== \ Delete files ${files}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${par}=</td>
+<td>Get par</td>
+<td>${EMPTY}</td>
+<td>@{files}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Create NFS Session</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${resp}=</td>
+<td>Delete Request</td>
+<td>NFS_SESSION</td>
+<td>/files${par}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Delete All Sessions</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Return]</td>
+<td>${resp}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Delete VNF files by VNFD">Delete VNF files by VNFD</a></td>
+<td>[Arguments]</td>
+<td>${vnfdId}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Documentation]</td>
+<td class="colspan3" colspan="3">files is a dictionary composed by\n<br>
+- file name\n<br>
+- binary file image</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>==================== \ Delete VNFD ${vnfdId}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${par}=</td>
+<td>Get par</td>
+<td>${vnfdId}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Create NFS Session</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${resp}=</td>
+<td>Delete Request</td>
+<td>NFS_SESSION</td>
+<td>/files${par}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Delete All Sessions</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Return]</td>
+<td>${resp}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Get VNF file List">Get VNF file List</a></td>
+<td>[Arguments]</td>
+<td>${expectedFiles}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Documentation]</td>
+<td class="colspan3" colspan="3">expected files is a dictionary composed by:\n<br>
+- file name\n<br>
+- list of vnfd Id that use the file</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>==================== Get VNF file List ${expectedFiles}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>====================</td>
+<td>Prepare and send http request</td>
+<td>====================</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Create NFS Session</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${resp}=</td>
+<td>Get Request</td>
+<td>NFS_SESSION</td>
+<td>/files</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Delete All Sessions</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>====================</td>
+<td>Check Response</td>
+<td>====================</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal As Strings</td>
+<td>${resp.status_code}</td>
+<td>200</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${jsondata}=</td>
+<td>To Json</td>
+<td>${resp.content}</td>
+<td>true</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${expectedFilesNr}=</td>
+<td>Get Length</td>
+<td>${expectedFiles}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${files}=</td>
+<td>Get From Dictionary</td>
+<td>${resp.json()}</td>
+<td>files</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${filesNr}=</td>
+<td>Get Length</td>
+<td>${files}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Return From Keyword If</td>
+<td>'${expectedFilesNr}'=='0' and '${filesNr}'=='0'</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${receivedFiles}=</td>
+<td>Set Variable</td>
+<td>${files}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${receivedFilesLen}=</td>
+<td>Get Length</td>
+<td>${receivedFiles}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${expectedFilesNr}</td>
+<td>${receivedFilesLen}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>: FOR</td>
+<td>${receivedFile}</td>
+<td>IN</td>
+<td>@{receivedFiles}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Log</td>
+<td>${receivedFile}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>${name}</td>
+<td>${vnfdId}=</td>
+<td>Get VNF File Data</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>${receivedFile}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Dictionary Should Contain Key</td>
+<td>${expectedFiles}</td>
+<td>${name}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>${id}=</td>
+<td>Get From Dictionary</td>
+<td>${expectedFiles}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>${name}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>List Should Not Contain Duplicates</td>
+<td>${vnfdId}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>List Should Contain Sub List</td>
+<td>${vnfdId}</td>
+<td>${id}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Comment</td>
+<td>List Should Contain Sub List</td>
+<td>${id}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>${vnfdId}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Comment</td>
+<td>Should Contain</td>
+<td>${expectedFiles}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>${name}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Set variable file vnfd Id</td>
+<td>${name}</td>
+<td>@{vnfdId}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Get VNF file List by VNFD">Get VNF file List by VNFD</a></td>
+<td>[Arguments]</td>
+<td>${vnfdId}</td>
+<td>@{expectedFiles}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Documentation]</td>
+<td class="colspan3" colspan="3">files is a list composed by expected files name</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>==================== Get VNF file ${vnfdId} List ${expectedFiles}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>====================</td>
+<td>Prepare and send http request</td>
+<td>====================</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Create NFS Session</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${resp}=</td>
+<td>Get Request</td>
+<td>NFS_SESSION</td>
+<td>/files/list?vnfd=${vnfdId}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Delete All Sessions</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>====================</td>
+<td>Check Response</td>
+<td>====================</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal As Strings</td>
+<td>${resp.status_code}</td>
+<td>200</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${jsondata}=</td>
+<td>To Json</td>
+<td>${resp.content}</td>
+<td>true</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${expectedFilesLen}=</td>
+<td>Get Length</td>
+<td>${expectedFiles}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${vnfFiles}=</td>
+<td>Get From Dictionary</td>
+<td>${resp.json()}</td>
+<td>NFS</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${vnfFilesLen}=</td>
+<td>Get Length</td>
+<td>${vnfFiles}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Return From Keyword If</td>
+<td>'${expectedFilesLen}'=='0' and '${vnfFilesLen}'=='0'</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${files}=</td>
+<td>Get From Dictionary</td>
+<td>${vnfFiles}</td>
+<td>files</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${receivedFiles}=</td>
+<td>Run Keyword If</td>
+<td>'${expectedFilesLen}'=='1'</td>
+<td>Create List</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${files}</td>
+<td>ELSE</td>
+<td>Convert To List</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${files}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>${receivedFiles}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${receivedFilesLen}=</td>
+<td>Get Length</td>
+<td>${receivedFiles}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${expectedFilesLen}</td>
+<td>${receivedFilesLen}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>: FOR</td>
+<td>${receivedFile}</td>
+<td>IN</td>
+<td>@{receivedFiles}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Log</td>
+<td>${receivedFile}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>${name}</td>
+<td>${type}</td>
+<td>${vnfdId}=</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>Get VNF File Data</td>
+<td>${receivedFile}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Should Contain</td>
+<td>${expectedFiles}</td>
+<td>${name}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Set Global Variable</td>
+<td>${${name}_vnfdId}</td>
+<td>${vnfdId}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Get Parts">Get Parts</a></td>
+<td>[Arguments]</td>
+<td>${content}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>Log</td>
+<td>========= Get Parts =========</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>Log</td>
+<td>${content}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${str}=</td>
+<td>Set Variable</td>
+<td>${content}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${lines}=</td>
+<td>Get Lines Matching RegExp</td>
+<td>${content}</td>
+<td>^--.*$</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>@{lineList}=</td>
+<td>SplitString</td>
+<td>${lines}</td>
+<td>\n<br>
+</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>@{parts}=</td>
+<td>Create List</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>: FOR</td>
+<td>${line}</td>
+<td>IN</td>
+<td>@{lineList}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Log</td>
+<td>========================== NUOVO GIRO ==========================</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Log</td>
+<td>line=${line}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>${part}=</td>
+<td>Fetch From Left</td>
+<td>${str}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>${line}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>${str}=</td>
+<td>Replace String</td>
+<td>${str}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>${line}</td>
+<td>${EMPTY}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>1</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>${str}=</td>
+<td>Replace String</td>
+<td>${str}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>${part}</td>
+<td>${EMPTY}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>1</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>${remove}=</td>
+<td>Get Lines Matching RegExp</td>
+<td>${part}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>^--.*$</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>${part}=</td>
+<td>Replace String</td>
+<td>${part}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>${remove}\n<br>
+</td>
+<td>${EMPTY}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>${len}=</td>
+<td>Get Length</td>
+<td>${part}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Log</td>
+<td>part=${part}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Run Keyword Unless</td>
+<td>${len}==0</td>
+<td>Append To List</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>${parts}</td>
+<td>${part}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Log</td>
+<td>========================== FINE ==========================</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${nr}=</td>
+<td>Get Length</td>
+<td>${parts}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>Found ${nr} parts</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log List</td>
+<td>${parts}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Return]</td>
+<td>@{parts}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Get Attachment Part">Get Attachment Part</a></td>
+<td>[Arguments]</td>
+<td>${attachmentPart}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>Log</td>
+<td>========= Get Attachment =========</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${part}=</td>
+<td>Convert To String</td>
+<td>${attachmentPart.strip()}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${header}=</td>
+<td>Set Variable</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${body}=</td>
+<td>Set Variable</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${body_flag}=</td>
+<td>Set Variable</td>
+<td>False</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>@{lineList}=</td>
+<td>SplitString</td>
+<td>${part}</td>
+<td>\r</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log List</td>
+<td>${lineList}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>: FOR</td>
+<td>${line}</td>
+<td>IN</td>
+<td>@{lineList}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>${len}=</td>
+<td>Get Length</td>
+<td>${line.strip()}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>${lenB}=</td>
+<td>Get Length</td>
+<td>${body}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>${sep}=</td>
+<td>Set Variable If</td>
+<td>'${lenB}'=='0'</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>${EMPTY}</td>
+<td>\r\n<br>
+</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>${header}=</td>
+<td>Run Keyword If</td>
+<td>'${body_flag}'=='False'</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>Catenate</td>
+<td>SEPARATOR=</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>${header}</td>
+<td>${line}\n<br>
+</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>ELSE</td>
+<td>Set Variable</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>${header}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>${body}=</td>
+<td>Run Keyword If</td>
+<td>'${body_flag}'=='True'</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>Catenate</td>
+<td>SEPARATOR=${sep}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>${body}</td>
+<td>${line}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>ELSE</td>
+<td>Set Variable</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>${body}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>${body_flag}=</td>
+<td>Run Keyword If</td>
+<td>${len}==0</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>Set Variable</td>
+<td>True</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>ELSE</td>
+<td>Set Variable</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>${body_flag}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>${nr}=</td>
+<td>Get Length</td>
+<td>${parts}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>Log</td>
+<td>Found ${nr} parts</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Return]</td>
+<td>${header}</td>
+<td>${body}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Get Field Value">Get Field Value</a></td>
+<td>[Arguments]</td>
+<td>${data}</td>
+<td>${fieldName}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${lines}=</td>
+<td>Get Lines Containing String</td>
+<td>${data}</td>
+<td>${fieldName}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>@{parts}=</td>
+<td>Split String</td>
+<td>${lines}</td>
+<td>${fieldName}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>@{val}=</td>
+<td>Split String</td>
+<td>@{parts}[1]</td>
+<td>;</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${value}=</td>
+<td>Set Variable</td>
+<td>@{val}[0]</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${value}=</td>
+<td>Replace String</td>
+<td>${value}</td>
+<td>=</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${EMPTY}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${value}=</td>
+<td>Replace String</td>
+<td>${value}</td>
+<td>"</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${EMPTY}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Return]</td>
+<td>${value}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Check Field">Check Field</a></td>
+<td>[Arguments]</td>
+<td>${data}</td>
+<td>${fieldName}</td>
+<td>${value}=${NONE}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${field}=</td>
+<td>Get Lines Containing String</td>
+<td>${data}</td>
+<td>${fieldName}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Not Be Empty</td>
+<td>${field}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Run Keyword If</td>
+<td>'${value}' != '${NONE}'</td>
+<td>Should Contain</td>
+<td>${field}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${value}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Check value in List">Check value in List</a></td>
+<td>[Arguments]</td>
+<td>${value}</td>
+<td>@{list}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${result}=</td>
+<td>Set Variable</td>
+<td>${false}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>Check value in list - ${value} : @{list}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>: FOR</td>
+<td>${val}</td>
+<td>IN</td>
+<td>@{list}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>${result}=</td>
+<td>Run Keyword If</td>
+<td>'${val}'=='${value}'</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>Set Variable</td>
+<td>${True}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Exit For Loop If</td>
+<td>'${result}'=='${True}'</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Return]</td>
+<td>${result}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_get WADL ${table}">get WADL ${table}</a></td>
+<td>Log</td>
+<td>******* get WADL file</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${url}=</td>
+<td>Catenate</td>
+<td>SEPARATOR=</td>
+<td>${basePath}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>/${table}/?_wadl</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${responseStatus}</td>
+<td>${responseBody}=</td>
+<td>Send WS REST Request</td>
+<td>GET</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${url}</td>
+<td>application/xml</td>
+<td>False</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${wadl}=</td>
+<td>Encode String To Bytes</td>
+<td>${responseBody}</td>
+<td>encoding=UTF-8</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${wadl_file}=</td>
+<td>Set Variable</td>
+<td>${wadl_dir}${/}${table}.wadl</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Create File</td>
+<td>${wadl_file}</td>
+<td>${wadl}</td>
+<td>encoding=UTF-8</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Get VNF File Data">Get VNF File Data</a></td>
+<td>[Arguments]</td>
+<td>${respFile}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>==================== Get VNF File Data ${respFile}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${name}=</td>
+<td>Get From Dictionary</td>
+<td>${respFile}</td>
+<td>name</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>${type}=</td>
+<td>Get From Dictionary</td>
+<td>${respFile}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>type</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${status}</td>
+<td>${vnfdId}=</td>
+<td>Run Keyword And Ignore Error</td>
+<td>Get From Dictionary</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${respFile}</td>
+<td>vnfd_id</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>Get VNF File Data result = ${status} : ${vnfdId}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>@{vnfdId}=</td>
+<td>Create List</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>@{vnfdId}=</td>
+<td>Run Keyword If</td>
+<td>'${status}' != 'FAIL'</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>Copy List</td>
+<td>${ids}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Return]</td>
+<td>${name}</td>
+<td>${vnfdId}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Set file Value">Set file Value</a></td>
+<td>[Arguments]</td>
+<td>${filePath}</td>
+<td>${key}</td>
+<td>${value}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>================ Set value ${key}:${value} to file ${filePath}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${file}=</td>
+<td>Get Binary File</td>
+<td>${filePath}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${json}=</td>
+<td>To Json</td>
+<td>${file}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>Log</td>
+<td>${json}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${new_json}=</td>
+<td>Set To Dictionary</td>
+<td>${json}</td>
+<td>${key}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${value}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>${new_json}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${outS}=</td>
+<td>Catenate</td>
+<td>SEPARATOR=</td>
+<td>${new_json}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${out1}=</td>
+<td>Replace String</td>
+<td>${outS}</td>
+<td>':</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>":</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${out2}=</td>
+<td>Replace String</td>
+<td>${out1}</td>
+<td>u'{</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>{</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${out3}=</td>
+<td>Replace String</td>
+<td>${out2}</td>
+<td>}'</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${out4}=</td>
+<td>Replace String</td>
+<td>${out3}</td>
+<td>{u'</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>{"</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${out5}=</td>
+<td>Replace String</td>
+<td>${out4}</td>
+<td>u'</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>"</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${out}=</td>
+<td>Replace String</td>
+<td>${out5}</td>
+<td>'</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>"</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>out=${out}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Create File</td>
+<td>${filePath}</td>
+<td>${out}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Get par">Get par</a></td>
+<td>[Arguments]</td>
+<td>${vnfdId}=${EMPTY}</td>
+<td>@{files}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${par}=</td>
+<td>Run Keyword If</td>
+<td>'${vnfdId}'=='${EMPTY}'</td>
+<td>Set Variable</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${EMPTY}</td>
+<td>ELSE</td>
+<td>Set Variable</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>?vnfd=${vnfdId}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>: FOR</td>
+<td>${fileName}</td>
+<td>IN</td>
+<td>@{files}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>${par}=</td>
+<td>Run Keyword If</td>
+<td>'${par}'=='${EMPTY}'</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>Set Variable</td>
+<td>?file=${fileName}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>ELSE</td>
+<td>Set Variable</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>${par}&amp;file=${fileName}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>par=${par}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Return]</td>
+<td>${par}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Get VNFD List">Get VNFD List</a></td>
+<td>[Arguments]</td>
+<td>${check}==True</td>
+<td>@{expectedVNFD}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Documentation]</td>
+<td class="colspan3" colspan="3">files is a list composed by expected files name</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>==================== Get VNFD List ${expectedVNFD}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>====================</td>
+<td>Prepare and send http request</td>
+<td>====================</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Create NFS Session</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${resp}=</td>
+<td>Get Request</td>
+<td>NFS_SESSION</td>
+<td>/vnfds</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Delete All Sessions</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>====================</td>
+<td>Check Response</td>
+<td>====================</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal As Strings</td>
+<td>${resp.status_code}</td>
+<td>200</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${jsondata}=</td>
+<td>To Json</td>
+<td>${resp.content}</td>
+<td>true</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${expectedVNFDLen}=</td>
+<td>Get Length</td>
+<td>${expectedVNFD}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${vnfds}=</td>
+<td>Get From Dictionary</td>
+<td>${resp.json()}</td>
+<td>vnfds</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${vnfdsLen}=</td>
+<td>Get Length</td>
+<td>${vnfds}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Return From Keyword If</td>
+<td>'${check}'!='True'</td>
+<td>${vnfds}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Return From Keyword If</td>
+<td>'${expectedVNFDLen}'=='0' and '${vnfdsLen}'=='0'</td>
+<td>${vnfds}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${expectedVNFDLen}</td>
+<td>${vnfdsLen}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>: FOR</td>
+<td>${vnfd}</td>
+<td>IN</td>
+<td>@{vnfds}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Log</td>
+<td>${vnfd}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Should Contain</td>
+<td>${expectedVNFD}</td>
+<td>${vnfd}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Return]</td>
+<td>${vnfds}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Create VNFD">Create VNFD</a></td>
+<td>[Arguments]</td>
+<td>${vnfd}</td>
+<td>${responseCode}=201</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>==================== \ Create VNF Descriptor</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${vnfd}=</td>
+<td>Replace String</td>
+<td>${vnfd}</td>
+<td>\n<br>
+</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${EMPTY}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${vnfd}=</td>
+<td>Replace String</td>
+<td>${vnfd}</td>
+<td>\t</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${EMPTY}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>====================</td>
+<td>Prepare and send http request</td>
+<td>====================</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Create NFS Session</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>${headers}=</td>
+<td>Create Dictionary</td>
+<td>Content-Type</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>application/json</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${resp}=</td>
+<td>Post Request</td>
+<td>NFS_SESSION</td>
+<td>/vnfds</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>data=${vnfd}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Delete All Sessions</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>====================</td>
+<td>Check Response</td>
+<td>====================</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>status=${resp.status_code}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>Log</td>
+<td>json=${resp.json()}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>content=${resp.content}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal As Strings</td>
+<td>${resp.status_code}</td>
+<td>${responseCode}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Not Be Equal</td>
+<td>${resp.content}</td>
+<td>${EMPTY}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Return From Keyword If</td>
+<td>'${resp.status_code}'!='201'</td>
+<td>${EMPTY}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${vnfd_id}</td>
+<td>Get From Dictionary</td>
+<td>${resp.json()}</td>
+<td>vnfd_id</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Return]</td>
+<td>${vnfd_id}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Get VNFD">Get VNFD</a></td>
+<td>[Arguments]</td>
+<td>${id}</td>
+<td>${vnfd}</td>
+<td>${responseCode}=200</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>==================== \ Get VNF Descriptor ${id}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${vnfd}=</td>
+<td>Replace String</td>
+<td>${vnfd}</td>
+<td>\n<br>
+</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${EMPTY}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${vnfd}=</td>
+<td>Replace String</td>
+<td>${vnfd}</td>
+<td>\t</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${EMPTY}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>====================</td>
+<td>Prepare and send http request</td>
+<td>====================</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Create NFS Session</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${resp}=</td>
+<td>Get Request</td>
+<td>NFS_SESSION</td>
+<td>/vnfds/${id}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Delete All Sessions</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>====================</td>
+<td>Check Response</td>
+<td>====================</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal As Strings</td>
+<td>${resp.status_code}</td>
+<td>${responseCode}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Not Be Equal</td>
+<td>${resp.content}</td>
+<td>${EMPTY}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${json}=</td>
+<td>To Json</td>
+<td>${vnfd}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${jsonResp}=</td>
+<td>To Json</td>
+<td>${resp.content}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Dictionary Should Contain Key</td>
+<td>${jsonResp}</td>
+<td>id</td>
+<td>VNFD Id not found into json response</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${vnfdid}=</td>
+<td>Get From Dictionary</td>
+<td>${jsonResp}</td>
+<td>id</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${vnfdid}</td>
+<td>${id}</td>
+<td>VNFD Id into json response differ from espected</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Remove From Dictionary</td>
+<td>${jsonResp}</td>
+<td>id</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Remove From Dictionary</td>
+<td>${json}</td>
+<td>id</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Dictionaries Should Be Equal</td>
+<td>${json}</td>
+<td>${jsonResp}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Return]</td>
+<td>${resp}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Delete VNFD">Delete VNFD</a></td>
+<td>[Arguments]</td>
+<td>${id}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Documentation]</td>
+<td class="colspan3" colspan="3">files is a dictionary composed by\n<br>
+- file name\n<br>
+- binary file image</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>==================== \ Delete VNF Descrioptor ${id}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Create NFS Session</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${resp}=</td>
+<td>Delete Request</td>
+<td>NFS_SESSION</td>
+<td>/vnfds/${id}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Delete All Sessions</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Return]</td>
+<td>${resp}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Delete All VNFD">Delete All VNFD</a></td>
+<td>Log</td>
+<td>==================== \ Delete All VNF Descrioptos</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Create NFS Session</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${resp}=</td>
+<td>Delete Request</td>
+<td>NFS_SESSION</td>
+<td>/vnfds</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Delete All Sessions</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Return]</td>
+<td>${resp}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Modify VNFD">Modify VNFD</a></td>
+<td>[Arguments]</td>
+<td>${id}</td>
+<td>${vnfd}</td>
+<td>${responseCode}=204</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>==================== \ Modify VNF Descriptor ${id}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${vnfd}=</td>
+<td>Replace String</td>
+<td>${vnfd}</td>
+<td>\n<br>
+</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${EMPTY}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${vnfd}=</td>
+<td>Replace String</td>
+<td>${vnfd}</td>
+<td>\t</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${EMPTY}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>====================</td>
+<td>Prepare and send http request</td>
+<td>====================</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Create NFS Session</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>${headers}=</td>
+<td>Create Dictionary</td>
+<td>Content-Type</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>application/json</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${resp}=</td>
+<td>Put Request</td>
+<td>NFS_SESSION</td>
+<td>/vnfds/${id}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>data=${vnfd}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Delete All Sessions</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>====================</td>
+<td>Check Response</td>
+<td>====================</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>status=${resp.status_code}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>Log</td>
+<td>json=${resp.json()}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>Log</td>
+<td>content=${resp.content}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal As Strings</td>
+<td>${resp.status_code}</td>
+<td>${responseCode}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>Should Not Be Equal</td>
+<td>${resp.content}</td>
+<td>${EMPTY}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>${vnfd_id}</td>
+<td>Get From Dictionary</td>
+<td>${resp.json()}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>vnfd_id</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Set variable file vnfd Id">Set variable file vnfd Id</a></td>
+<td>[Arguments]</td>
+<td>${name}</td>
+<td>@{vnfdId}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>: FOR</td>
+<td>${id}</td>
+<td>IN</td>
+<td>@{vnfdId}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Set Global Variable</td>
+<td>${${name}_vnfdId}</td>
+<td>${id}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Create NFS Session">Create NFS Session</a></td>
+<td>Log</td>
+<td>Create NFS Session on ${NFS}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>Log</td>
+<td>proxy=${HTTP_PROXY}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>Set Global Variable</td>
+<td>http_proxy</td>
+<td>'<a href="http://figinie:greenlantern@138.132.88.108:8080">http://figinie:greenlantern@138.132.88.108:8080</a>'</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>${proxies}=</td>
+<td>Create Dictionary</td>
+<td>http=http://figinie:greenlantern@138.132.88.108:8080</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Create Session</td>
+<td>NFS_SESSION</td>
+<td>${NFS}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>Create Session</td>
+<td>NFS_SESSION</td>
+<td>${NFS}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>proxies=${proxies}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Get Json File">Get Json File</a></td>
+<td>[Arguments]</td>
+<td>${filePath}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>================ Get json file ${filePath}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${file}=</td>
+<td>Get Binary File</td>
+<td>${filePath}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${json}=</td>
+<td>To Json</td>
+<td>${file}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${outS}=</td>
+<td>Catenate</td>
+<td>SEPARATOR=</td>
+<td>${json}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${out1}=</td>
+<td>Replace String</td>
+<td>${outS}</td>
+<td>':</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>":</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${out2}=</td>
+<td>Replace String</td>
+<td>${out1}</td>
+<td>{u'</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>{"</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${out3}=</td>
+<td>Replace String</td>
+<td>${out2}</td>
+<td>u'</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>"</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${out}=</td>
+<td>Replace String</td>
+<td>${out3}</td>
+<td>'</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>"</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>out=${out}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Return]</td>
+<td>${out}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Get VNF">Get VNF</a></td>
+<td>[Arguments]</td>
+<td>${id}=${EMPTY}</td>
+<td>${queries}=${EMPTY}</td>
+<td>${responseCode}=200</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>@{expected_VNFD}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>==================== \ Get VNF</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${uri}=</td>
+<td>Set Variable If</td>
+<td>'${Id}'=='${EMPTY}'</td>
+<td>${EMPTY}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>/${id}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${uri}=</td>
+<td>Set Variable If</td>
+<td>'${queries}'=='${EMPTY}'</td>
+<td>${uri}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${uri}?${queries}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>====================</td>
+<td>Prepare and send http request</td>
+<td>====================</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Create NFS Session</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${resp}=</td>
+<td>Get Request</td>
+<td>NFS_SESSION</td>
+<td>/vnfs${uri}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Delete All Sessions</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>====================</td>
+<td>Check Response</td>
+<td>====================</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>status=${resp.status_code}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>Log</td>
+<td>json=${resp.json()}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>content=${resp.content}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal As Strings</td>
+<td>${resp.status_code}</td>
+<td>${responseCode}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Not Be Equal</td>
+<td>${resp.content}</td>
+<td>${EMPTY}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Return From Keyword If</td>
+<td>'${resp.status_code}'!='200'</td>
+<td>${EMPTY}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${jsondata}=</td>
+<td>To Json</td>
+<td>${resp.content}</td>
+<td>true</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${expectedVnfNr}=</td>
+<td>Get Length</td>
+<td>${expected_VNFD}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${vnfs}=</td>
+<td>Get From Dictionary</td>
+<td>${resp.json()}</td>
+<td>vnfs</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${vnfsNr}=</td>
+<td>Get Length</td>
+<td>${vnfs}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Return From Keyword If</td>
+<td>'${expectedVnfNr}'=='0' and '${vnfsNr}'=='0'</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${receivedVnfs}=</td>
+<td>Set Variable</td>
+<td>${vnfs}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${receivedVnfsLen}=</td>
+<td>Get Length</td>
+<td>${receivedVnfs}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${expectedVnfNr}</td>
+<td>${receivedVnfsLen}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>: FOR</td>
+<td>${vnf}</td>
+<td>IN</td>
+<td>@{receivedVnfs}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>${vnfd_id}=</td>
+<td>Get From Dictionary</td>
+<td>${vnf}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>vnfd_id</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>List Should Contain Value</td>
+<td>${expected_VNFD}</td>
+<td>${vnfd_id}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Return]</td>
+<td>${resp}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Head VNF file">Head VNF file</a></td>
+<td>[Arguments]</td>
+<td>${fileName}</td>
+<td>${file}=${EMPTY}</td>
+<td>${possibleCode}=${EMPTY}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>==================== \ Head file ${fileName}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>====================</td>
+<td>Prepare and send http request</td>
+<td>====================</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Create NFS Session</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${resp}=</td>
+<td>Head Request</td>
+<td>NFS_SESSION</td>
+<td>/files/${fileName}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Delete All Sessions</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>====================</td>
+<td>Check Response</td>
+<td>====================</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Return From Keyword If</td>
+<td>'${possibleCode}'=='${resp.status_code}'</td>
+<td>${resp}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal As Strings</td>
+<td>${resp.status_code}</td>
+<td>200</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal As Strings</td>
+<td>${resp.reason}</td>
+<td>OK</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>headers=${resp.headers}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${content}=</td>
+<td>Get From Dictionary</td>
+<td>${resp.headers}</td>
+<td>content-type</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Contain</td>
+<td>${content}</td>
+<td>text/plain</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${len}=</td>
+<td>Get From Dictionary</td>
+<td>${resp.headers}</td>
+<td>content-length</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Not Be Equal As Strings</td>
+<td>${len}</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${fileLen}=</td>
+<td>Get Length</td>
+<td>${file}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal As Strings</td>
+<td>${len}</td>
+<td>${fileLen}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Return]</td>
+<td>${resp}</td>
+<td></td>
+<td></td>
+</tr>
+</table>
+</body>
+</html>

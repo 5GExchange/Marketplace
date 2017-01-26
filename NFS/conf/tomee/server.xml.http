@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Server port="8005" shutdown="SHUTDOWN">
+
+	<!-- TomEE plugin for Tomcat -->
+	<Listener className="org.apache.tomee.catalina.ServerListener" />
+	<!--APR library loader. Documentation at /docs/apr.html -->
+	<Listener SSLEngine="on"
+		className="org.apache.catalina.core.AprLifecycleListener" />
+	<!--Initialize Jasper prior to webapps are loaded. Documentation at /docs/jasper-howto.html -->
+	<Listener className="org.apache.catalina.core.JasperListener" />
+	<!-- Prevent memory leaks due to use of particular java/javax APIs -->
+	<Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" />
+	<Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" />
+	<Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener" />
+
+	<GlobalNamingResources>
+		<Resource auth="Container" 
+			name="UserDatabase"
+			description="User database that can be updated and saved" 
+			factory="org.apache.catalina.users.MemoryUserDatabaseFactory"
+			pathname="conf/tomcat-users.xml" 
+			type="org.apache.catalina.UserDatabase" />
+	</GlobalNamingResources>
+
+	<Service name="Catalina">
+		<Connector address="%ADDRESS%" 
+			port="%HTTP_PORT%"
+			connectionTimeout="3600000"
+			connectionUploadTimeout="3600000"
+			disableUploadTimeout="true"
+			protocol="HTTP/1.1"
+			redirectPort="%HTTPS_PORT%" />
+		<Engine defaultHost="%ADDRESS%" name="Catalina">
+			<Realm className="org.apache.catalina.realm.LockOutRealm">
+				<Realm className="org.apache.catalina.realm.UserDatabaseRealm"
+					resourceName="UserDatabase" />
+			</Realm>
+			<Host appBase="webapps" autoDeploy="true" name="%ADDRESS%"
+				unpackWARs="true">
+				<!--Valve className="org.apache.catalina.valves.AccessLogValve"
+					directory="logs" 
+					pattern="%h %l %u %t &quot;%r&quot; %s %b" 
+					prefix="localhost_access_log."
+					suffix=".txt" /-->
+			</Host>
+		</Engine>
+	</Service>
+
+</Server>

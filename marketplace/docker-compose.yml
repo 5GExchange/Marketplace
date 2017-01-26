@@ -1,0 +1,175 @@
+dnsdock:
+ image: tonistiigi/dnsdock
+ hostname: dnsdock
+ restart: always
+ ports:
+#   - 8080:80
+   - 172.17.0.1:53:53/udp
+ volumes:
+   - /var/run/docker.sock:/var/run/docker.sock
+
+mysql:
+  build: mysql/
+  environment:
+    MYSQL_USER: admin
+    MYSQL_PASS: DgGz6fnp
+    STARTUP_SQL: /tmp/init/*.sql
+  ports:
+    - 3306:3306
+#  volumes:
+#    - /data/mysql:/var/lib/mysql
+
+mongodb:
+  build: mongodb/
+#  volumes:
+#    - /data/mongodb:/data/db
+  ports:
+    - 27017:27017
+  command: mongod --smallfiles
+
+
+#sla:
+#  build: sla-core/
+#  links:
+#    - mysql
+#  dns:
+#    - 172.17.0.1
+#  ports:
+#    - 9040:9040
+#  environment:
+#    - DNSDOCK_ALIAS=sla.docker
+
+dashboard:
+  build: dashboard/
+
+vnfs:
+  build: vnfs/
+  links:
+    - mongodb
+  ports:
+    - 5000:5000
+  dns:
+    - 172.17.0.1
+  environment:
+    - DNSDOCK_ALIAS=vnfs.docker
+    - NFS_HOST=172.16.0.10
+    - NFS_PORT=8080
+    - SECRET_KEY=^9xi7kyli7-43r(m5b5ykl5uq@61kuk-4zyd$c2q-o&ma&gllo
+    - DOCKER_HOST=https://5gex.tmit.bme.hu
+    - DOCKER_AUTH_EP=auth
+    - DOCKER_REPO_EP=v2
+    - DOCKER_SERVICE=registry.5gex
+    - DOCKER_USER=fgxdev
+    - DOCKER_PASS=5GEXhack3r29
+
+
+broker:
+  build: broker/
+  links:
+    - mongodb
+  dns:
+    - 172.17.0.1
+  environment:
+    - DNSDOCK_ALIAS=broker.docker
+    - SECRET_KEY=^9xi7kyli7-43r(m5b5ykl5uq@61kuk-4zyd$c2q-o&ma&gllo
+
+mdc:
+  build: mdc/
+  links:
+    - mysql
+  ports:
+    - 8500:8500
+  dns:
+    - 172.17.0.1
+  environment:
+    - DNSDOCK_ALIAS=mdc.docker
+    - NFS_HOST=172.16.0.10
+    - NFS_PORT=8080
+
+servicecatalog:
+  build: service-catalog/
+  links:
+    - mongodb
+  dns:
+    - 172.17.0.1
+  ports:
+    - 42050:42050
+  environment:
+    - DNSDOCK_ALIAS=bsc.docker,service-catalog.docker
+    - CONNECTOR_IP=172.16.0.10
+    - CONNECTOR_PORT=9000
+
+serviceselection:
+  build: service-selection/
+  links:
+    - mongodb
+  dns:
+    - 172.17.0.1
+  ports:
+    - 42055:42055
+  environment:
+    - DNSDOCK_ALIAS=service-selection.docker
+    - CONNECTOR_IP=172.16.0.10
+    - CONNECTOR_PORT=9000
+
+#billing:
+#  build: cyclops/docker-files/cyclops-aio
+#  privileged: true
+#  # need to link them because of the dns ipv4 resolve problem
+#  links:
+#    - accounting
+#  cap_add:
+#    - SYS_PTRACE
+#  dns:
+#    - 172.17.0.1
+#  ports:
+#    - 8080:8080
+#    - 8083:8083
+#    - 8086:8086
+#  environment:
+#    - DNSDOCK_ALIAS=cyclops.docker
+
+accounting:
+  build: accounting/
+  links:
+    - mysql
+  ports:
+    - 8000:8000
+  dns:
+    - 172.17.0.1
+  environment:
+    - DNSDOCK_ALIAS=accounting.docker
+    - AMQP_HOST=10.10.1.226
+    - AMQP_PORT=5672
+
+umaa:
+  build: umaa/
+  links:
+    - mysql
+  dns:
+    - 172.17.0.1
+  environment:
+    - DNSDOCK_ALIAS=umaa.docker
+    - SECRET_KEY=^9xi7kyli7-43r(m5b5ykl5uq@61kuk-4zyd$c2q-o&ma&gllo
+
+proxy:
+  build: proxy/
+  links:
+    - umaa
+    - vnfs
+    - broker
+#    - billing
+    - accounting
+    - mdc 
+    - servicecatalog
+    - serviceselection
+    - dashboard
+  ports:
+    - 80:80
+  dns:
+    - 172.17.0.1
+  environment:
+    - DNSDOCK_ALIAS=proxy.docker,web.docker
+    - NFS_URL=http://172.16.0.10:8080
+    - BILLING_URL=http://172.16.6.85:8080
+    - ORCHESTRATOR_URL=http://172.16.0.10:9000

@@ -1,0 +1,58 @@
+{
+	"vendor": "Italtel",
+	"descriptor_version": "1.0",
+	"version": "1.0",
+	"virtual_link": [
+		{
+			"id": 1,
+			"connectivity_type": "XXXXXX",
+			"connection_points_references": [ "111","222","333" ],  
+			"root_requirement": "QQQQQQQ",
+			"qos": [ "AAA","BBB" ],  
+			"test_access": ""
+		}
+	],
+	"connection_point": [
+		
+	],
+	"lifecycle_event": [
+		
+	],
+	"dependency": [
+		
+	],
+	"monitoring_parameter": [
+		{
+			"id": 1,
+			"name": "availability",
+			"description": "Percentage of time the VNF has been available over the last 365 days"
+		},
+		{
+			"id": 2,
+			"name": "memory",
+			"description": "memory used"
+		}
+	],
+	"deployment_flavour": [
+		{
+			"id": 1,
+			"flavour_key": "aaaaaaaaaa",
+			"constraint": [ "111","222" ],  
+			"constituent_vdu": {
+					"vdu_reference": 4,
+					"number_of_instances": 3,
+					"constituent_vnfc": "a:b"
+			}
+		},
+		{
+			"id": 2,
+			"flavour_key": "bbbbbbbbbb",
+			"constraint": [ "aaa","bbb" ] 
+		}
+	],
+	"auto_scale_policy": [
+		
+	],
+	"manifest_file": "",
+	"manifest_file_security": ""
+}

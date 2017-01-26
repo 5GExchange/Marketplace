@@ -1,0 +1,1117 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 1px solid black;
+}
+th, td {
+  border: 1px solid black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+  width: 12em;
+}
+td.colspan4, th.colspan4 {
+    width: 48em;
+}
+td.colspan3, th.colspan3 {
+    width: 36em;
+}
+td.colspan2, th.colspan2 {
+    width: 24em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  height: 1.7em;
+  font-weight: bold;
+  text-align: center;
+  letter-spacing: 0.1em;
+}
+td.name {
+  background-color: rgb(240, 240, 240);
+  letter-spacing: 0.1em;
+}
+td.name, th.name {
+  width: 10em;
+}
+</style>
+<title>Rest Crud Lib</title>
+</head>
+<body>
+<h1>Rest Crud Lib</h1>
+<table border="1" id="setting">
+<tr>
+<th class="name" colspan="5">Setting</th>
+</tr>
+<tr>
+<td class="name">Library</td>
+<td>String</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Library</td>
+<td>OperatingSystem</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Library</td>
+<td>HttpLibrary.HTTP</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Resource</td>
+<td>rest_lib.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Resource</td>
+<td>database_lib.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Library</td>
+<td>Collections</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+<table border="1" id="variable">
+<tr>
+<th class="name" colspan="5">Variable</th>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+<table border="1" id="keyword">
+<tr>
+<th class="name" colspan="5">Keyword</th>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Get All items and Check Result">Get All items and Check Result</a></td>
+<td>[Arguments]</td>
+<td>${tableName}</td>
+<td>${expResponseStatus}</td>
+<td>${expResultData}=${EMPTY}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${url}=</td>
+<td>Get URL Path</td>
+<td>${tableName}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${responseStatus}</td>
+<td>${json}=</td>
+<td>Send WS REST Request</td>
+<td>GET</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${url}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${passed}=</td>
+<td>Run Keyword and Return Status</td>
+<td>Should Contain</td>
+<td>${responseStatus}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${expResponseStatus}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${code}=</td>
+<td>Run Keyword If</td>
+<td>${passed}</td>
+<td>Get Json Element</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${json}</td>
+<td>${tableName}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Run Keyword If</td>
+<td>'${expResultData}' != '${EMPTY}'</td>
+<td>Should Be Equal As Strings</td>
+<td>${code}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${expResultData}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Create item and Check Result">Create item and Check Result</a></td>
+<td>[Arguments]</td>
+<td>${tableName}</td>
+<td>${dictdata}</td>
+<td>${expResponseStatus}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${expResultData}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${url}=</td>
+<td>Get URL Path</td>
+<td>${tableName}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${jsondata}=</td>
+<td>Stringify Json</td>
+<td>${dictdata}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${responseStatus}</td>
+<td>${json}=</td>
+<td>Send WS REST Request</td>
+<td>POST</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${url}</td>
+<td></td>
+<td>${jsondata}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${passed}=</td>
+<td>Run Keyword and Return Status</td>
+<td>Should Contain</td>
+<td>${responseStatus}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${expResponseStatus}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${jsonResultData}=</td>
+<td>Run Keyword If</td>
+<td>${passed}</td>
+<td>Get Json Element</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${json}</td>
+<td>${tableName}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${len}=</td>
+<td>Get Length</td>
+<td>${expResultData}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Run Keyword If</td>
+<td>'${len}' != '0'</td>
+<td>Check Json Result</td>
+<td>${jsonResultData}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${expResultData}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${id_item}=</td>
+<td>Get From Dictionary</td>
+<td>${jsonResultData}</td>
+<td>id</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Set Suite Variable</td>
+<td>${itemId}</td>
+<td>${id_item}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Get item and Check Result">Get item and Check Result</a></td>
+<td>[Arguments]</td>
+<td>${tableName}</td>
+<td>${id}</td>
+<td>${expResponseStatus}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${expResultData}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${url}=</td>
+<td>Get URL Path</td>
+<td>${tableName}/${id}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${responseStatus}</td>
+<td>${json}=</td>
+<td>Send WS REST Request</td>
+<td>GET</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${url}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${passed}=</td>
+<td>Run Keyword and Return Status</td>
+<td>Should Contain</td>
+<td>${responseStatus}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${expResponseStatus}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${len}=</td>
+<td>Get Length</td>
+<td>${json}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${jsonResultData}=</td>
+<td>Run Keyword If</td>
+<td>${passed} and '${len}'!='0'</td>
+<td>Get Json Element</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${json}</td>
+<td>${tableName}</td>
+<td>ELSE</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>Get Variable Value</td>
+<td>${EMPTY}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${len}=</td>
+<td>Get Length</td>
+<td>${expResultData}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Run Keyword If</td>
+<td>'${len}' != '0'</td>
+<td>Check Json Result</td>
+<td>${jsonResultData}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${expResultData}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Update item and Check Result">Update item and Check Result</a></td>
+<td>[Arguments]</td>
+<td>${tableName}</td>
+<td>${dictdata}</td>
+<td>${expResponseStatus}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${expResultData}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${url}=</td>
+<td>Get URL Path</td>
+<td>${tableName}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${jsondata}=</td>
+<td>Stringify Json</td>
+<td>${dictdata}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${responseStatus}</td>
+<td>${json}=</td>
+<td>Send WS REST Request</td>
+<td>PUT</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${url}</td>
+<td></td>
+<td>${jsondata}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${passed}=</td>
+<td>Run Keyword and Return Status</td>
+<td>Should Contain</td>
+<td>${responseStatus}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${expResponseStatus}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${jsonResultData}=</td>
+<td>Run Keyword If</td>
+<td>${passed}</td>
+<td>Get Json Element</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${json}</td>
+<td>${tableName}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${len}=</td>
+<td>Get Length</td>
+<td>${expResultData}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Run Keyword If</td>
+<td>'${len}' != '0'</td>
+<td>Check Json Result</td>
+<td>${jsonResultData}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${expResultData}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Remove item and Check Result">Remove item and Check Result</a></td>
+<td>[Arguments]</td>
+<td>${tableName}</td>
+<td>${id}</td>
+<td>${expResponseStatus}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${url}=</td>
+<td>Get URL Path</td>
+<td>${tableName}/${id}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${responseStatus}</td>
+<td>${json}=</td>
+<td>Send WS REST Request</td>
+<td>DELETE</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${url}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${passed}=</td>
+<td>Run Keyword and Return Status</td>
+<td>Should Contain</td>
+<td>${responseStatus}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${expResponseStatus}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_test CRUD table ${table}">test CRUD table ${table}</a></td>
+<td>[Arguments]</td>
+<td>${dict}</td>
+<td>${dict_update}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Documentation]</td>
+<td class="colspan3" colspan="3">need setting of variables:\n<br>
+- checkDb</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>******* Check empty</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Get All items and Check Result</td>
+<td>${table}</td>
+<td>200</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>******* Add</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${dictTop}=</td>
+<td>Create Dictionary</td>
+<td>${table}</td>
+<td>${dict}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Create item and Check Result</td>
+<td>${table}</td>
+<td>${dictTop}</td>
+<td>201</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${dict}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Run Keyword If</td>
+<td>${checkDb}</td>
+<td>CheckTableRow</td>
+<td>${table}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${itemId}</td>
+<td>${dict}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>******* Check item</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Get item and Check Result</td>
+<td>${table}</td>
+<td>${itemId}</td>
+<td>200</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${dict}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>******* Update item</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Set To Dictionary</td>
+<td>${dict_update}</td>
+<td>id</td>
+<td>${itemId}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${dictTop}=</td>
+<td>Create Dictionary</td>
+<td>${table}</td>
+<td>${dict_update}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Update item and Check Result</td>
+<td>${table}</td>
+<td>${dictTop}</td>
+<td>202</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${dict_update}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Run Keyword If</td>
+<td>${checkDb}</td>
+<td>CheckTableRow</td>
+<td>${table}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${itemId}</td>
+<td>${dict_update}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>******* Check item after update</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Get item and Check Result</td>
+<td>${table}</td>
+<td>${itemId}</td>
+<td>200</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${dict_update}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>******* Remove item</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Remove item and Check Result</td>
+<td>${table}</td>
+<td>${itemId}</td>
+<td>200</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>******* Check item after remove</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${dict}=</td>
+<td>Create Dictionary</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Get item and Check Result</td>
+<td>${table}</td>
+<td>${itemId}</td>
+<td>404</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${EMPTY}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_get WADL ${table}">get WADL ${table}</a></td>
+<td>Log</td>
+<td>******* get WADL file</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${url}=</td>
+<td>Catenate</td>
+<td>SEPARATOR=</td>
+<td>${basePath}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>/${table}/?_wadl</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${responseStatus}</td>
+<td>${responseBody}=</td>
+<td>Send WS REST Request</td>
+<td>GET</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${url}</td>
+<td>application/xml</td>
+<td>False</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${wadl}=</td>
+<td>Encode String To Bytes</td>
+<td>${responseBody}</td>
+<td>encoding=UTF-8</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${wadl_file}=</td>
+<td>Set Variable</td>
+<td>${wadl_dir}${/}${table}.wadl</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Create File</td>
+<td>${wadl_file}</td>
+<td>${wadl}</td>
+<td>encoding=UTF-8</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${xml}=</td>
+<td>Catenate</td>
+<td>&lt;?xml version="1.0" encoding="UTF-8"?&gt;</td>
+<td>&lt;?xml-stylesheet type="text/xsl" href="wadl.xsl"?&gt;</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${xml}=</td>
+<td>Catenate</td>
+<td>${xml}</td>
+<td>${wadl}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${xml}=</td>
+<td>Replace String Using Regexp</td>
+<td>${xml}</td>
+<td>&lt;application.*&gt;</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>&lt;wadl:application xmlns:wadl="http://wadl.dev.java.net/2009/02" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://wadl.dev.java.net/2009/02 wadl.xsd "&gt;</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${xml}=</td>
+<td>Replace String Using Regexp</td>
+<td>${xml}</td>
+<td>&lt;application</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>&lt;wadl:application</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${xml}=</td>
+<td>Replace String Using Regexp</td>
+<td>${xml}</td>
+<td>&lt;grammars</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>&lt;wadl:grammars</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${xml}=</td>
+<td>Replace String Using Regexp</td>
+<td>${xml}</td>
+<td>&lt;resource</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>&lt;wadl:resource</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${xml}=</td>
+<td>Replace String Using Regexp</td>
+<td>${xml}</td>
+<td>&lt;method</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>&lt;wadl:method</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${xml}=</td>
+<td>Replace String Using Regexp</td>
+<td>${xml}</td>
+<td>&lt;response</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>&lt;wadl:response</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${xml}=</td>
+<td>Replace String Using Regexp</td>
+<td>${xml}</td>
+<td>&lt;representation</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>&lt;wadl:representation</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${xml}=</td>
+<td>Replace String Using Regexp</td>
+<td>${xml}</td>
+<td>&lt;request</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>&lt;wadl:request</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${xml}=</td>
+<td>Replace String Using Regexp</td>
+<td>${xml}</td>
+<td>&lt;response</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>&lt;wadl:response</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${xml}=</td>
+<td>Replace String Using Regexp</td>
+<td>${xml}</td>
+<td>&lt;/application</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>&lt;/wadl:application</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${xml}=</td>
+<td>Replace String Using Regexp</td>
+<td>${xml}</td>
+<td>&lt;/grammars</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>&lt;/wadl:grammars</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${xml}=</td>
+<td>Replace String Using Regexp</td>
+<td>${xml}</td>
+<td>&lt;/resource</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>&lt;/wadl:resource</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${xml}=</td>
+<td>Replace String Using Regexp</td>
+<td>${xml}</td>
+<td>&lt;/method</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>&lt;/wadl:method</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${xml}=</td>
+<td>Replace String Using Regexp</td>
+<td>${xml}</td>
+<td>&lt;/response</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>&lt;/wadl:response</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${xml}=</td>
+<td>Replace String Using Regexp</td>
+<td>${xml}</td>
+<td>&lt;/representation</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>&lt;/wadl:representation</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${xml}=</td>
+<td>Replace String Using Regexp</td>
+<td>${xml}</td>
+<td>&lt;/request</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>&lt;/wadl:request</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${xml}=</td>
+<td>Replace String Using Regexp</td>
+<td>${xml}</td>
+<td>&lt;/response</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>&lt;/wadl:response</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>Create File</td>
+<td>&lt;?xml-stylesheet type="text/xsl" href="wadl.xsl"?&gt;</td>
+<td>"${responseBody}"</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>encoding=UTF-8</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>${xml}=</td>
+<td>Set Variable</td>
+<td>&lt;?xml version="1.0" encoding="UTF-8"?&gt; &lt;chapter xmlns="http://docbook.org/ns/docbook” xml:id="wadl_example_chapter” xmlns:wadl="http://wadl.dev.java.net/2009/02"&gt; &lt;title&gt;${table}&lt;/title&gt; &lt;!-- Pointer to WADL file --&gt; &lt;wadl:resources href="${wadl_xml_file}"/&gt; &lt;/chapter&gt;</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${xml_file}=</td>
+<td>Set Variable</td>
+<td>${wadl_dir}${/}${table}.xml</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Create File</td>
+<td>${xml_file}</td>
+<td>${xml}</td>
+<td>encoding=UTF-8</td>
+</tr>
+</table>
+</body>
+</html>

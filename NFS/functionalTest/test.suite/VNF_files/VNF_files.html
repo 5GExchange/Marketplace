@@ -1,0 +1,1291 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 1px solid black;
+}
+th, td {
+  border: 1px solid black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+  width: 12em;
+}
+td.colspan4, th.colspan4 {
+    width: 48em;
+}
+td.colspan3, th.colspan3 {
+    width: 36em;
+}
+td.colspan2, th.colspan2 {
+    width: 24em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  height: 1.7em;
+  font-weight: bold;
+  text-align: center;
+  letter-spacing: 0.1em;
+}
+td.name {
+  background-color: rgb(240, 240, 240);
+  letter-spacing: 0.1em;
+}
+td.name, th.name {
+  width: 10em;
+}
+</style>
+<title>VNF files</title>
+</head>
+<body>
+<h1>VNF files</h1>
+<table border="1" id="setting">
+<tr>
+<th class="name" colspan="5">Settings</th>
+</tr>
+<tr>
+<td class="name">Library</td>
+<td>RequestsLibrary</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Library</td>
+<td>Collections</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Library</td>
+<td>String</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Library</td>
+<td>OperatingSystem</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Resource</td>
+<td>../../user.library/rest_lib.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Resource</td>
+<td>../Global Setting.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Resource</td>
+<td>../Server Setting.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Resource</td>
+<td>../File Operations.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Library</td>
+<td>../../python.lib/md5/md5.py</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+<table border="1" id="variable">
+<tr>
+<th class="name" colspan="5">Variables</th>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+<table border="1" id="testcase">
+<tr>
+<th class="name" colspan="5">Test Cases</th>
+</tr>
+<tr>
+<td class="name"><a name="test_manage images with different size">manage images with different size</a></td>
+<td>[Tags]</td>
+<td>FILES</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Setup]</td>
+<td>Delete All VNF files</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>@{files}=</td>
+<td>Create List</td>
+<td>file10K.img</td>
+<td>file100K.img</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>file1M.img</td>
+<td>file10M.img</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>: FOR</td>
+<td>${file}</td>
+<td>IN</td>
+<td>@{files}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>${fileSize}=</td>
+<td>Get File Size</td>
+<td>${FILE_DIR}${/}${file}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>${md5sum}=</td>
+<td>md5_for_file</td>
+<td>${FILE_DIR}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>${file}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Log</td>
+<td>test using file ${file} - size=${fileSize} - md5sum=${md5sum}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>${data}=</td>
+<td>Get Binary File</td>
+<td>${FILE_DIR}${/}${file}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>VNFFile WS Client</td>
+<td>${file}</td>
+<td>upload2</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>false</td>
+<td>${EMPTY}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>${md5sum}</td>
+<td>1</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Get VNF file</td>
+<td>${file}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>${resp}=</td>
+<td>Delete VNF file</td>
+<td>${file}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Should Be Equal As Strings</td>
+<td>${resp.status_code}</td>
+<td>204</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Should Be Equal As Strings</td>
+<td>${resp.reason}</td>
+<td>No Content</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Run Keyword If</td>
+<td>'${NFS_ADDRESS}'=='${LOCALHOST}'</td>
+<td>File Should Not Exist</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>${STORE_DIR}${/}${file}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Teardown]</td>
+<td>Terminate All Processes</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_more upload at the same time">more upload at the same time</a></td>
+<td>[Tags]</td>
+<td>FILES</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Setup]</td>
+<td>Delete All VNF files</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${expectedFile}</td>
+<td>@{files}</td>
+<td>prepare files</td>
+<td>file100M.img</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>write files</td>
+<td>upload2</td>
+<td>@{files}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>check files</td>
+<td>${expectedFile}</td>
+<td>5</td>
+<td>30</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Teardown]</td>
+<td>Terminate All Processes</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_more update at the same time">more update at the same time</a></td>
+<td>[Tags]</td>
+<td>FILES</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Setup]</td>
+<td>Delete All VNF files</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${expectedFile}</td>
+<td>@{files}</td>
+<td>prepare files</td>
+<td>file10M.img</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>write files</td>
+<td>upload2</td>
+<td>@{files}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>check files</td>
+<td>${expectedFile}</td>
+<td>5</td>
+<td>20</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${expectedFile}</td>
+<td>@{files}</td>
+<td>prepare files</td>
+<td>file100M.img</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>write files</td>
+<td>update2</td>
+<td>@{files}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>check files</td>
+<td>${expectedFile}</td>
+<td>5</td>
+<td>30</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Teardown]</td>
+<td>Terminate All Processes</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_more update of same file at the same time">more update of same file at the same time</a></td>
+<td>[Tags]</td>
+<td>FILES</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Setup]</td>
+<td>Delete All VNF files</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${expectedFile}</td>
+<td>@{addFiles}</td>
+<td>prepare files</td>
+<td>file10M.img</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${file}=</td>
+<td>Get From List</td>
+<td>${addFiles}</td>
+<td>0</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>write files</td>
+<td>upload2</td>
+<td>@{addFiles}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>check files</td>
+<td>${expectedFile}</td>
+<td>2</td>
+<td>30</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>@{files}</td>
+<td>Create List</td>
+<td>${file}</td>
+<td>${file}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${file}</td>
+<td>${file}</td>
+<td>${file}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>write files</td>
+<td>update2</td>
+<td>@{files}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>check files</td>
+<td>${expectedFile}</td>
+<td>5</td>
+<td>30</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Teardown]</td>
+<td>Terminate All Processes</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_update and read same file at the same time">update and read same file at the same time</a></td>
+<td>[Tags]</td>
+<td>FILES</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Setup]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Pass Execution If</td>
+<td>'${NFS_ADDRESS}'!='${LOCALHOST}'</td>
+<td>Test that is executed only with local server else it can fail due to wait time that should be modified (depending from server and network)</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Delete All VNF files</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${expectedFile}</td>
+<td>@{listfiles}</td>
+<td>prepare files</td>
+<td>file100M.img</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>write files</td>
+<td>upload2</td>
+<td>@{listfiles}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>check files</td>
+<td>${expectedFile}</td>
+<td>3</td>
+<td>20</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${testfile}=</td>
+<td>Get From List</td>
+<td>${listfiles}</td>
+<td>0</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>@{files}</td>
+<td>Create List</td>
+<td>${testfile}</td>
+<td>${testfile}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${testfile}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>try to check response 503 with more gets on same file.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>: FOR</td>
+<td>${index}</td>
+<td>IN RANGE</td>
+<td>1</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>65</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Log</td>
+<td>try Nr. ${index}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>write files</td>
+<td>update2</td>
+<td>@{files}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>sleep</td>
+<td>${index}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>${resp}=</td>
+<td>Get VNF file</td>
+<td>${testfile}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td></td>
+<td>503</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Comment</td>
+<td>${resp}=</td>
+<td>Download file</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>${testfile}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>${response503}=</td>
+<td>Set Variable If</td>
+<td>'503'=='${resp.status_code}'</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>True</td>
+<td>False</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Exit For Loop If</td>
+<td>'${response503}'=='True'</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${response503}</td>
+<td>True</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>check files</td>
+<td>${expectedFile}</td>
+<td>5</td>
+<td>30</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Teardown]</td>
+<td>Terminate All Processes</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_upload large image - 100M">upload large image - 100M</a></td>
+<td>[Tags]</td>
+<td>FILES</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Setup]</td>
+<td>Delete All VNF files</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>upload large image</td>
+<td>${EMPTY}</td>
+<td>file100M.img</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Teardown]</td>
+<td>Terminate All Processes</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_upload very large image - 1G">upload very large image - 1G</a></td>
+<td>[Tags]</td>
+<td>FILES</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Setup]</td>
+<td>Delete All VNF files</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>upload large image</td>
+<td>file100M.img</td>
+<td>testfile1G.img</td>
+<td>10</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Teardown]</td>
+<td>Terminate All Processes</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+<table border="1" id="keyword">
+<tr>
+<th class="name" colspan="5">Keywords</th>
+</tr>
+<tr>
+<td class="name"><a name="keyword_prepare files">prepare files</a></td>
+<td>[Arguments]</td>
+<td>${usedFile}</td>
+<td>${fileNr}=10</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>@{files}=</td>
+<td>Create List</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${expectedFile}=</td>
+<td>Create Dictionary</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>: FOR</td>
+<td>${index}</td>
+<td>IN RANGE</td>
+<td>0</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${fileNr}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>${filename}=</td>
+<td>Set Variable</td>
+<td>img${index}.TEST</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>prepare file</td>
+<td>${usedFile}</td>
+<td>${filename}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>${index}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Append To List</td>
+<td>${files}</td>
+<td>${filename}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Set To Dictionary</td>
+<td>${expectedFile}</td>
+<td>${filename}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>${EMPTY}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>End prepare</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Return]</td>
+<td>${expectedFile}</td>
+<td>@{files}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_prepare file">prepare file</a></td>
+<td>[Arguments]</td>
+<td>${usedFile}</td>
+<td>${filename}</td>
+<td>${nr}=10</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Copy File</td>
+<td>${FILE_DIR}${/}${usedFile}</td>
+<td>${FILE_DIR}${/}${filename}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>: FOR</td>
+<td>${index}</td>
+<td>IN RANGE</td>
+<td>0</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${nr}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Append To File</td>
+<td>${FILE_DIR}${/}${filename}</td>
+<td>${filename}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_write files">write files</a></td>
+<td>[Arguments]</td>
+<td>${command}</td>
+<td>@{files}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>: FOR</td>
+<td>${file}</td>
+<td>IN</td>
+<td>@{files}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>${md5sum}=</td>
+<td>md5_for_file</td>
+<td>${FILE_DIR}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>${file}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>log</td>
+<td>${command}file ${file} : md5=${md5sum}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>VNFFile WS Client</td>
+<td>${file}</td>
+<td>${command}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>True</td>
+<td>${EMPTY}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>${md5sum}</td>
+<td>11</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_remove files">remove files</a></td>
+<td>[Arguments]</td>
+<td>@{files}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>: FOR</td>
+<td>${file}</td>
+<td>IN</td>
+<td>@{files}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>${resp}=</td>
+<td>Delete VNF file</td>
+<td>${file}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Should Be Equal As Strings</td>
+<td>${resp.status_code}</td>
+<td>204</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Should Be Equal As Strings</td>
+<td>${resp.reason}</td>
+<td>No Content</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Run Keyword If</td>
+<td>'${NFS_ADDRESS}'=='${LOCALHOST}'</td>
+<td>File Should Not Exist</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>${STORE_DIR}${/}${file}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Remove File</td>
+<td>${FILE_DIR}${/}${file}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_check files">check files</a></td>
+<td>[Arguments]</td>
+<td>${expectedFile}</td>
+<td>${cicleTime}</td>
+<td>${maxNr}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>: FOR</td>
+<td>${nr}</td>
+<td>IN RANGE</td>
+<td>0</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${maxNr}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>sleep</td>
+<td>${cicleTime}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>${result}</td>
+<td>${status}</td>
+<td>Run Keyword And Ignore Error</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>Get VNF file List</td>
+<td>${expectedFile}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Exit For Loop If</td>
+<td>'${result}'=='PASS'</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Get VNF file List</td>
+<td>${expectedFile}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Generate image file">Generate image file</a></td>
+<td>[Arguments]</td>
+<td>${startFile}</td>
+<td>${file}</td>
+<td>${mulNr}=10</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${data}=</td>
+<td>Get File</td>
+<td>${FILE_DIR}${/}${startFile}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Remove File</td>
+<td>${FILE_DIR}${/}${file}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>: FOR</td>
+<td>${index}</td>
+<td>IN RANGE</td>
+<td>0</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${mulNr}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>Append To File</td>
+<td>${FILE_DIR}${/}${file}</td>
+<td>${data}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_upload large image">upload large image</a></td>
+<td>[Arguments]</td>
+<td>${startFile}</td>
+<td>${file}</td>
+<td>${copyNr}=${EMPTY}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Run Keyword If</td>
+<td>'${copyNr}'!='${EMPTY}'</td>
+<td>Generate image file</td>
+<td>${startFile}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${file}</td>
+<td>${copyNr}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${md5sum}=</td>
+<td>md5_for_file</td>
+<td>${FILE_DIR}</td>
+<td>${file}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>Start upload file ${file} : md5=${md5sum}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>VNFFile WS Client</td>
+<td>${file}</td>
+<td>upload2</td>
+<td>False</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td></td>
+<td>${md5sum}</td>
+<td>11</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Delete All VNF files</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_download files">download files</a></td>
+<td>[Arguments]</td>
+<td>@{files}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>: FOR</td>
+<td>${file}</td>
+<td>IN</td>
+<td>@{files}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>${md5sum}=</td>
+<td>md5_for_file</td>
+<td>${FILE_DIR}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>${file}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>log</td>
+<td>upload file ${file} : md5=${md5sum}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>VNFFile WS Client</td>
+<td>${file}</td>
+<td>get</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td></td>
+<td>${EMPTY}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
+<td>${md5sum}</td>
+<td>11</td>
+</tr>
+</table>
+</body>
+</html>

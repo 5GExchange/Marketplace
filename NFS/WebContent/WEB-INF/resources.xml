@@ -1,0 +1,4 @@
+<resources>
+<!-- 	<Service id="HTMLWadlGenerator" class-name="com.rest.cxf.wadl.HTMLWadlGenerator" /> -->
+	<Service id="HTMLWadlGenerator" class-name="eu.tnova.nfs.ws.wadl.HTMLWadlGenerator" />
+</resources>

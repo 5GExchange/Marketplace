@@ -1,0 +1,1027 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 1px solid black;
+}
+th, td {
+  border: 1px solid black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+  width: 12em;
+}
+td.colspan4, th.colspan4 {
+    width: 48em;
+}
+td.colspan3, th.colspan3 {
+    width: 36em;
+}
+td.colspan2, th.colspan2 {
+    width: 24em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  height: 1.7em;
+  font-weight: bold;
+  text-align: center;
+  letter-spacing: 0.1em;
+}
+td.name {
+  background-color: rgb(240, 240, 240);
+  letter-spacing: 0.1em;
+}
+td.name, th.name {
+  width: 10em;
+}
+</style>
+<title>VNF TeNOR remove errors</title>
+</head>
+<body>
+<h1>VNF TeNOR remove errors</h1>
+<table border="1" id="setting">
+<tr>
+<th class="name" colspan="5">Settings</th>
+</tr>
+<tr>
+<td class="name">Suite Setup</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Library</td>
+<td>RequestsLibrary</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Library</td>
+<td>Collections</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Library</td>
+<td>String</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Library</td>
+<td>OperatingSystem</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Resource</td>
+<td>../../user.library/rest_lib.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Resource</td>
+<td>../Global Setting.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Resource</td>
+<td>../Server Setting.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Resource</td>
+<td>../../user.library/wiremock.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Resource</td>
+<td>../../user.library/orchestrator.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Resource</td>
+<td>../File Operations.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Library</td>
+<td>../../python.lib/md5/md5.py</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+<table border="1" id="testcase">
+<tr>
+<th class="name" colspan="5">Test Cases</th>
+</tr>
+<tr>
+<td class="name"><a name="test_Remove All">Remove All</a></td>
+<td>[Tags]</td>
+<td>UC</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Delete All VNFD</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Delete All VNF files</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Run Keyword If</td>
+<td>'${NFS_ADDRESS}'=='${LOCALHOST}'</td>
+<td>Directory Should Be Empty</td>
+<td>${STORE_DIR}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Upload 2 images">Upload 2 images</a></td>
+<td>[Tags]</td>
+<td>UC</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>upload images</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Upload Image</td>
+<td>${fileNameImage1}</td>
+<td>1</td>
+<td>qcow</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Upload Image</td>
+<td>${fileNameImage2}</td>
+<td>2</td>
+<td>iso</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Create VNFD">Create VNFD</a></td>
+<td>[Tags]</td>
+<td>UC</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${fileVNF}=</td>
+<td>Get VNF File</td>
+<td>${fileNameVNF1}</td>
+<td>${fileNameDesc1}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Add Orchestrator Stub Create VNF</td>
+<td>${fileVNF}</td>
+<td>${fileNameVNF1}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${fileDesc}=</td>
+<td>Get file</td>
+<td>${FILE_DIR}${/}${fileNameDesc1}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${vnfd_id}=</td>
+<td>Create VNFD</td>
+<td>${fileDesc}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Set Global Variable</td>
+<td>${${fileNameDesc1}_vnfdId}</td>
+<td>${vnfd_id}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Teardown]</td>
+<td>Remove All Orchestrator Stub</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Check VNFD and file list after upload">Check VNFD and file list after upload</a></td>
+<td>[Tags]</td>
+<td>UC</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Setup]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${fileDesc1}=</td>
+<td>Get file</td>
+<td>${FILE_DIR}${/}${fileNameDesc1}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>@{expectedVNFD}=</td>
+<td>Create List</td>
+<td>${fileDesc1}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Get VNFD List</td>
+<td></td>
+<td>@{expectedVNFD}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>@{vnfdC1}=</td>
+<td>Create List</td>
+<td>${${fileNameDesc1}_vnfdId}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${expectedFile}=</td>
+<td>Create Dictionary</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Set To Dictionary</td>
+<td>${expectedFile}</td>
+<td>${fileNameImage1}</td>
+<td>${vnfdC1}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Set To Dictionary</td>
+<td>${expectedFile}</td>
+<td>${fileNameImage2}</td>
+<td>${vnfdC1}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Get VNF file List</td>
+<td>${expectedFile}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Teardown]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Check VNFD after upload">Check VNFD after upload</a></td>
+<td>[Tags]</td>
+<td>UC</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${fileDesc}=</td>
+<td>Get file</td>
+<td>${FILE_DIR}${/}${fileNameDesc1}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${resp}=</td>
+<td>Get VNFD</td>
+<td>${${fileNameDesc1}_vnfdId}</td>
+<td>${fileDesc}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Teardown]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Remove VNFD when Orchestrator error">Remove VNFD when Orchestrator error</a></td>
+<td>[Tags]</td>
+<td>UC</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Setup]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Add Orchestrator Stub Delete VNF</td>
+<td>${${fileNameDesc1}_vnfdId}</td>
+<td>500</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Delete VNFD</td>
+<td>${${fileNameDesc1}_vnfdId}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Teardown]</td>
+<td>Remove All Orchestrator Stub</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Check VNFD after remove VNFD">Check VNFD after remove VNFD</a></td>
+<td>[Tags]</td>
+<td>UC</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Setup]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>@{expected}=</td>
+<td>Create List</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Get VNFD List</td>
+<td></td>
+<td>@{expected}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${expectedFile}=</td>
+<td>Create Dictionary</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Get VNF file List</td>
+<td>${expectedFile}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_wait check and remove">wait check and remove</a></td>
+<td>Add Orchestrator Stub Delete VNF</td>
+<td>${${fileNameDesc1}_vnfdId}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>sleep</td>
+<td>65 seconds</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Teardown]</td>
+<td>Remove All Orchestrator Stub</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Check VNFD after remove VNFD (1)">Check VNFD after remove VNFD (1)</a></td>
+<td>[Tags]</td>
+<td>UC</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Setup]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>@{expected}=</td>
+<td>Create List</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Get VNFD List</td>
+<td></td>
+<td>@{expected}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${expectedFile}=</td>
+<td>Create Dictionary</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Get VNF file List</td>
+<td>${expectedFile}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Upload 2 images (2)">Upload 2 images (2)</a></td>
+<td>[Tags]</td>
+<td>UC</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>upload images</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Upload Image</td>
+<td>${fileNameImage1}</td>
+<td>1</td>
+<td>qcow</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Upload Image</td>
+<td>${fileNameImage2}</td>
+<td>2</td>
+<td>iso</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Create VNFD (2)">Create VNFD (2)</a></td>
+<td>[Tags]</td>
+<td>UC</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${fileVNF}=</td>
+<td>Get VNF File</td>
+<td>${fileNameVNF1}</td>
+<td>${fileNameDesc1}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Add Orchestrator Stub Create VNF</td>
+<td>${fileVNF}</td>
+<td>${fileNameVNF1}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${fileDesc}=</td>
+<td>Get file</td>
+<td>${FILE_DIR}${/}${fileNameDesc1}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${vnfd_id}=</td>
+<td>Create VNFD</td>
+<td>${fileDesc}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Set Global Variable</td>
+<td>${${fileNameDesc1}_vnfdId}</td>
+<td>${vnfd_id}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Teardown]</td>
+<td>Remove All Orchestrator Stub</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Check VNFD and file list after upload (2)">Check VNFD and file list after upload (2)</a></td>
+<td>[Tags]</td>
+<td>UC</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Setup]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${fileDesc1}=</td>
+<td>Get file</td>
+<td>${FILE_DIR}${/}${fileNameDesc1}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>@{expectedVNFD}=</td>
+<td>Create List</td>
+<td>${fileDesc1}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Get VNFD List</td>
+<td></td>
+<td>@{expectedVNFD}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>@{vnfdC1}=</td>
+<td>Create List</td>
+<td>${${fileNameDesc1}_vnfdId}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${expectedFile}=</td>
+<td>Create Dictionary</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Set To Dictionary</td>
+<td>${expectedFile}</td>
+<td>${fileNameImage1}</td>
+<td>${vnfdC1}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Set To Dictionary</td>
+<td>${expectedFile}</td>
+<td>${fileNameImage2}</td>
+<td>${vnfdC1}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Get VNF file List</td>
+<td>${expectedFile}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Teardown]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Check VNFD after upload (2)">Check VNFD after upload (2)</a></td>
+<td>[Tags]</td>
+<td>UC</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${fileDesc}=</td>
+<td>Get file</td>
+<td>${FILE_DIR}${/}${fileNameDesc1}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${resp}=</td>
+<td>Get VNFD</td>
+<td>${${fileNameDesc1}_vnfdId}</td>
+<td>${fileDesc}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Teardown]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Remove VNFD when already removed">Remove VNFD when already removed</a></td>
+<td>[Tags]</td>
+<td>UC</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Setup]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Add Orchestrator Stub Delete VNF</td>
+<td>${${fileNameDesc1}_vnfdId}</td>
+<td>404</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Delete VNFD</td>
+<td>${${fileNameDesc1}_vnfdId}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Teardown]</td>
+<td>Remove All Orchestrator Stub</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Check VNFD after remove VNFD (2)">Check VNFD after remove VNFD (2)</a></td>
+<td>[Tags]</td>
+<td>UC</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Setup]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>@{expected}=</td>
+<td>Create List</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Get VNFD List</td>
+<td></td>
+<td>@{expected}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${expectedFile}=</td>
+<td>Create Dictionary</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Get VNF file List</td>
+<td>${expectedFile}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Remove VNFD">Remove VNFD</a></td>
+<td>[Tags]</td>
+<td>UC</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Add Orchestrator Stub Delete VNF</td>
+<td>${${fileNameDesc1}_vnfdId}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Delete VNFD</td>
+<td>${${fileNameDesc1}_vnfdId}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Teardown]</td>
+<td>Remove All Orchestrator Stub</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+<table border="1" id="keyword">
+<tr>
+<th class="name" colspan="5">Keywords</th>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Upload Image">Upload Image</a></td>
+<td>[Arguments]</td>
+<td>${fileName}</td>
+<td>${providerId}=${EMPTY}</td>
+<td>${imageType}=${EMPTY}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${file}=</td>
+<td>Get Binary File</td>
+<td>${FILE_DIR}${/}${filename}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${md5sum}=</td>
+<td>md5_for_file</td>
+<td>${FILE_DIR}</td>
+<td>${filename}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Upload file</td>
+<td>${fileName}</td>
+<td>${file}</td>
+<td>${md5sum}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${providerId}</td>
+<td>${imageType}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Run Keyword If</td>
+<td>'${NFS_ADDRESS}'=='${LOCALHOST}'</td>
+<td>File Should Exist</td>
+<td>${STORE_DIR}${/}${fileName}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Run Keyword If</td>
+<td>'${NFS_ADDRESS}'=='${LOCALHOST}'</td>
+<td>File Should Not Be Empty</td>
+<td>${STORE_DIR}${/}${fileName}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Get VNF File">Get VNF File</a></td>
+<td>[Arguments]</td>
+<td>${vnfFile}</td>
+<td>${vnfdFile}</td>
+<td>${vnfdId}=${EMPTY}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Copy File</td>
+<td>${FILE_DIR}${/}${vnfdFile}</td>
+<td>${FILE_DIR}${/}${vnfdFile}.MOD</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Run Keyword If</td>
+<td>'${vnfdId}'!='${EMPTY}'</td>
+<td>Set file Value</td>
+<td>${FILE_DIR}${/}${vnfdFile}.MOD</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>id</td>
+<td>${vnfdId}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${fileDesc}=</td>
+<td>Get Json File</td>
+<td>${FILE_DIR}${/}${vnfdFile}.MOD</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Copy File</td>
+<td>${FILE_DIR}${/}${vnfFile}</td>
+<td>${FILE_DIR}${/}${vnfFile}.MOD</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Set file Value</td>
+<td>${FILE_DIR}${/}${vnfFile}.MOD</td>
+<td>vnfd</td>
+<td>${fileDesc}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${data}=</td>
+<td>Get file</td>
+<td>${FILE_DIR}${/}${vnfFile}.MOD</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Return]</td>
+<td>${data}</td>
+<td></td>
+<td></td>
+</tr>
+</table>
+</body>
+</html>

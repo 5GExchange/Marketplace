@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<meta charset="ISO-8859-1" />
+	<title>Network Function Store</title>
+	<style id='custom-style-inline-css' type='text/css'>
+		.ui-widget { font-size: 80%; font-weight: normal }
+		#header { margin-bottom: 10px; }
+		.bannerLogo { width: 15%; }
+		.bannerTitle { width: 85%; }
+		.Logo {	width: 180px; margin-left: 20px; height: auto; }
+		.Title { margin-left: 20px; margin-right: 220px; text-align: center;
+			font: 34px Tahoma, Sans-Serif, bold; }
+		.tableColumn1 {	font-size: 75%; font-weight: normal; text-align: left; }
+		.tableColumn2 { font-size: 75%; font-weight: normal; text-align: center; }
+		.bold {	font-size: 80%; font-weight: bold }
+		.descriptor { font: 90% Arial, Helvetica, sans-serif; }
+	</style>
+</h:head>
+
+<h:body>
+	<div id="header"
+		class="ui-widget ui-widget-header ui-state-default ui-corner-all">
+		<table>
+			<tr>
+				<td id="banner_left" class="bannerLogo"><a id="5gex"
+					href="http://www.5gex.eu"> <img id="5gex-logo" class="Logo"
+						alt="5gex-logo" src="images/5gex-logo.png" />
+				</a></td>
+				<td id="banner_middle" class="bannerTitle">
+					<h1 class="Title">Network Function Store</h1>
+				</td>
+			</tr>
+		</table>
+	</div>
+
+	<p:accordionPanel dynamic="true" cache="true">
+		<p:tab id="vnfdTab" title="Virtual Network Functions Descriptors">
+			<h:form id="vnfdForm" class="ui-widget ui-widget-content bold">
+				<p:dataTable id="vnfdTable" var="vnfd" 
+					value="#{vnfdView.vnfds}"
+					scrollable="true" scrollHeight="200"
+					selectionMode="single" 
+					selection="#{vnfdView.selectedVnfd}"
+					rowKey="#{vnfd.vnfdId}">
+			        <p:column style="width:16px">
+			            <p:rowToggler />
+			        </p:column>
+					<p:column headerText="Id" sortBy="#{vnfd.vnfdId}"
+						style="width: 10%; text-align: center">
+						<h:outputText value="#{vnfd.vnfdId}" class="tableColumn2" />
+					</p:column>
+					<p:column headerText="Description">
+						<h:outputText value="#{vnfd.description}" class="tableColumn1" />
+					</p:column>
+					<p:column headerText="Version" sortBy="#{vnfd.descriptorVersion}"
+						style="width: 10%; text-align: center">
+						<h:outputText value="#{vnfd.descriptorVersion}"
+							class="tableColumn2" />
+					</p:column>
+					<p:column headerText="VNF" style="width: 5%; text-align: center">
+ 						<p:outputPanel layout="inline" rendered="#{vnfd.vnfCreated}">
+ 							<img src="images/available.png" />	
+ 						</p:outputPanel>	
+ 						<p:outputPanel layout="inline" rendered="#{!vnfd.vnfCreated}">
+ 							<img src="images/not_available.png" />	
+ 						</p:outputPanel>			
+ 					</p:column>
+					<f:facet name="footer">
+ 						<p:commandButton value="View" icon="fa fa-fw fa-search"
+							process="vnfdTable" update="vnfdShowDialog"
+							oncomplete="PF('vnfdShowDialogWidget').show()">
+						</p:commandButton>
+<!-- 						<p:commandButton value="Files" icon="fa fa-fw fa-search" -->
+<!-- 							process="vnfdTable" update="vnfdFilesDialog" -->
+<!-- 							oncomplete="PF('vnfdFilesDialogWidget').show()"> -->
+<!-- 						</p:commandButton> -->
+						<p:commandButton value="Remove" icon="fa fa-fw fa-remove"
+							process="vnfdTable" update="@form vnfdConfirm"
+							actionListener="#{vnfdView.deleteSelectedVnfd}">
+							<p:confirm header="Confirmation" message="Are you sure?"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+						<p:commandButton value="Add" icon="fa fa-fw fa-plus"
+							process="vnfdTable" update="@form vnfdAddDialog"
+							oncomplete="PF('vnfdAddDialogWidget').show()">
+						</p:commandButton>
+						<p:commandButton value="Refresh" icon="fa fa-fw fa-refresh"
+							process="vnfdTable" update="@form"
+							actionListener="#{vnfdView.refreshVnfds}">
+						</p:commandButton>
+					</f:facet>
+					<p:rowExpansion>
+				         <p:outputPanel style="text-align:center; margin-left: 5%; margin-right: 5%" >
+							<p:dataTable id="vnfdFiles" var="file" value="#{vnfd.images}">
+				                <f:facet name="header">
+									<h:outputText value="Image Files" />
+				                </f:facet>
+								<p:column headerText="Name" style="width: 30%">
+									<h:outputText value="#{file.name}" class="tableColumn1" style="text-align:left;" />
+								</p:column>
+								<p:column headerText="Type" style="width: 10%">
+									<h:outputText value="#{file.type}" class="tableColumn2" />
+								</p:column>
+								<p:column headerText="Size" style="width: 15%">
+									<h:outputText value="#{file.size}" class="tableColumn2" />
+								</p:column>
+								<p:column headerText="Md5 checksum" style="width: 35%">
+									<h:outputText value="#{file.md5Sum}" class="tableColumn2" />
+								</p:column>
+								<p:column headerText="Provider" style="width: 10%">
+									<h:outputText value="#{file.providerId}" class="tableColumn2" />
+								</p:column>
+							</p:dataTable>
+				         </p:outputPanel>
+					</p:rowExpansion>
+				</p:dataTable>
+			</h:form>
+		</p:tab>
+		<p:tab title="Virtual Network Functions Image Files">
+			<h:form id="fileForm" class="ui-widget ui-widget-content bold">
+				<p:dataTable id="fileTable" var="file"
+					value="#{imageFileView.imageFiles}" 
+					scrollable="true" scrollHeight="200"
+					selectionMode="single"
+					selection="#{imageFileView.selectedImageFile}"
+					rowKey="#{file.name}">
+			        <p:ajax event="rowSelect" listener="#{imageFileView.onRowSelect}" 
+			        	update="@form" />
+			        <p:column style="width:16px">
+			            <p:rowToggler />
+			        </p:column>
+					<p:column headerText="Name" sortBy="#{file.name}"
+						style="width: 20%; text-align: center">
+						<h:outputText value="#{file.name}" class="tableColumn2" />
+					</p:column>
+					<p:column headerText="md5 checksum"
+						style="width: 20%; text-align: center">
+						<h:outputText value="#{file.md5Sum}" class="tableColumn2" />
+					</p:column>
+					<p:column headerText="Size" sortBy="#{file.size}"
+						style="width: 10%; text-align: center">
+						<h:outputText value="#{file.size}" class="tableColumn2" />
+					</p:column>
+					<p:column headerText="Provider" sortBy="#{file.providerId}"
+						style="width: 10%; text-align: center">
+						<h:outputText value="#{file.providerId}" class="tableColumn2" />
+					</p:column>
+					<p:column headerText="last modify" sortBy="#{file.lastModifiedDate}"
+						style="width: 20%; text-align: center">
+						<h:outputText value="#{file.lastModifiedDate}" class="tableColumn2" />
+					</p:column>
+					<f:facet name="footer">
+						<p:commandButton value="Upload" icon="fa fa-fw fa-upload"
+							process="fileTable" update="@form vnfdAddDialog"
+							oncomplete="PF('fileAddDialogWidget').show()"
+							>
+						</p:commandButton>
+					    <p:commandButton value="Download" icon="ui-icon-arrowthick-1-s"
+					    	ajax="false" 
+						    onclick="PrimeFaces.monitorDownload(startDownload, stopDownload);" 
+							disabled="#{imageFileView.isSelectedFileNotPresent()}"
+						    >
+							<p:fileDownload value="#{imageFileView.downloadFile}" />
+					    </p:commandButton>
+						<p:commandButton value="Remove" icon="fa fa-fw fa-remove"
+							process="fileTable" update="@form"
+							disabled="#{imageFileView.isSelectedFileNotPresent()}"
+							actionListener="#{imageFileView.deleteSelectedImageFile}">
+							<p:confirm header="Confirmation" message="Are you sure?"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+						<p:commandButton value="Refresh" icon="fa fa-fw fa-refresh"
+							process="fileTable" update="@form"
+							actionListener="#{imageFileView.refreshImageFiles()}">
+						</p:commandButton>
+					</f:facet>
+					<p:rowExpansion>
+				         <p:outputPanel style="text-align:center; margin-left: 5%; margin-right: 5%" >
+							<p:dataTable var="vnfdsFile" value="#{file.vnfds}" >
+				                <f:facet name="header">
+									<h:outputText value="VNF Descriptors" />
+				                </f:facet>
+								<p:column headerText="Id" style="width: 20%">
+									<h:outputText value="#{vnfdsFile.id}" class="tableColumn1" />
+								</p:column>
+								<p:column headerText="Description">
+									<h:outputText value="#{vnfdsFile.vnfd.description}" class="tableColumn2" />
+								</p:column>
+							</p:dataTable>
+				         </p:outputPanel>
+					</p:rowExpansion>
+				</p:dataTable>
+			</h:form>
+		</p:tab>
+	</p:accordionPanel>
+
+	<p:dialog id="vnfdShowDialog" widgetVar="vnfdShowDialogWidget"
+		header="VNF Descriptor #{vnfdView.selectedVnfd.vnfdId}" modal="true" showEffect="fade"
+		hideEffect="fade" draggable="false" resizable="false" width="700" height="400">
+		<h:outputText class="descriptor" escape="false" value="#{vnfdView.selectedVnfdJson}" />
+	</p:dialog>
+
+	<p:confirmDialog id="vnfdConfirm" widgetVar="vnfdConfirmWidget" 
+		global="true" showEffect="fade" hideEffect="fade">
+		<p:commandButton value="Yes" type="button" update="vnfdTable"
+			styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+		<p:commandButton value="No" type="button"
+			styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+	</p:confirmDialog>
+
+	<p:dialog id="vnfdAddDialog" widgetVar="vnfdAddDialogWidget"
+			modal="true" header="Add VNF Descriptor" >
+		<h:form enctype="multipart/form-data" class="ui-widget">
+			<p:fileUpload id="vnfdUploadFile" auto="true" multiple="false"
+				dragDropSupport="false" mode="advanced" skinSimple="true"
+				process="vnfdAddDialog" 
+				oncomplete="PF('vnfdAddDialogWidget').hide()"
+				update=":#{p:component('vnfdTable')} #{p:component('fileTable')}"
+				fileUploadListener="#{vnfdView.handleVnfdUpload}" />
+		</h:form>
+	</p:dialog>
+
+	<p:dialog id="fileAddDialog" widgetVar="fileAddDialogWidget"
+			modal="true" header="Upload VNF Image file" >
+		<h:form enctype="multipart/form-data" class="ui-widget">
+			<p:fileUpload id="fileUploadFile" auto="false" multiple="false"
+				dragDropSupport="false" mode="advanced" skinSimple="true"
+				process="fileAddDialog" 
+				oncomplete="PF('fileAddDialogWidget').hide()"
+				update=":#{p:component('vnfdTable')} #{p:component('fileTable')}"
+				fileUploadListener="#{imageFileView.handleImageFileUpload}" />
+		</h:form>
+	</p:dialog>
+
+ 	<script type="text/javascript">
+ 		function startDownload() {
+ 		    PF('fileGetDialog').show();
+ 		}
+		 
+ 		function stopDownload() {
+			PF('fileGetDialog').hide();
+ 		   	#{imageFileView.endDownloadFile()};
+ 		}	
+	</script>
+	
+	<p:dialog id="fileGetDialog" widgetVar="fileGetDialogWidget"
+			modal="true" header="Download VNF Image file"
+			draggable="false" closable="false" resizable="false">
+     	<p:graphicImage name="images/ajax-loader.gif" />
+	</p:dialog>
+
+<!--     <p:dialog id="vnfdFilesDialog"  -->
+<!--     		header="Files used by VNF descriptor #{vnfdView.selectedVnfd.vnfdId}"  -->
+<!--     		widgetVar="vnfdFilesDialogWidget" modal="true" showEffect="fade" hideEffect="explode"  -->
+<!--     		resizable="true" draggable="true" width="75%" > -->
+<!--          <p:outputPanel style="text-align:center;"> -->
+<!-- 			<p:dataTable id="vnfdFiles" var="file" value="#{vnfdView.selectedVnfd.images}"> -->
+<!-- 				<p:column headerText="Name" style="width: 30%"> -->
+<!-- 					<h:outputText value="#{file.name}" class="tableColumn1" style="text-align:left;" /> -->
+<!-- 				</p:column> -->
+<!-- 				<p:column headerText="Type" style="width: 10%"> -->
+<!-- 					<h:outputText value="#{file.type}" class="tableColumn2" /> -->
+<!-- 				</p:column> -->
+<!-- 				<p:column headerText="Size" style="width: 15%"> -->
+<!-- 					<h:outputText value="#{file.size}" class="tableColumn2" /> -->
+<!-- 				</p:column> -->
+<!-- 				<p:column headerText="Md5 checksum" style="width: 35%"> -->
+<!-- 					<h:outputText value="#{file.md5Sum}" class="tableColumn2" /> -->
+<!-- 				</p:column> -->
+<!-- 				<p:column headerText="Provider" style="width: 10%"> -->
+<!-- 					<h:outputText value="#{file.providerId}" class="tableColumn2" /> -->
+<!-- 				</p:column> -->
+<!-- 			</p:dataTable> -->
+<!--          </p:outputPanel> -->
+<!--     </p:dialog> -->
+
+</h:body>
+</html>

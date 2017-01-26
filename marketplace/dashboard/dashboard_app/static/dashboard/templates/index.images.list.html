@@ -1,0 +1,93 @@
+<div class="col-xs-12" ng-controller="ImageListCtrl">
+    <div class="box box-primary">
+        <div class="box-header with-border">
+            <h3 class="box-title"><i class="fa fa-database"></i> VNF Images</h3>
+            <div class="box-tools pull-right">
+                <button class="btn btn-default btn-sm" ng-show="hasRole('Function Provider')" ng-click="showImageUploadAModal()"><i class="fa fa-upload"></i> Upload Image</button>
+                <button class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button>
+            </div>
+        </div>
+        <div class="box-body no-padding">
+            <div class="table-responsive" id="no-more-tables">
+                <table class="table table-hover table-striped">
+                    <tbody>
+                    <tr>
+                        <th>Image Name</th>
+                        <th>Version</th>
+                        <th>Provider</th>
+                        <th>Assigned To</th>
+                        <th></th>
+                    </tr>
+                    <tr ng-repeat="image in images">
+                        <td data-title="Name">[[ image.image_name ]]</td>
+                        <td data-title="Version">[[ image.version ]]</td>
+                        <td data-title="provider">
+                            <div ng-switch on="image.provider_id">
+                                <div ng-switch-when='1000'>
+                                    <img ng-src="/static/dashboard/img/docker_logo.png" ng-style="{ 'width' : '100px', 'height' : '50px', 'alt' : 'Docker image' }" />
+                                </div> 
+                                <div ng-switch-default> 
+                                     <img ng-src="/static/dashboard/img/openstack_logo.png" ng-style="{ 'width' : '100px', 'height ' : '50px', 'alt' : 'Openstack image'}" />
+                                </div> 
+                            </div>
+                        </td>
+                        <!--
+                        <td data-title="URL"><a href="[[ image.url ]]" target="_blank">[[ image.url ]]</a></td>
+                        /--!>
+                        <td data-title="Assigned To">
+                            <span>[[image.assigned_vnfds]]</span>
+                        </td>
+                        <td data-title="Action">
+                            <div class="box-tools pull-right">
+                                <button class="btn btn-danger btn-sm" ng-click="ImageDeleteConfirm(image.nfs_image_name)"><i class="fa fa-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="box-footer">
+            <div class="pull-right">
+                [[images.length]] Images
+            </div>
+        </div>
+
+<!--
+        <div class="box-header with-border">
+            <h3 class="box-title"><i class="fa fa-database"></i> Docker Images</h3>
+        </div>
+        <div class="box-body no-padding">
+            <div class="table-responsive" id="no-more-tables">
+                <table class="table table-hover table-striped">
+                    <tbody>
+                    <tr>
+                        <th>Image Name</th>
+                        <th>Version</th>
+                        <th>Assigned To</th>
+                        <th></th>
+                    </tr>
+                    <tr ng-repeat="container in containersList">
+                        <td data-title="Name">[[ container.name ]]</td>
+                        <td data-title="Version"><select><option ng-repeat="x in container.tags">[[x]]</option></select></td>
+                        <td data-title="Assigned To">
+                            <span>[[container.assigned_vnfds]]</span>
+                        </td>
+                        <td data-title="Action">
+                            <div class="box-tools pull-right">
+                                <button class="btn btn-danger btn-sm" ng-click="ImageDeleteConfirm(container.nfs_image_name)"><i class="fa fa-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="box-footer">
+            <div class="pull-right">
+                [[containers.length]] Images
+            </div>
+        </div>
+/!-->
+    </div>
+</div>

@@ -1,0 +1,495 @@
+#! /bin/bash
+# description: 	 Network Function Store TomEE manager
+################################################################################
+
+#------ program name
+PROGNAME="nfsMonitor"
+THISPROG=`basename $0`
+#------ nfs dir
+NFS_DIR=/usr/local/nfs
+BIN_DIR=$NFS_DIR/bin
+VAR_DIR=$NFS_DIR/var
+VAR_RUN_DIR=$VAR_DIR/run
+VAR_TMP_DIR=$VAR_DIR/tmp
+VAR_LOG_DIR=$VAR_DIR/log
+VAR_DB_DIR=$VAR_DIR/db
+#------ nfs files
+TOMCAT_KILL_SCRIPT=$BIN_DIR/killTomcat
+NFS_CONF_FILE=$BIN_DIR/nfs.conf
+INIT_FLAG_FILE=$VAR_RUN_DIR/init.flag
+TOMCAT_RESPONSE_FILE=$VAR_TMP_DIR/tomcat_response
+PID_FILE=$VAR_RUN_DIR/nfs.pid
+LOG_FILE=$VAR_LOG_DIR/nfs.log
+#------ tomcat dir
+CATALINA_PID_FILE=$VAR_RUN_DIR/catalina.pid
+TOMCAT_NAME=`ls -t $NFS_DIR | grep apache-tomee`
+TOMCAT_HOME=$NFS_DIR/$TOMCAT_NAME						# direttorio home di tomcat
+TOMCAT_CONF_DIR=$TOMCAT_HOME/conf						# direttorio di configurazione di tomcat
+TOMCAT_DEPLOY_DIR=$TOMCAT_HOME/webapps					# direttorio delle applicazioni di tomcat
+TOMCAT_BIN_DIR=$TOMCAT_HOME/bin							# direttorio eseguibili di tomcat
+TOMCAT_LOG_DIR=$TOMCAT_HOME/logs						# direttorio logs di tomcat
+TOMCAT_CERTS_DIR=$NFS_DIR/certs							
+#------ tomcat files
+CATALINA_PROP_FILE=$TOMCAT_CONF_DIR/catalina.properties
+LOGROTATE_CONF_FILE=$TOMCAT_CONF_DIR/logrotate.conf
+LOGGING_PROP_FILE=$TOMCAT_CONF_DIR/logging.properties
+SERVER_XML_FILE=$TOMCAT_CONF_DIR/server.xml
+SETENV_SH_FILE=$TOMCAT_BIN_DIR/setenv.sh
+#------ tomcat and apps status
+UNKNOWN=10
+UNDEPLOY=11
+RUNNING=0
+STOPPED=1
+STARTING=3
+ERROR=1
+#------ vars
+NFS_APP=NFS
+MANAGER_USER=nfsmngscr
+MANAGER_PASSWD=nfsmngscrpwd
+TOMCAT_PROC_NAME=Bootstrap
+WAIT_CHECK_TOMCAT_ALIVE=300
+#------ config info
+if [ -f $NFS_CONF_FILE ]; then
+    source $NFS_CONF_FILE
+fi
+if [ -z "$NFS_DB_FILE" ]; then
+    NFS_DB_FILE=$VAR_DB_DIR/nfs
+fi
+NFS_LOG_FILE=$TOMCAT_LOG_DIR/nfs.log
+if [ -z "$LOG_LEVEL" ]; then
+    LOG_LEVEL=notice
+fi
+if [ -z "$NFS_STORE_PATH" ]; then
+    NFS_STORE_PATH=/usr/local/store
+fi
+if [ -z "$TOMCAT_PROTOCOL" ]; then
+    TOMCAT_PROTOCOL=https
+fi
+if [ -z "$TOMCAT_IP" ]; then
+    TOMCAT_IP=0.0.0.0
+fi
+if [ -z "$TOMCAT_HTTP_PORT" ]; then
+    TOMCAT_HTTP_PORT=80
+fi
+if [ -z "$TOMCAT_HTTPS_PORT" ]; then
+    TOMCAT_HTTPS_PORT=443
+fi
+#------ external configuration
+if [ $TOMCAT_PROTOCOL == "https" ]; then
+	TOMCAT_PORT=$TOMCAT_HTTPS_PORT
+else
+	TOMCAT_PORT=$TOMCAT_HTTP_PORT
+fi
+TOMCAT_ADDRESS=$TOMCAT_IP
+[ $TOMCAT_IP == "0.0.0.0" ] && TOMCAT_ADDRESS=127.0.0.1
+
+#-------------------------------------------------------------------------------
+# log_msg - log a message
+# $1 : level=alert, err, warning, notice, info, debug
+# $@ : log message
+#-------------------------------------------------------------------------------
+log_msg() {
+	lev="$1"
+	shift
+	case $lev in
+	  debug)
+		[ $LOG_LEVEL != "debug" ] && return
+		;;
+	  info)
+		[[ $LOG_LEVEL != "debug" && $LOG_LEVEL != "info" ]] && return
+		;;
+	  notice)
+		[[ $LOG_LEVEL == "warning" || $LOG_LEVEL == "err" || $LOG_LEVEL == "alert" ]] && return
+		;;
+	  warning)
+		[[ $LOG_LEVEL == "err" || $LOG_LEVEL == "alert" ]] && return
+		;;
+	  err)
+		[ $LOG_LEVEL == "alert" ] && return
+		;;
+	  alert)
+		;;
+	  *)
+		return
+		;;
+	esac
+	echo "$THISPROG $lev : $@" >> $LOG_FILE
+}
+
+#------ used programs
+JAVA=$(which java 2>/dev/null)
+[ -z $JAVA ] && JAVA=$(locate java | grep "bin/java$" | head -1)
+[ -z $JAVA ] && log_msg err "java not found" && return 1
+JAVA_PATH=$(dirname $JAVA)
+export PATH=$PATH:$JAVA_PATH
+which wget 2>/dev/null 1>/dev/null
+WGET_FOUND=$?
+which curl 2>/dev/null 1>/dev/null
+CURL_FOUND=$?
+
+##############################################################################################################
+
+#-------------------------------------------------------------------------------
+# make_TOMCAT_setenv - creazione del file di settaggio delle variabili di ambiente
+#   usate dagli script di tomcat (es. startup.sh)
+#-------------------------------------------------------------------------------
+make_TOMCAT_setenv() {
+	rm -f $SETENV_SH_FILE
+	#------ setto variabili per script di tomcat e li salvo nel file setenv.sh
+	#- JAVA_HOME/JRE_HOME non sono necessarie perch� gi� settata da setclasspath.sh
+	#- CATALINA_HOME/CATALINA_BASE non sono necessarie perch� gi� settata da catalina.sh
+
+	#- CATALINA_OPTS
+	heap=1024
+	perm=256
+	CATALINA_OPTS="-Xmx2g -Xms512m -XX:PermSize=512m -Djava.security.egd=file:/dev/./urandom"
+	log_msg debug "setting CATALINA_OPTS to $CATALINA_OPTS"
+	echo "CATALINA_OPTS=\"$CATALINA_OPTS\"" >> $SETENV_SH_FILE
+
+	#- CATALINA_OUT
+	CATALINA_OUT=$TOMCAT_LOG_DIR/catalina.log
+	echo "CATALINA_OUT=\"$CATALINA_OUT\"" >> $SETENV_SH_FILE
+
+	#- JAVA_OPTS
+	JAVA_OPTS="-Ddb.file=$NFS_DB_FILE"
+	JAVA_OPTS="$JAVA_OPTS -Dnfs.log.file=$NFS_LOG_FILE"
+	JAVA_OPTS="$JAVA_OPTS -Dcerts.dir=$TOMCAT_CERTS_DIR"
+	JAVA_OPTS="$JAVA_OPTS -Dnfs.storePath=$NFS_STORE_PATH"
+	[ -n $TOMCAT_PROTOCOL ] && JAVA_OPTS="$JAVA_OPTS -Dnfs.Protocol=$TOMCAT_PROTOCOL"
+	[ -n $TOMCAT_HOST ] && JAVA_OPTS="$JAVA_OPTS -Dnfs.Host=$TOMCAT_HOST"
+	[ -n $TOMCAT_PORT ] && JAVA_OPTS="$JAVA_OPTS -Dnfs.Port=$TOMCAT_PORT"
+	[ -n $NFS_URL ] && JAVA_OPTS="$JAVA_OPTS -Dnfs.url=$NFS_URL"
+	[ -n $ORCHESTRATOR_URL ] && JAVA_OPTS="$JAVA_OPTS -Dorchestrator.url=$ORCHESTRATOR_URL"
+	[ -n $GATEKEEPER_URL ] && JAVA_OPTS="$JAVA_OPTS -Dgatekeeper.url=$GATEKEEPER_URL"
+	[ -n $NFS_SERVICE_KEY ] && JAVA_OPTS="$JAVA_OPTS -Dnfs.serviceKey=$NFS_SERVICE_KEY"
+	echo "JAVA_OPTS=\"$JAVA_OPTS\"" >> $SETENV_SH_FILE
+
+	#- CATALINA_PID
+	echo "CATALINA_PID=\"$CATALINA_PID_FILE\"" >> $SETENV_SH_FILE
+
+	#------ setto indirizzo/porta di tomcat nel file server.xml
+	rm -f $SERVER_XML_FILE
+	cp $SERVER_XML_FILE.$TOMCAT_PROTOCOL $SERVER_XML_FILE.tmp
+	sed s/%ADDRESS%/$TOMCAT_IP/g $SERVER_XML_FILE.tmp > $SERVER_XML_FILE
+	sed s/%HTTP_PORT%/$TOMCAT_HTTP_PORT/g $SERVER_XML_FILE > $SERVER_XML_FILE.tmp
+	sed s/%HTTPS_PORT%/$TOMCAT_HTTPS_PORT/g $SERVER_XML_FILE.tmp > $SERVER_XML_FILE
+	rm -f $SERVER_XML_FILE.tmp
+}
+
+#-------------------------------------------------------------------------------
+# get_monitor_status - get monitor status
+# output: pid monitor or empty string if not running
+#-------------------------------------------------------------------------------
+get_monitor_status() {
+	if [ -e $PID_FILE ]; then
+		pid=`cat $PID_FILE`
+		if [ -e /proc/$pid ]; then
+			kill -0 $pid
+			[ $? -eq 0 ] && echo "$pid" && return
+		else
+			rm -f $PID_FILE
+		fi
+	fi
+	echo ""
+}
+
+#-------------------------------------------------------------------------------
+# get_tomcat_status - get tomcat status
+# output: pid tomcat or 0 if not running
+#-------------------------------------------------------------------------------
+get_tomcat_status() {
+	pid_Tomcat=$(ps ax | grep $TOMCAT_PROC_NAME | grep $NFS_DIR | awk '{ print $1 }')
+	echo $pid_Tomcat
+}
+
+#-------------------------------------------------------------------------------
+# exec_tomcat - esegui un'operazione su un tomcat
+# input:  $1 : operation
+#	  	  $2 : path context
+#	  	  $3 : numero ritentativi
+#	  	  $4 : timeout
+# output: 0=OK, 1=ERROR
+#-------------------------------------------------------------------------------
+exec_tomcat() {
+	URL="$TOMCAT_PROTOCOL://$TOMCAT_ADDRESS:$TOMCAT_PORT/manager/text/"$1
+	[ -z "$2" ] || URL=$URL"?path=$2"
+	rm -f $TOMCAT_RESPONSE_FILE
+	if [ $WGET_FOUND -eq 0 ]; then
+		options="--no-check-certificate "
+		[ -z "$3" ] || options=$options"-t $3 "
+		[ -z "$4" ] || options=$options"-T $4 "
+		log_msg debug "execute command \"$1\" on tomcat $TOMCAT_ADDRESS (context=$2, options=$options)"
+		wget $options --http-user=$MANAGER_USER --http-passwd=$MANAGER_PASSWD $URL -O $TOMCAT_RESPONSE_FILE 2> /dev/null
+		[ $? -ne 0 ] && log_msg info "error tomcat response" && return 1
+	elif [ $CURL_FOUND -eq 0 ]; then
+		options="-k "
+		TNR=1
+		[ -z "$3" ] || TNR=$3
+		TW=1
+		[ -z "$4" ] || TW=$4
+		[ -z "$4" ] || options=$options"--connect-timeout $TW "
+		[ -z "$4" ] || options=$options"--max-time $TW "
+		curl $options --user $MANAGER_USER:$MANAGER_PASSWD $URL -o $TOMCAT_RESPONSE_FILE 2> /dev/null
+		[ $? -ne 0 ] && log_msg info "error tomcat response" && return 1
+	else
+		log_msg err "no program to check tomcat" && return 1
+	fi
+	#------ controllo presenza file risposta
+	if [ -f $TOMCAT_RESPONSE_FILE ]; then
+		firstline=`head -n 1 $TOMCAT_RESPONSE_FILE`
+		res=`echo $firstline | awk '{print $1}'`
+		[ "$res" != "OK" ] && log_msg err "tomcat response: $firstline" && return 1
+		return 0
+	fi
+	log_msg err "no responce from tomcat" && return 1
+}
+
+#-------------------------------------------------------------------------------
+# check_appl_status - controlla lo stato di un'applicazione dal file $TOMCAT_RESPONSE_FILE
+# input:  $1 : applicatione
+# output: stato {UNKNOWN|UNDEPLOY|RUNNING|STOPPED}
+#-------------------------------------------------------------------------------
+check_appl_status() {
+	stato=$UNKNOWN
+	if [ -e $TOMCAT_RESPONSE_FILE ]; then
+		#------ controllo nel file di risposta se esiste applicazione
+		result=`egrep ^/$1 $TOMCAT_RESPONSE_FILE`
+		deployed=`echo $result | egrep -wc $1`
+		if [ $deployed == 0 ]; then
+			stato=$UNDEPLOY
+		else
+			stato=$STOPPED
+			st=""
+			[ $deployed != 0 ] && st=`echo $result | awk -F ":" '{print $2}'`
+			[ $st == "running" ] && stato=$RUNNING
+		fi
+	fi
+	return $stato
+}
+
+#-------------------------------------------------------------------------------
+# get_appl_status - controlla lo stato di un'applicazione
+# input:
+# 	  $1 : applicatione
+# output: stato {UNKNOWN|UNDEPLOY|RUNNING|STOPPED}
+#-------------------------------------------------------------------------------
+get_appl_status() {
+	stato=$UNKNOWN
+	exec_tomcat list "" 1 10
+	if [ $? -eq 0 ]; then
+		check_appl_status $1
+		stato=$?
+	fi
+	return $stato
+}
+
+#-------------------------------------------------------------------------------
+# print_status - stampa lo stato
+# input:  $1 : stato
+# output: echo stato
+#-------------------------------------------------------------------------------
+print_status() {
+	status="??"
+	[ $1 -eq $UNKNOWN  ] && status="unknown"
+	[ $1 -eq $UNDEPLOY ] && status="undeploy"
+	[ $1 -eq $RUNNING  ] && status="running"
+	[ $1 -eq $STOPPED  ] && status="stopped"
+	[ $1 -eq $STARTING ] && status="starting"
+	echo $status
+	log_msg info "status = $status"
+}
+
+#-------------------------------------------------------------------------------
+# get_manager_status - controlla lo stato del manager di un tomcat attivo
+# output: RUNNING/UNKNOWN
+#-------------------------------------------------------------------------------
+get_manager_status() {
+	exec_tomcat list "" 1 10
+	[ $? -eq 0 ] && return $RUNNING
+	return $UNKNOWN
+}
+
+#-------------------------------------------------------------------------------
+# start_tomcat
+#-------------------------------------------------------------------------------
+start_tomcat() {
+	log_msg info "start Tomcat"
+	make_TOMCAT_setenv
+	[ -e $NFS_STORE_PATH ] || mkdir $NFS_STORE_PATH
+	jpda=""
+	[ -z "$DEBUG" ] || jpda="jpda"
+	$TOMCAT_BIN_DIR/startup.sh $jpda start >& /dev/null
+	#------ controllo se Tomcat è partito (manager risponde), sennò attendo che parta per un certo tempo
+	waitNr=1
+	while [ $waitNr -le 10 ]; do
+		log_msg debug "Check for Tomcat running (attempt #$waitNr)"
+		sleep 2
+		get_manager_status
+		if [ $? -eq $RUNNING ]; then
+			get_appl_status $NFS_APP
+			[ $? -eq $RUNNING ] && log_msg info "Tomcat and app running" && return 0
+		fi
+		waitNr=$(( $waitNr + 1 ))
+	done
+	log_msg err "Tomcat not started" && return 1
+}
+
+#-------------------------------------------------------------------------------
+# stop_tomcat
+#-------------------------------------------------------------------------------
+stop_tomcat() {
+	log_msg info "stop Tomcat"
+	#------ controllo se tomcat attivo
+	pid_Tomcat=`get_tomcat_status`
+	if [ -n "$pid_Tomcat" ]; then
+		#------ shutdown tomcat
+		log_msg info "shutdown Tomcat"
+		$TOMCAT_BIN_DIR/shutdown.sh >& /dev/null
+		#------ controllo se Tomcat si ferma guardando l'utilizzo dell'indirizzo usato
+		waitnet=1
+		while [ $waitnet -le 5 ]; do
+			sleep 1
+			log_msg debug "Check bind address (attempt #$waitnet)"
+			netp=`netstat -anp | egrep -w $TOMCAT_PORT | egrep -w $pid_Tomcat`
+			[ -z "$netp" ] && break
+			waitnet=$(( $waitnet + 1 ))
+		done
+		#------ ricontrollo tomcat, se il processo � ancora presente allora kill
+		pid_Tomcat=`get_tomcat_status`
+		[ -n "$pid_Tomcat" ] && log_msg debug "kill Tomcat" && kill -9 $pid_Tomcat && sleep 1
+		pid_Tomcat=`get_tomcat_status`
+		[ -n "$pid_Tomcat" ] && log_msg err "unable to stop Tomcat"
+		[ -z "$pid_Tomcat" ] && log_msg info "Tomcat stopped"
+	else
+		log_msg info "Tomcat already stopped"
+	fi
+}
+
+#-------------------------------------------------------------------------------
+# start
+#   actions to do when application start
+#-------------------------------------------------------------------------------
+start() {
+	#------ controllo la presenza del file pid del monitor
+	pid=`get_monitor_status`
+	[ -n "$pid" ] && log_msg warning "already active" && return 0
+	#------ Salvo il pid del monitor per l'eventuale stop
+	log_msg debug "save $PROGNAME pid ($$)"
+	echo $$ > $PID_FILE
+	#------ clear work dir
+	rm -rf $TOMCAT_HOME/work/*
+	#------ start Tomcat
+	while [ true ]; do
+		start_tomcat
+		#------ loop di controllo stato tomcat
+		while [ true ]; do
+			#------ controllo se tomcat risponde
+			get_manager_status
+			if [ $? -ne $RUNNING ]; then
+				log_msg alert "Detected tomcat NOT RUNNING ($status) - try to restart"
+				break;
+			fi
+			#------ controllo se l'applicazione risponde
+			get_appl_status $NFS_APP
+			if [ $? -ne $RUNNING ]; then
+				log_msg alert "$NFS_APP not running ($status) - restart tomcat"
+				stop_tomcat
+				break;
+			fi
+			sleep $WAIT_CHECK_TOMCAT_ALIVE
+		done
+	done
+	log_msg alert "start ended"
+}
+
+#-------------------------------------------------------------------------------
+# stop
+#   actions to do when application must be stopped
+#-------------------------------------------------------------------------------
+stop() {
+	#------ controllo monitor, se attivo -> kill
+	pid_monitor=`get_monitor_status`
+	if [ -z "$pid_monitor" ]; then
+		log_msg info "$PROGNAME not active"
+	else
+		log_msg debug "kill $PROGNAME (pid $pid_monitor)"
+		kill -9 $pid_monitor
+	fi
+	#------ stop tomcat
+	stop_tomcat
+	#------ remove monitor pid file
+	log_msg debug "Remove pid file"
+	rm -f $PID_FILE
+}
+
+#-------------------------------------------------------------------------------
+# status
+#-------------------------------------------------------------------------------
+status() {
+	stat=0
+	#------ get monitor status
+	pid_monitor=`get_monitor_status`
+	if [ -z "$pid_monitor" ]; then
+		log_msg debug "$PROGNAME not active"
+		[ -z "$NO_PRINT_STATUS" ] && echo "$PROGNAME not active"
+		stat=1
+	else
+		log_msg debug "$PROGNAME active: pid $pid_monitor"
+		[ -z "$NO_PRINT_STATUS" ] && echo "$PROGNAME active: pid $pid_monitor"
+	fi
+	#------ get tomcat status
+	pid_Tomcat=`get_tomcat_status`
+	if [ -z "$pid_Tomcat" ]; then
+		log_msg debug "tomcat not active"
+		[ -z "$NO_PRINT_STATUS" ] && echo "tomcat not active"
+		stat=2
+	else
+		log_msg debug "tomcat active: pid $pid_Tomcat"
+		[ -z "$NO_PRINT_STATUS" ] && echo "tomcat active: pid $pid_Tomcat"
+		#------ get tomcat manager status
+		get_manager_status
+		pstatus=$(print_status $?)
+		[ -z "$NO_PRINT_STATUS" ] && echo "tomcat manager status: $pstatus"
+		[ "$pstatus" != "running" ] && stat=3
+		#------ get nfs app status
+		get_appl_status $NFS_APP
+		pstatus=$(print_status $?)
+		[ -z "$NO_PRINT_STATUS" ] && echo "nfs app status: $pstatus"
+		[ "$pstatus" != "running" ] && stat=4
+	fi
+	exit $stat
+}
+
+#-------------------------------------------------------------------------------
+# check required command and act
+#-------------------------------------------------------------------------------
+CMD=$1
+log_msg notice "$CMD"
+
+case "$CMD" in
+  start)
+ 	start
+	;;
+  stop)
+	stop
+	;;
+  status)
+	status
+	;;
+  help)
+	echo "Usage: $THISPROG [COMMAND]"
+	echo "Manage $PROGNAME program"
+	echo "COMMAND:"
+	echo "  start    start NFS server"
+	echo "  stop     stop NFS server"
+	echo "  status   get NFS server status"
+	echo "  help     this help"
+	echo ""
+	echo
+	;;
+  *)
+	echo "command \"$CMD\" not supported, try \"$THISPROG help\" for more information"
+	log_msg err "command \"$CMD\" not supported, try \"$THISPROG help\" for more information"
+	exit 1
+esac
+exit 0

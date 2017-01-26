@@ -1,0 +1,72 @@
+<div class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" ng-click="ImageUploadCtrl.closeModal()" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title"><i class="fa fa-upload"></i> Image Upload</h4>
+            </div>
+            <div class="modal-body">
+                <div ng-controller="ImageUploadCtrl">
+                  <h4>Upload on file select</h4>
+
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label>Image Type</label>
+
+                            <select ng-model="image_file_type" >
+                                  <option value="docker">DOCKER</option>
+                                  <option value="ami">AMI</option>
+                                  <option value="ari">ARI</option>
+                                  <option value="aki">AKI</option>
+                                  <option value="vhd">VHD</option>
+                                  <option value="vmdk">VMDK</option>
+                                  <option value="raw">RAW</option>
+                                  <option value="qcow2">QCOW2</option>
+                                  <option value="vdi">VDI</option>
+                                  <option value="iso">ISO</option>
+                                </select>
+                        </div>
+                        <div class="form-group col-md-12" ng-if="image_file_type != 'docker'">
+                            <label>Image MD5</label>
+                            <input type="text" ng-model="image_md5sum">
+
+                        </div>
+
+                    </div>
+                    <div class="col-xs-12" id="dockerinstructions" ng-if="image_file_type == 'docker'">
+                        <h4>Instructions for pushing your docker image</h4>
+                        <h5>1. Create the image in your local repository (From the folder where your Dockerfile is located):
+                        <br><i> sudo docker build -t &lt;image name&gt; .</i>
+                        <br>
+                        <br>2. Log in the 5GEx Docker Registry with your 5GEx username and password:
+                        <br><i>sudo docker login -u &lt;username&gt; 5gex.tmit.bme.hu</i>
+                        <br>
+                        <br>3. Tag the local container:
+                        <br><i>sudo docker tag &lt;image name&gt; 5gex.tmit.bme.hu/&lt;tag&gt;</i>
+                        <br>
+                        <br>4. Push the image:
+                        <br><i>sudo docker push 5gex.tmit.bme.hu/&lt;tag&gt;</i></h5>
+                    </div>
+
+                    <button type="file" ngf-select="upload($file)" accept="*" ngf-max-height="1000" ng-if="image_file_type != 'docker'">Select File</button>
+                    <br><br>
+
+                    <div class="progress" ng-if="image_file_type != 'docker'">
+                        File: [[ image_upload_filename ]]
+                        <div class="progress-bar" role="progressbar" aria-valuenow="[[image_upload_progress]]" aria-valuemin="0" aria-valuemax="100" style="width:[[image_upload_progress]]%;">
+                            <span>[[image_upload_progress]]%</span>
+                        </div>
+                    </div>
+                    <div>
+                        <span ng-show="image_upload_completed">Completed!</span>
+                        <span ng-show="image_upload_failed">Failed, [[ image_upload_failed_message ]]</span>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" ng-click="ImageUploadCtrl.closeModal()" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

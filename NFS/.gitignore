@@ -1,0 +1,19 @@
+/db/
+/prod/
+/OLD_src/
+/dist/
+/Interface
+/keystore
+/review/
+/src_nobuild/
+/build/
+/local/
+/proxy.properties
+/lib - OLD/
+/server/
+/.tern-project
+/expected.json
+/req.json
+/vnfd.json
+/vnfd2.json
+/vnfds.json

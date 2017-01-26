@@ -1,0 +1,27 @@
+{
+	"provider": "Italtel",
+	"descriptor_version": "3.0",
+	"version": "3.0",
+	"description": "VNFD 3",
+	"billing_model":{
+		"model":"RS",
+		"period":"Period A",
+		"price":{
+			"unit":"EUR",
+			"min_per_period":"5",
+			"max_per_period":"10",
+			"setup":"0"
+		}
+		
+	},
+	"vdu":[
+		{
+			"id": "VDU-1",
+			"vm_image": "file1.img"
+		},
+		{
+			"id": "VDU-2",
+			"vm_image": "file4.img"
+		}
+	]
+}

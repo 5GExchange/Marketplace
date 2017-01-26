@@ -1,0 +1,10 @@
+Flask==0.10.1
+PyJWT>=1.3.0
+#requests>=2.7.0
+requests==2.12.5
+requests_toolbelt
+pyyaml
+pyopenssl
+ndg-httpsclient
+pyasn1
+eventlet

@@ -1,0 +1,33 @@
+{
+		"release": "T-NOVA v.0.1",
+		"descriptor_version": "version of this VNFD",
+		"description": "description 2",
+		"provider_id": "provider 2",
+		"version": "version of VNF software",
+		"created_at": "2014-09-23T09:29:45Z", 
+		"modified_at": "2014-09-23T09:29:45Z",
+		"type": "VNFD type",
+		"trade": "TRUE",
+		"billing_model":{
+			"model": "RS",
+			"period": "Period B",
+			"price" :{ 
+	            "unit":"EUR",
+	            "min_per_period":"5",
+	            "max_per_period":"30",
+	            "setup":"0"		
+			}
+		},
+		"vdu": [
+			{
+				"id": "vdu1",
+				"vm_image": "file1.img"
+			},
+			{
+				"id": "vdu3",
+				"vm_image": "file3.img"
+			}
+		],
+		"manifest_file": "path/to/file",
+		"manifest_file_security": "manifest file md5 hash"
+}

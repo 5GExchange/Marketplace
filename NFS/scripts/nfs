@@ -1,0 +1,93 @@
+#!/bin/bash 
+#
+# /etc/init.d/nfsService -- startup script for the nfs engine
+#
+# Written by Enzo Figini <enzo.figini@italtel.com>.
+#
+PATH=/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin
+MONITOR=/usr/local/nfs/bin/nfsMonitor
+DESC="Network Function Store"
+DEFAULT=/etc/default/nfs
+
+if [ `id -u` -ne 0 ]; then
+	echo "You need root privileges to run this script"
+	exit 1
+fi
+
+
+# we only use these functions, define fallback versions of them ...
+# ... and let the lsb override them, if it thinks it knows better.
+log_success_msg() { 
+	echo "${1:-}"; 
+}
+log_failure_msg() { 
+	echo -n "${1:-}"; 
+}
+log_daemon_msg() { 
+	echo -n "${1:-}; "; 
+}
+log_end_msg() { 
+	if [ $1 -eq 0 ]; then 
+		echo " ...done."
+	else
+	 	echo " ...fail." 
+	fi
+}
+
+# Determine whether the lsb package is installed
+if test -f /etc/init.d/functions; then   
+	. /etc/init.d/functions
+elif test -f /etc/rc.status; then
+   . /etc/rc.status
+elif test -f /lib/lsb/init-functions; then
+   . /lib/lsb/init-functions
+fi
+
+if [ -r /etc/default/rcS ]; then
+	. /etc/default/rcS
+fi
+
+if [ ! -e $MONITOR ]; then
+	log_failure_msg "$MONITOR script not found"
+	exit 1
+fi
+
+case "$1" in
+  start)
+	log_daemon_msg "Starting $DESC service"
+	$MONITOR start &
+	sleep 5
+	export NO_PRINT_STATUS=1
+	for i in {0..10}; do
+		$MONITOR status 2>1
+		[ $? -eq 0 ] && log_end_msg 0 && exit 0
+	done
+	log_end_msg 1
+	;;
+  stop)
+	log_daemon_msg "Stopping $DESC service"
+	$MONITOR stop
+	[ $? -ne 0 ] && log_failure_msg "Failed to stop $DESC service" && exit 1
+	log_end_msg 0
+	;;
+  status)
+	exec $MONITOR status
+	stat=$?
+	[ "$stat" == "0" ] && log_success_msg "$DESC is running" && exit 0
+	[ "$stat" == "1" ] && log_success_msg "$DESC server not active" && exit 1
+	[ "$stat" == "2" ] && log_success_msg "$DESC manager not active" && exit 1
+	[ "$stat" == "3" ] && log_success_msg "$DESC application not active" && exit 1
+	log_success_msg "Unknown status"
+	exit 1
+    ;;
+  restart)
+	$0 stop
+	$0 start
+	;;
+  *)
+	log_success_msg "Usage: $0 {start|stop|restart|status}"
+	exit 1
+	;;
+esac
+
+exit 0

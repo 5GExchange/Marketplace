@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="debug" monitorInterval="30">
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d{DEFAULT} [%t] %-5p %c - %m%n" />
+		</Console>
+		<RollingFile name="RollingFile" 
+		    	fileName="${sys:nfs.log.file}" 
+		    	filePattern="${sys:nfs.log.file}-%d{dd-MM-yyyy}-%i.gz">
+			<PatternLayout pattern="%d{DEFAULT} %-5p %-35.35c - %m%n" />
+			<Policies>
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="100 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="3" />
+		</RollingFile>
+	</Appenders>
+	<Loggers>
+		<Logger name="eu.tnova" level="debug" additivity="false">
+			<AppenderRef ref="Console" />
+			<AppenderRef ref="RollingFile" />
+		</Logger>
+		<Root level="error">
+			<AppenderRef ref="Console" />
+			<AppenderRef ref="RollingFile" />
+		</Root>
+	</Loggers>
+</Configuration>

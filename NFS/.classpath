@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="eu/tnova/nfs/json/ConnectionPoint.java|eu/tnova/nfs/json/ConstituentVdu.java|eu/tnova/nfs/json/DeploymentFlavour.java|eu/tnova/nfs/json/MonitoringParameter.java|eu/tnova/nfs/json/VDU.java|eu/tnova/nfs/json/VNFC.java|eu/tnova/nfs/json/VNFD.java|eu/tnova/nfs/json/VirtualLink.java|eu/tnova/nfs/ws/NetworkFunctionStoreFilesWS.java|eu/tnova/nfs/ws/NetworkFunctionStoreFilesWSInterface.java|eu/tnova/nfs/ws/VNFMediaType.java|eu/tnova/nfs/ws/entity/NFSFile.java|eu/tnova/nfs/ws/entity/NFSFiles.java|eu/tnova/nfs/ws/entity/NFSSearch.java|eu/tnova/nfs/ws/entity/NFSSearchFile.java|eu/tnova/nfs/ws/utils/DBUtility.java|eu/tnova/nfs/ws/utils/FileUtils.java|eu/tnova/nfs/ws/utils/VNFDUtils.java|eu/tnova/nfs/ws/validator/VNFFileValidator.java|eu/tnova/nfs/ws/entity/VNFDRequest.java" kind="src" path="src"/>
+	<classpathentry excluding="eu/tnova/nfs/json/VNFDUtilsTest.java|eu/tnova/nfs/json/" kind="src" path="test"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/TomEE NFS at localhost">
+		<attributes>
+			<attribute name="owner.project.facets" value="jst.web;#system#"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.8.0_31">
+		<attributes>
+			<attribute name="owner.project.facets" value="java"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="output" path="build/classes"/>
+</classpath>

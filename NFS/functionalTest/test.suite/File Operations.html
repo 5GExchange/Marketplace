@@ -1,0 +1,819 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 1px solid black;
+}
+th, td {
+  border: 1px solid black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+  width: 12em;
+}
+td.colspan4, th.colspan4 {
+    width: 48em;
+}
+td.colspan3, th.colspan3 {
+    width: 36em;
+}
+td.colspan2, th.colspan2 {
+    width: 24em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  height: 1.7em;
+  font-weight: bold;
+  text-align: center;
+  letter-spacing: 0.1em;
+}
+td.name {
+  background-color: rgb(240, 240, 240);
+  letter-spacing: 0.1em;
+}
+td.name, th.name {
+  width: 10em;
+}
+</style>
+<title>File Operations</title>
+</head>
+<body>
+<h1>File Operations</h1>
+<table border="1" id="setting">
+<tr>
+<th class="name" colspan="5">Settings</th>
+</tr>
+<tr>
+<td class="name">Resource</td>
+<td>Global Setting.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Resource</td>
+<td>Server Setting.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Library</td>
+<td>Collections</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Resource</td>
+<td>../user.library/rest_lib.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Library</td>
+<td>Process</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+<table border="1" id="keyword">
+<tr>
+<th class="name" colspan="5">Keywords</th>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Upload file">Upload file</a></td>
+<td>[Arguments]</td>
+<td>${fileName}</td>
+<td>${file}</td>
+<td>${md5sum}=${EMPTY}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${providerId}=${EMPTY}</td>
+<td>${imageType}=${EMPTY}</td>
+<td>${responseCode}=201</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${optionals}=</td>
+<td>Create Dictionary</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Run Keyword If</td>
+<td>'${providerId}'!='${EMPTY}'</td>
+<td>Set To Dictionary</td>
+<td>${optionals}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>Provider-ID</td>
+<td>${providerId}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Run Keyword If</td>
+<td>'${md5sum}'!='${EMPTY}'</td>
+<td>Set To Dictionary</td>
+<td>${optionals}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>MD5SUM</td>
+<td>${md5sum}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Run Keyword If</td>
+<td>'${imageType}'!='${EMPTY}'</td>
+<td>Set To Dictionary</td>
+<td>${optionals}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>Image-Type</td>
+<td>${imageType}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${flist}=</td>
+<td>Create List</td>
+<td>${fileName}</td>
+<td>${file}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>application/octet-stream</td>
+<td>${optionals}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${files}=</td>
+<td>Create Dictionary</td>
+<td>file</td>
+<td>${flist}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${resp}=</td>
+<td>Upload VNF files</td>
+<td>${files}</td>
+<td>${responseCode}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Return From Keyword If</td>
+<td>'${responseCode}'!='201'</td>
+<td>${resp}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Run Keyword If</td>
+<td>'${NFS_ADDRESS}'=='${LOCALHOST}'</td>
+<td>File Should Exist</td>
+<td>${STORE_DIR}${/}${filename}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Run Keyword If</td>
+<td>'${NFS_ADDRESS}'=='${LOCALHOST}'</td>
+<td>File Should Not Be Empty</td>
+<td>${STORE_DIR}${/}${filename}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${fileSize}=</td>
+<td>Run Keyword If</td>
+<td>'${NFS_ADDRESS}'=='${LOCALHOST}'</td>
+<td>Get File Size</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${STORE_DIR}${/}${filename}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Run Keyword If</td>
+<td>'${NFS_ADDRESS}'=='${LOCALHOST}'</td>
+<td>Log</td>
+<td>Uploaded file: size=${fileSize}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Return]</td>
+<td>${resp}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Update file">Update file</a></td>
+<td>[Arguments]</td>
+<td>${fileName}</td>
+<td>${file}</td>
+<td>${md5sum}=${EMPTY}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${providerId}=${EMPTY}</td>
+<td>${imageType}=${EMPTY}</td>
+<td>${responseCode}=200</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${optionals}=</td>
+<td>Create Dictionary</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Run Keyword If</td>
+<td>'${providerId}'!='${EMPTY}'</td>
+<td>Set To Dictionary</td>
+<td>${optionals}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>Provider-ID</td>
+<td>${providerId}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Run Keyword If</td>
+<td>'${md5sum}'!='${EMPTY}'</td>
+<td>Set To Dictionary</td>
+<td>${optionals}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>MD5SUM</td>
+<td>${md5sum}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Run Keyword If</td>
+<td>'${imageType}'!='${EMPTY}'</td>
+<td>Set To Dictionary</td>
+<td>${optionals}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>Image-Type</td>
+<td>${imageType}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${flist}=</td>
+<td>Create List</td>
+<td>${fileName}</td>
+<td>${file}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>application/octet-stream</td>
+<td>${optionals}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${files}=</td>
+<td>Create Dictionary</td>
+<td>file</td>
+<td>${flist}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${resp}=</td>
+<td>Update VNF file</td>
+<td>${fileName}</td>
+<td>${files}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${responseCode}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Return From Keyword If</td>
+<td>'${responseCode}'!='200'</td>
+<td>${resp}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Run Keyword If</td>
+<td>'${NFS_ADDRESS}'=='${LOCALHOST}'</td>
+<td>File Should Exist</td>
+<td>${STORE_DIR}${/}${filename}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Run Keyword If</td>
+<td>'${NFS_ADDRESS}'=='${LOCALHOST}'</td>
+<td>File Should Not Be Empty</td>
+<td>${STORE_DIR}${/}${filename}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${fileSize}=</td>
+<td>Run Keyword If</td>
+<td>'${NFS_ADDRESS}'=='${LOCALHOST}'</td>
+<td>Get File Size</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${STORE_DIR}${/}${filename}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Run Keyword If</td>
+<td>'${NFS_ADDRESS}'=='${LOCALHOST}'</td>
+<td>Log</td>
+<td>Updated file: size=${fileSize}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Return]</td>
+<td>${resp}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_VNFFile WS Client">VNFFile WS Client</a></td>
+<td>[Arguments]</td>
+<td>${filename}</td>
+<td>${operation}</td>
+<td>${background}=True</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${aliasProcess}=${EMPTY}</td>
+<td>${md5sum}=0</td>
+<td>${providerId}=${EMPTY}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Timeout]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>log</td>
+<td>VNFFile WS Client ${filename} ${operation} ${background} ${aliasProcess} ${md5sum} ${providerId}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${TOP_DIR}=</td>
+<td>Set Variable</td>
+<td>${CURDIR}${/}..${/}..</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${CLASS_DIR}=</td>
+<td>Set Variable</td>
+<td>${TOP_DIR}${/}build${/}classes</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${LIB_DIR}=</td>
+<td>Set Variable</td>
+<td>${TOP_DIR}${/}dist${/}apache-tomee-plus-1.7.3${/}lib${/}*</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${alias}=</td>
+<td>Set Variable If</td>
+<td>'${aliasProcess}'=='${EMPTY}'</td>
+<td>${filename}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${aliasProcess}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${cmd}=</td>
+<td>Set variable</td>
+<td>java -Xmx8g -Xms256m</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${cmd}=</td>
+<td>Catenate</td>
+<td>${cmd}</td>
+<td>-cp "${CLASS_DIR};${LIB_DIR}"</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${cmd}=</td>
+<td>Catenate</td>
+<td>${cmd}</td>
+<td>eu.tnova.nfs.utils.VNFFileWSClient</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${cmd}=</td>
+<td>Catenate</td>
+<td>${cmd}</td>
+<td>${operation}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${cmd}=</td>
+<td>Catenate</td>
+<td>${cmd}</td>
+<td>${NFS}/files</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${cmd}=</td>
+<td>Catenate</td>
+<td>${cmd}</td>
+<td>${FILE_DIR}${/}${filename}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${cmd}=</td>
+<td>Catenate</td>
+<td>${cmd}</td>
+<td>${md5sum}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${cmd}=</td>
+<td>Catenate</td>
+<td>${cmd}</td>
+<td>${providerId}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Run Keyword If</td>
+<td>'${background}'=='True'</td>
+<td>Start Process</td>
+<td>${cmd}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>alias=${alias}</td>
+<td>shell=True</td>
+<td>stderr=STDOUT</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${result}=</td>
+<td>Run Keyword If</td>
+<td>'${background}'!='True'</td>
+<td>Run process</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${cmd}</td>
+<td>alias=${alias}</td>
+<td>shell=True</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>stderr=STDOUT</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Return From Keyword If</td>
+<td>'${background}'=='True'</td>
+<td>${EMPTY}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>${result.stdout}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Run Keyword If</td>
+<td>'${operation}'=='upload2'</td>
+<td>Should Be Equal As Integers</td>
+<td>${result.rc}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>201</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Run Keyword If</td>
+<td>'${operation}'=='update2'</td>
+<td>Should Be Equal As Integers</td>
+<td>${result.rc}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>200</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Teardown]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Return]</td>
+<td>${result.rc}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Download file">Download file</a></td>
+<td>[Arguments]</td>
+<td>${fileName}</td>
+<td>${file}=${EMPTY}</td>
+<td>${md5sum}=${EMPTY}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${providerId}=${EMPTY}</td>
+<td>${imageType}=${EMPTY}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>Download file ${fileName}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${resp}=</td>
+<td>Get VNF file</td>
+<td>${fileName}</td>
+<td>${file}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Return From Keyword If</td>
+<td>'200'!='${resp.status_code}'</td>
+<td>${resp}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>@{parts}=</td>
+<td>Get Parts</td>
+<td>${resp.content}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${filepart}=</td>
+<td>Get From List</td>
+<td>${parts}</td>
+<td>0</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${headerPart}</td>
+<td>${dataPart}</td>
+<td>Get Attachment Part</td>
+<td>${filepart}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Run Keyword If</td>
+<td>'${providerId}'!='${EMPTY}'</td>
+<td>Check Field</td>
+<td>${headerPart}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>Provider-ID</td>
+<td>${providerId}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Run Keyword If</td>
+<td>'${md5sum}'!='${EMPTY}'</td>
+<td>Check Field</td>
+<td>${headerPart}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>MD5SUM</td>
+<td>${md5sum}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Run Keyword If</td>
+<td>'${imageType}'!='${EMPTY}'</td>
+<td>Check Field</td>
+<td>${headerPart}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>Image-Type</td>
+<td>${imageType}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Return]</td>
+<td>${resp}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Download file bg">Download file bg</a></td>
+<td>[Arguments]</td>
+<td>${fileName}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>Download file ${fileName}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${responseCode}=</td>
+<td>VNFFile WS Client</td>
+<td>${fileName}</td>
+<td>get</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>true</td>
+<td>${EMPTY}</td>
+<td>0</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>11</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Return From Keyword If</td>
+<td>'${responseCode}'!='200'</td>
+<td>${responseCode}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Return From Keyword If</td>
+<td>'${NFS_ADDRESS}'=='${LOCALHOST}'</td>
+<td>${responseCode}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>File Should Exist</td>
+<td>${STORE_DIR}${/}${filename}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>File Should Not Be Empty</td>
+<td>${STORE_DIR}${/}${filename}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${fileSize}=</td>
+<td>Get File Size</td>
+<td>${STORE_DIR}${/}${filename}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>Download file: size=${fileSize}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>[Return]</td>
+<td>${responseCode}</td>
+<td></td>
+<td></td>
+</tr>
+</table>
+</body>
+</html>

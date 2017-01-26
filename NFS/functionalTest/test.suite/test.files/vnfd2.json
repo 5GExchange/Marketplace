@@ -1,0 +1,27 @@
+{
+	"provider": "Italtel",
+	"descriptor_version": "2.0",
+	"version": "2.0",
+	"description": "VNFD 2",
+	"billing_model":{
+		"model":"RS",
+		"period":"Period A",
+		"price":{
+			"unit":"EUR",
+			"min_per_period":"5",
+			"max_per_period":"10",
+			"setup":"0"
+		}
+		
+	},
+	"vdu": [
+		{
+			"id": "VDU-1",
+			"vm_image": "file1.img"
+		},
+		{
+			"id": "VDU-3",
+			"vm_image": "http://www.t-nova.eu/NFS/files/file3.img"
+		}
+	]
+}

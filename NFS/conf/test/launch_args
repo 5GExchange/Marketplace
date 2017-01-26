@@ -1,0 +1,1 @@
+-Ddb.file=D:\tmp\NFS\db\NFS -Dnfs.log.file=D:\tmp\NFS\logs\nfs.log -Dnfs.storePath=D:\tmp\NFS\store -Dcerts.dir="D:\WorkspaceGIT\wp5\WP5\NFS\conf\certs"

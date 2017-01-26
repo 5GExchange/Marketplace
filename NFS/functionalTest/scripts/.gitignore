@@ -1,0 +1,7 @@
+/RUN_TESTS_USING_RIDE.bat
+/RUN_TESTSUITE.bat
+/run-test-suite.sh
+/server.xml.localhost
+/START_CLIENT_VNFFILE.bat
+/START_TOMCAT.bat
+/STOP_TOMCAT.bat
