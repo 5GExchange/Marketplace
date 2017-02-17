@@ -249,7 +249,8 @@ def get_docker_images_list(endpoint, repositories):
         code, access_token = get_docker_token("repository:"+repo+":pull")
         if code is not 200:
             print "Docker Registry not available: ", code, access_token
-            return code, access_token
+            #return code, access_token
+	    continue
         else:
             print "token: ", access_token
             headers = {"Authorization": "bearer " + access_token}
@@ -258,7 +259,8 @@ def get_docker_images_list(endpoint, repositories):
             print url
             try:
                 r = requests.get(url, headers=headers, timeout=5)
-                docker_list.append(r.json())
+		if r:
+                    docker_list.append(r.json())
             except requests.exceptions.Timeout as err:
                 print "Timeout (docker tags): ", err
             except ValueError:

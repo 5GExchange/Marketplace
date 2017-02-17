@@ -1,7 +1,7 @@
 dnsdock:
  image: tonistiigi/dnsdock
  hostname: dnsdock
- restart: always
+ #restart: always
  ports:
 #   - 8080:80
    - 172.17.0.1:53:53/udp

@@ -77,7 +77,7 @@ def get_images(provider_id=None):
             code3, docker_list = nfsapi.get_docker_images_list('/tags/list', docker_repos) 
             print "DOCKER_RESP: " + json.dumps(docker_list)
             for repo in docker_list:
-                for tag in repo['tags']:
+                for tag in repo['tags'] or []:
                     images_list.append(NFSImage(1000, repo['name'], tag, repo['name']+':'+tag, []))
             return images_list
 
