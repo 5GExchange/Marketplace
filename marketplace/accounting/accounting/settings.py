@@ -57,6 +57,7 @@ INSTALLED_APPS = (
    #'django_crontab',
    'rest_framework_swagger',
    'django_extensions',
+   'corsheaders',
    'account',
 )
 
@@ -84,17 +85,29 @@ WSGI_APPLICATION = 'accounting.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'accounting',
-        'USER': 'accounting_usr',
-        'PASSWORD': 'accounting_usr',
-        #'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
-        'HOST': 'mysql',   # Or an IP Address that your DB is hosted on
-        'PORT': '3306',
+if os.environ.get('DOCKER_ENV') is not None:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'accounting',
+            'USER': 'accounting_usr',
+            'PASSWORD': 'accounting_usr',
+            'HOST': 'mysql',   # Or an IP Address that your DB is hosted on
+            'PORT': '3306',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'accounting',
+            'USER': 'accounting_usr',
+            'PASSWORD': 'accounting_usr',
+            'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
+            'PORT': '3306',
+        }
+    }
+    
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
@@ -121,20 +134,60 @@ CRONJOBS = [
 
 CORS_ORIGIN_ALLOW_ALL = True
 
-#RabbitMQ connection params
-#AMQP_HOST = '10.10.1.226'
-AMQP_HOST = os.environ["AMQP_HOST"]
+if os.environ.get('DOCKER_ENV') is not None:
+    #RabbitMQ connection params
+    AMQP_HOST = '10.10.1.226'
+    #AMQP_HOST = os.environ["AMQP_HOST"]
 
-#AMQP_PORT = 5672
-AMQP_PORT = os.environ["AMQP_PORT"]
-AMQP_USER = 'guest'
-AMQP_PASSWORD = 'guest'
-AMQP_EXCHANGE_NAME = 'tnova'
-AMQP_ROUTING_KEY = 'event'
-AMQP_VHOST = '/'
+    AMQP_PORT = 5672
+    #AMQP_PORT = os.environ["AMQP_PORT"]
+    AMQP_USER = 'guest'
+    AMQP_PASSWORD = 'guest'
+    AMQP_EXCHANGE_NAME = 'tnova'
+    AMQP_ROUTING_KEY = 'event'
+    AMQP_VHOST = '/'
 
-SLA_URL = 'http://sla.docker:9040'
-#SLA_URL = 'http://localhost:9040'
+    DOMAIN_ID= os.environ["DOMAIN_ID"]
+    SLA_URL = 'http://sla.docker:9040'
+    #MDC_URL = 'http://mdc:8500'
+    MDC_URL = os.environ["MDC_URL"]
+    AGGREGATOR_EP = '/accounting'
+    IMOS_URL = os.environ["IMOS_URL"]
+    #monitoring DB parameters
+    INFLUXDB_URL = os.environ["INFLUXDB_URL"]
+    INFLUXDB_PORT = os.environ["INFLUXDB_PORT"]
+    INFLUXDB_NAME = os.environ["INFLUXDB_NAME"]
+    INFLUXDB_USR = 'root'
+    INFLUXDB_PASS = 'root'
+    DB_TIME_UNIT = os.environ["DB_TIME_UNIT"]
+else:
+    #RabbitMQ connection params
+    AMQP_HOST = '10.10.1.226'
+    #AMQP_HOST = os.environ["AMQP_HOST"]
+
+    AMQP_PORT = 5672
+    #AMQP_PORT = os.environ["AMQP_PORT"]
+    AMQP_USER = 'guest'
+    AMQP_PASSWORD = 'guest'
+    AMQP_EXCHANGE_NAME = 'tnova'
+    AMQP_ROUTING_KEY = 'event'
+    AMQP_VHOST = '/'
+
+    DOMAIN_ID= '001'
+    SLA_URL = 'http://sla.docker:9040'
+    #SLA_URL = 'http://localhost:9040'
+    #MDC_URL = 'http://mdc:8500'
+    MDC_URL = 'http://172.16.0.20/mdc/'
+    IMOS_URL = 'http://imos:2222/monitoring/?serviceid='
+    AGGREGATOR_EP = ':8000'
+    #monitoring DB parameters
+    INFLUXDB_URL = 'localhost'
+    INFLUXDB_PORT = 8086
+    INFLUXDB_NAME = 'fgx'
+    INFLUXDB_USR = 'root'
+    INFLUXDB_PASS = 'root'
+    DB_TIME_UNIT = 'ns'
+
 
 #constant to define a service or a VNF
 NETWORK_SERVICE = 'ns'

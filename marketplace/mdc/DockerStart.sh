@@ -1,4 +1,4 @@
 #!/bin/sh
-sleep 20
+python testMySql.py
 python manage.py runserver 0.0.0.0:8500
 

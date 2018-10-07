@@ -20,13 +20,17 @@ from django.utils import timezone
 from datetime import datetime
 
 
-# Create your models here.
 
 class Domain(models.Model):
 
     #Id of the owner domain
     domain = models.CharField(primary_key=True, max_length=254, default=None, blank=False, unique=True)
+    #whether this domain is local or external
     localDomain = models.BooleanField(default=False, blank=True)
+    #Entry Point of the domain for future queries
+    entryPoint = models.CharField(max_length=254, blank=False)
+    #whether this domain available or not at the moment
+    available = models.BooleanField(default=False, blank=True)
     dateCreated = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
@@ -41,6 +45,8 @@ class Mdc(models.Model):
     productType = models.CharField(max_length=3, choices=TYPES, blank=False)
     #Id of the VNF or the Service in the system
     productId = models.CharField(max_length=256, default=None, blank=False)
+    #type of the NS or VNF
+    kind = models.CharField(max_length=256, default=None, blank=False)
     #Id of the owner domain
     #domainId = models.CharField(max_length=256, default=None, blank=False)
 
@@ -58,7 +64,12 @@ class Mdc(models.Model):
     #SLA description of the element
     sla = models.CharField(max_length=256, null=True, default=None, blank=True)
     #Price description of the element
-    price = models.CharField(max_length=256, null=True, default=None, blank=True)
+    #price = models.CharField(max_length=256, null=True, default=None, blank=True)
+    billing_model = models.CharField(max_length=50, default=None, null=True, blank=True)
+    price_per_period = models.IntegerField(null=True, default=0, blank=True)
+    price_setup = models.IntegerField(null=True, default=0, blank=True)
+    period = models.CharField(max_length=10, null=True, default=None, blank=True)
+    currency = models.CharField(max_length=10, null=True, default=None, blank=True)
 
     #element sharing preferences
     shareWithAll = models.BooleanField(default=False, blank=True)

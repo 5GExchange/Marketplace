@@ -33,15 +33,22 @@ import java.util.Map;
 @Service
 public class OrchestratorServiceImpl implements OrchestratorService
 {
-    private static final Logger logger = LoggerFactory.getLogger( NsdServiceImpl.class );
+    //private static final Logger logger = LoggerFactory.getLogger( NsdServiceImpl.class );
+    private static final Logger logger = LoggerFactory.getLogger( OrchestratorServiceImpl.class );
 
     private RestTemplate restTemplate;
 
     @Value( "${tnova.orchestrator.host}" )
     private String orchestratorUri;
 
+    @Value( "${5gex.mdc.host}" )
+    private String mdcatalogueUri;
+
     @Value( "${tnova.orchestrator.feature.status}" )
     private String status;
+
+    @Value( "${5gex.mdc.feature.status}" )
+    private String statusMdC;
 
     @Autowired
     public OrchestratorServiceImpl( RestTemplate restTemplate )
@@ -217,4 +224,68 @@ public class OrchestratorServiceImpl implements OrchestratorService
 
         return false;
     }
+
+
+    public boolean createNsdToMdCatalogue ( NetworkService networkService )
+    {
+        restTemplate = new RestTemplate();
+        logger.info( "Publishing a network service to the MD Catalogue {}", mdcatalogueUri );
+
+        if( statusMdC.equalsIgnoreCase( "disabled" ) )
+        {
+            logger.info( "Publishing to MdC is disabled. Print the nsd json to log file" );
+            ObjectMapper mapper = new ObjectMapper();
+            try
+            {
+                logger.info( mapper.writerWithDefaultPrettyPrinter().writeValueAsString( networkService ) );
+
+                return true;
+            }
+            catch( Exception ex )
+            {
+                ex.printStackTrace();
+            }
+
+        }
+
+        logger.info( "Publishing network service to MdC" );
+        try
+        {
+            ObjectMapper mapper = new ObjectMapper();
+            String networkServiceRequest = mapper.writeValueAsString( networkService );
+
+            System.out.println( mapper.writerWithDefaultPrettyPrinter().writeValueAsString( networkService ));
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType( MediaType.APPLICATION_JSON );
+
+            HttpEntity<String> entity = new HttpEntity<>( networkServiceRequest, headers );
+	    logger.info( "MdC URI: {}", mdcatalogueUri);
+
+            final ResponseEntity<String> responseEntity = restTemplate
+                .exchange( mdcatalogueUri, HttpMethod.POST, entity, String.class );
+
+            if( responseEntity != null )
+            {
+                logger.info( "Receiving response from MdC with status = {} and description = {}",
+                    responseEntity.getStatusCode(), responseEntity.getStatusCode().getReasonPhrase() );
+                logger.info( "Receiving response from MdC {}", responseEntity.getBody() );
+
+                if( responseEntity.getStatusCode() != HttpStatus.CREATED )
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+        }
+        catch( Exception ex )
+        {
+            ex.printStackTrace();
+        }
+
+        logger.info( "Response is null. An error occurred  during communication with orchestrator. Please check" );
+        return false;
+    }
+
 }

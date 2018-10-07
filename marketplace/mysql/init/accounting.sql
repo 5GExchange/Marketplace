@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.5.50, for debian-linux-gnu (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.19, for Linux (x86_64)
 --
 -- Host: localhost    Database: accounting
 -- ------------------------------------------------------
--- Server version	5.5.50-0ubuntu0.14.04.1
+-- Server version	5.7.19-0ubuntu0.16.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -21,7 +21,9 @@ CREATE USER 'accounting_usr'@'%' IDENTIFIED BY 'accounting_usr';
 GRANT ALL PRIVILEGES ON accounting.* TO 'accounting_usr'@'%';
 FLUSH PRIVILEGES;
 
+
 USE accounting;
+
 --
 -- Table structure for table `account_account`
 --
@@ -38,8 +40,9 @@ CREATE TABLE `account_account` (
   `relative_instances` varchar(256) DEFAULT NULL,
   `productType` varchar(10) NOT NULL,
   `flavour` varchar(256) NOT NULL,
-  `startDate` datetime NOT NULL,
-  `lastBillDate` datetime NOT NULL,
+  `location` varchar(256) NOT NULL,
+  `startDate` datetime(6) NOT NULL,
+  `lastBillDate` datetime(6) NOT NULL,
   `providerId` varchar(256) NOT NULL,
   `clientId` varchar(256) NOT NULL,
   `status` varchar(10) NOT NULL,
@@ -49,11 +52,20 @@ CREATE TABLE `account_account` (
   `periodCost` double NOT NULL,
   `setupCost` double NOT NULL,
   `renew` tinyint(1) NOT NULL,
-  `dateCreated` datetime NOT NULL,
-  `dateModified` datetime NOT NULL,
+  `dateCreated` datetime(6) NOT NULL,
+  `dateModified` datetime(6) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `account_account`
+--
+
+LOCK TABLES `account_account` WRITE;
+/*!40000 ALTER TABLE `account_account` DISABLE KEYS */;
+/*!40000 ALTER TABLE `account_account` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `account_billingevent`
@@ -70,10 +82,19 @@ CREATE TABLE `account_billingevent` (
   `eventType` varchar(26) NOT NULL,
   `clientId` varchar(26) NOT NULL,
   `providerId` varchar(26) NOT NULL,
-  `date` datetime NOT NULL,
+  `date` datetime(6) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `account_billingevent`
+--
+
+LOCK TABLES `account_billingevent` WRITE;
+/*!40000 ALTER TABLE `account_billingevent` DISABLE KEYS */;
+/*!40000 ALTER TABLE `account_billingevent` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `account_monitor`
@@ -87,11 +108,19 @@ CREATE TABLE `account_monitor` (
   `serviceId` varchar(256) NOT NULL,
   `metricName` varchar(256) NOT NULL,
   `value` double NOT NULL,
-  `date` datetime NOT NULL,
+  `date` datetime(6) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `account_monitor`
+--
+
+LOCK TABLES `account_monitor` WRITE;
+/*!40000 ALTER TABLE `account_monitor` DISABLE KEYS */;
+/*!40000 ALTER TABLE `account_monitor` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `account_slainfo`
@@ -108,11 +137,20 @@ CREATE TABLE `account_slainfo` (
   `clientId` varchar(26) NOT NULL,
   `providerId` varchar(26) NOT NULL,
   `SLAPenalties` int(11) NOT NULL,
-  `dateCreated` datetime NOT NULL,
-  `dateTerminated` datetime NOT NULL,
+  `dateCreated` datetime(6) NOT NULL,
+  `dateTerminated` datetime(6) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `account_slainfo`
+--
+
+LOCK TABLES `account_slainfo` WRITE;
+/*!40000 ALTER TABLE `account_slainfo` DISABLE KEYS */;
+/*!40000 ALTER TABLE `account_slainfo` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `account_slapenalty`
@@ -131,6 +169,15 @@ CREATE TABLE `account_slapenalty` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `account_slapenalty`
+--
+
+LOCK TABLES `account_slapenalty` WRITE;
+/*!40000 ALTER TABLE `account_slapenalty` DISABLE KEYS */;
+/*!40000 ALTER TABLE `account_slapenalty` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `account_slaviolation`
 --
 
@@ -147,6 +194,15 @@ CREATE TABLE `account_slaviolation` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `account_slaviolation`
+--
+
+LOCK TABLES `account_slaviolation` WRITE;
+/*!40000 ALTER TABLE `account_slaviolation` DISABLE KEYS */;
+/*!40000 ALTER TABLE `account_slaviolation` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `auth_group`
 --
 
@@ -161,6 +217,14 @@ CREATE TABLE `auth_group` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `auth_group`
+--
+
+LOCK TABLES `auth_group` WRITE;
+/*!40000 ALTER TABLE `auth_group` DISABLE KEYS */;
+/*!40000 ALTER TABLE `auth_group` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `auth_group_permissions`
@@ -181,6 +245,14 @@ CREATE TABLE `auth_group_permissions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `auth_group_permissions`
+--
+
+LOCK TABLES `auth_group_permissions` WRITE;
+/*!40000 ALTER TABLE `auth_group_permissions` DISABLE KEYS */;
+/*!40000 ALTER TABLE `auth_group_permissions` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `auth_permission`
@@ -220,7 +292,7 @@ DROP TABLE IF EXISTS `auth_user`;
 CREATE TABLE `auth_user` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `password` varchar(128) NOT NULL,
-  `last_login` datetime DEFAULT NULL,
+  `last_login` datetime(6) DEFAULT NULL,
   `is_superuser` tinyint(1) NOT NULL,
   `username` varchar(30) NOT NULL,
   `first_name` varchar(30) NOT NULL,
@@ -228,12 +300,20 @@ CREATE TABLE `auth_user` (
   `email` varchar(254) NOT NULL,
   `is_staff` tinyint(1) NOT NULL,
   `is_active` tinyint(1) NOT NULL,
-  `date_joined` datetime NOT NULL,
+  `date_joined` datetime(6) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `auth_user`
+--
+
+LOCK TABLES `auth_user` WRITE;
+/*!40000 ALTER TABLE `auth_user` DISABLE KEYS */;
+/*!40000 ALTER TABLE `auth_user` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `auth_user_groups`
@@ -253,6 +333,15 @@ CREATE TABLE `auth_user_groups` (
   CONSTRAINT `auth_user_groups_user_id_4b5ed4ffdb8fd9b0_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `auth_user_groups`
+--
+
+LOCK TABLES `auth_user_groups` WRITE;
+/*!40000 ALTER TABLE `auth_user_groups` DISABLE KEYS */;
+/*!40000 ALTER TABLE `auth_user_groups` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `auth_user_user_permissions`
@@ -291,7 +380,7 @@ DROP TABLE IF EXISTS `django_admin_log`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `django_admin_log` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `action_time` datetime NOT NULL,
+  `action_time` datetime(6) NOT NULL,
   `object_id` longtext,
   `object_repr` varchar(200) NOT NULL,
   `action_flag` smallint(5) unsigned NOT NULL,
@@ -301,8 +390,8 @@ CREATE TABLE `django_admin_log` (
   PRIMARY KEY (`id`),
   KEY `djang_content_type_id_697914295151027a_fk_django_content_type_id` (`content_type_id`),
   KEY `django_admin_log_user_id_52fdd58701c5f563_fk_auth_user_id` (`user_id`),
-  CONSTRAINT `django_admin_log_user_id_52fdd58701c5f563_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`),
-  CONSTRAINT `djang_content_type_id_697914295151027a_fk_django_content_type_id` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`)
+  CONSTRAINT `djang_content_type_id_697914295151027a_fk_django_content_type_id` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`),
+  CONSTRAINT `django_admin_log_user_id_52fdd58701c5f563_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -352,7 +441,7 @@ CREATE TABLE `django_migrations` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `app` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
-  `applied` datetime NOT NULL,
+  `applied` datetime(6) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -363,7 +452,7 @@ CREATE TABLE `django_migrations` (
 
 LOCK TABLES `django_migrations` WRITE;
 /*!40000 ALTER TABLE `django_migrations` DISABLE KEYS */;
-INSERT INTO `django_migrations` VALUES (1,'contenttypes','0001_initial','2016-09-19 09:38:49'),(2,'auth','0001_initial','2016-09-19 09:38:51'),(3,'admin','0001_initial','2016-09-19 09:38:51'),(4,'contenttypes','0002_remove_content_type_name','2016-09-19 09:38:51'),(5,'auth','0002_alter_permission_name_max_length','2016-09-19 09:38:51'),(6,'auth','0003_alter_user_email_max_length','2016-09-19 09:38:51'),(7,'auth','0004_alter_user_username_opts','2016-09-19 09:38:51'),(8,'auth','0005_alter_user_last_login_null','2016-09-19 09:38:51'),(9,'auth','0006_require_contenttypes_0002','2016-09-19 09:38:51'),(10,'sessions','0001_initial','2016-09-19 09:38:51');
+INSERT INTO `django_migrations` VALUES (1,'contenttypes','0001_initial','2017-08-16 15:48:55.820414'),(2,'auth','0001_initial','2017-08-16 15:48:56.621395'),(3,'admin','0001_initial','2017-08-16 15:48:57.003196'),(4,'contenttypes','0002_remove_content_type_name','2017-08-16 15:48:57.626592'),(5,'auth','0002_alter_permission_name_max_length','2017-08-16 15:48:57.709754'),(6,'auth','0003_alter_user_email_max_length','2017-08-16 15:48:57.791358'),(7,'auth','0004_alter_user_username_opts','2017-08-16 15:48:57.883536'),(8,'auth','0005_alter_user_last_login_null','2017-08-16 15:48:57.962469'),(9,'auth','0006_require_contenttypes_0002','2017-08-16 15:48:57.968784'),(10,'sessions','0001_initial','2017-08-16 15:48:58.028730');
 /*!40000 ALTER TABLE `django_migrations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -377,7 +466,7 @@ DROP TABLE IF EXISTS `django_session`;
 CREATE TABLE `django_session` (
   `session_key` varchar(40) NOT NULL,
   `session_data` longtext NOT NULL,
-  `expire_date` datetime NOT NULL,
+  `expire_date` datetime(6) NOT NULL,
   PRIMARY KEY (`session_key`),
   KEY `django_session_de54fa62` (`expire_date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -401,4 +490,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-09-19 10:40:07
+-- Dump completed on 2017-08-16 16:50:24

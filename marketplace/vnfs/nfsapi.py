@@ -17,11 +17,13 @@ DOCKER_REPO_EP= os.environ["DOCKER_REPO_EP"]
 DOCKER_AUTH_EP= os.environ["DOCKER_AUTH_EP"] 
 DOCKER_USER= os.environ["DOCKER_USER"] 
 DOCKER_PASS= os.environ["DOCKER_PASS"] 
+DOMAIN_ID=os.environ["DOMAIN_ID"] 
 
 
 def _get_call_url(endpoint):
     protocol = 'https' if USE_HTTPS else 'http'
     return '%s://%s:%s/%s' % (protocol, NFS_HOST, NFS_PORT, endpoint.strip('/'))
+    #return '%s://%s/%s' % (protocol, NFS_HOST, endpoint.strip('/'))
 
 
 def upload_image(image_name, image_path, provider_id, md5sum, image_type, json_response=True):
@@ -81,6 +83,7 @@ def get_image_url(image_name):
 def upload_vnfd(vnfd, json_response=True):
     endpoint = 'NFS/vnfds'
 
+    vnfd['domain'] = DOMAIN_ID
     data = json.dumps(vnfd) if isinstance(vnfd, dict) else vnfd
 
     r = requests.post(_get_call_url(endpoint), data=data, headers={'Content-Type': 'application/json'})

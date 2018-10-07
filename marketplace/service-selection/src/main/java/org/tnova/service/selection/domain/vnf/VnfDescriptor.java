@@ -35,7 +35,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
     "release",
     "type",
     "id",
-    "description"
+    "description", 
+    "domain"
 })
 public class VnfDescriptor {
 
@@ -73,6 +74,8 @@ public class VnfDescriptor {
     private Integer id;
     @JsonProperty("description")
     private String description;
+    @JsonProperty("domain")
+    private String domain;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
@@ -103,7 +106,7 @@ public class VnfDescriptor {
      * @param release
      * @param billingModel
      */
-    public VnfDescriptor(Integer providerId, List<Vdu> vdu, String name, String createdAt, String modifiedAt, List<Vlink> vlinks, Boolean trade, String descriptorVersion, List<DeploymentFlavour> deploymentFlavours, String version, List<VnfLifecycleEvent> vnfLifecycleEvents, BillingModel billingModel, String provider, String release, String type, Integer id, String description) {
+    public VnfDescriptor(Integer providerId, List<Vdu> vdu, String name, String createdAt, String modifiedAt, List<Vlink> vlinks, Boolean trade, String descriptorVersion, List<DeploymentFlavour> deploymentFlavours, String version, List<VnfLifecycleEvent> vnfLifecycleEvents, BillingModel billingModel, String provider, String release, String type, Integer id, String description, String domain) {
         this.providerId = providerId;
         this.vdu = vdu;
         this.name = name;
@@ -121,6 +124,7 @@ public class VnfDescriptor {
         this.type = type;
         this.id = id;
         this.description = description;
+        this.domain = domain;
     }
 
     /**
@@ -148,6 +152,24 @@ public class VnfDescriptor {
         return this;
     }
 
+    /**
+     * 
+     * @param domain
+     *     The owner domain
+     */
+    @JsonProperty("domain")
+    public String getDomain() {
+        return domain;
+    }
+    @JsonProperty("domain")
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
+
+    public VnfDescriptor withDomain(String domain) {
+        this.domain = domain;
+        return this;
+    }
     /**
      * 
      * @return

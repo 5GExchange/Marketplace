@@ -292,30 +292,6 @@ public class ServiceBean {
 		return vnfdsMap;
 	}
 
-//	@Schedule(second = "0", minute = "*/10", hour = "*")
-//	private void VNFCheck() {
-//		log.debug("VNFCheck");
-//		List<VNFDescriptor> vnfds = getVNFDescriptors();
-//		for ( VNFDescriptor vnfd : vnfds ) {
-//			try {
-//				if ( !vnfd.isVnfCreated() ) {
-//					if ( allFilesAreAvailable(vnfd) )
-//						orchestratorClient.create_VNF(vnfd, null);
-//				} else {
-//					if ( !allFilesAreAvailable(vnfd) )
-//						orchestratorClient.delete_VNF(vnfd, null);
-//				}
-//
-//			} catch (Exception e) {
-//				log.error("VNFCheck : problem VNF notification to orchestrator : {}", e.getMessage());
-//			}
-//			try {
-//				em.merge(vnfd);
-//			} catch (Exception e) {
-//			}
-//		}
-//	}
-	
 	public void sendNotificationToOrchestrator(
 			OrchestratorOperationTypeEnum operation, VNFFile vnfFile, String userToker) {
 		sendNotificationToOrchestrator(operation, vnfFile.getVnfDescriptors(), userToker);

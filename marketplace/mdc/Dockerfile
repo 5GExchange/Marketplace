@@ -1,6 +1,8 @@
 #FROM nodesource/node:trusty
 FROM python:2.7
 MAINTAINER Javier Melian (ATOS)
+ARG GIT_REVISION=unknown
+LABEL git-revision=$GIT_REVISION    
 
 ENV PYTHONUNBUFFERED 1
 #RUN apt-get update

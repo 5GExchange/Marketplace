@@ -147,6 +147,7 @@ function RootCtrl(Restangular, $scope, $rootScope, $cookies, $state, $interval) 
                 $scope.user_profile = response;
                 console.log("GetUserProfile has been successfully loaded");
 
+    /*
     if ($scope.hasRole('Function Provider')){
 
                  $interval(function () {
@@ -157,12 +158,14 @@ function RootCtrl(Restangular, $scope, $rootScope, $cookies, $state, $interval) 
                             $scope.trades = response;
                             console.log("tradesList " + response.length + " Trades found");
                         }, function (response) {
+                            A
                             console.log("tradesList error with status code " + response.status);
                             console.log("tradesList error message: " + response.data.detail);
                         });
 
                  }, 2000);
     }
+    */
 
             }, function (response) {
                 console.log("GetUserProfile error with status code " + response.status);

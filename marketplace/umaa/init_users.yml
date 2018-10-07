@@ -1,34 +1,35 @@
 - username: admin
   password: 123456
-  email: g.alexiou@pasiphae.eu
-  company_name: TEIC
+  email: javier.melian@atos.net
+  company_name: 5GEX 
   groups:
    - Administrator
 
 - username: customer1
   password: 123456
-  email: customer1@t-nova.eu
-  company_name: TEIC
+  email: customer1@5gex.eu
+  company_name: 5GEX
   groups:
    - Customer
 
 - username: sp1
   password: 123456
-  email: sp1@t-nova.eu
-  company_name: T-NOVA
+  email: sp1@5gex.eu
+  company_name: 5GEX
   groups:
    - Service Provider
 
 - username: fp1
   password: 123456
-  email: fp1@t-nova.eu
-  company_name: TEIC
+  email: fp1@5gex.eu
+  company_name: 5GEX
   groups:
    - Function Provider
 
 - username: fp2
   password: 123456
-  email: fp2@t-nova.eu
-  company_name: NCSR Demokritos
+  email: fp2@5gex.eu
+  company_name: ATOS
   groups:
    - Function Provider
+

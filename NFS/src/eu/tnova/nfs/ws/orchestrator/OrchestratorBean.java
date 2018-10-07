@@ -88,8 +88,15 @@ public class OrchestratorBean implements OrchestratorBeanInterface {
 	@Override
 	public boolean create(VNFDescriptor vnfDescriptor, String userToker) {
 		log.info("create VNF with VNFD {}", vnfDescriptor.getId());
-		if ( vnfDescriptor.isVnfCreated() || !allFilesAreAvailable(vnfDescriptor) )
+		if ( vnfDescriptor.isVnfCreated() || !allFilesAreAvailable(vnfDescriptor) ) {
+			if (vnfDescriptor.isVnfCreated())
+				log.info("dice qeu ya existe");
+			if (!allFilesAreAvailable(vnfDescriptor))
+				log.info("Archivos no disponibles");
 			return false;
+		}
+		
+		log.info("Como no existe, lo crea");
 		OrchestratorVNF vnf = new OrchestratorVNF(
 				vnfDescriptor.getId(), OrchestratorOperationTypeEnum.CREATE, userToker);
 		ArrayList<Timer> timers = getTimers(vnf);
@@ -117,7 +124,7 @@ public class OrchestratorBean implements OrchestratorBeanInterface {
 			return true;
 		} catch (ValidationException e) {
 			log.error(e.getMessage());
-			if ( e.getStatus() == null || e.getStatus().getStatusCode() == 422) {
+			if ( e.getStatus() == null || e.getStatus().getStatusCode() == 409) {
 				log.info("VNF {} already found on orchestrator", vnfDescriptor.getId());
 				if ( timer!=null ) {
 					timer.cancel();
@@ -311,10 +318,12 @@ public class OrchestratorBean implements OrchestratorBeanInterface {
 			VNFFile image = files.get(imageName);
 			if ( image.getStatus().equals(VNFFileStatusEnum.NOT_AVAILABLE) || 
 					image.getStatus().equals(VNFFileStatusEnum.UPLOAD) )
-				return false;
+				//return false;
+				return true;
 			File imageFile = image.getFile(storePath);
 			if ( !imageFile.exists() )
-				return false;
+				//return false;
+				return true;
 		}
 		return true;
 	}

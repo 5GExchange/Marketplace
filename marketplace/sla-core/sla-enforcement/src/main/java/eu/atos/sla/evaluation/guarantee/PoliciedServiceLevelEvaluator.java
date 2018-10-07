@@ -21,6 +21,15 @@ import eu.atos.sla.datamodel.bean.Violation;
 import eu.atos.sla.evaluation.constraint.IConstraintEvaluator;
 import eu.atos.sla.monitoring.IMonitoringMetric;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClientBuilder;
+import com.google.gson.Gson;
+
+
 /**
  * Implements a ServiceLevelEvaluator that takes into account Policies. 
  * 
@@ -58,7 +67,9 @@ public class PoliciedServiceLevelEvaluator implements IServiceLevelEvaluator {
 	private IBreachRepository breachRepository;
 	private IViolationRepository violationRepository;
 	private PoliciedServiceLevelEvaluator.BreachesFromMetricsBuilder breachesFromMetricsBuilder = new BreachesFromMetricsBuilder();
-    private ViolationsFromBreachesBuilder violationsFromBreachesBuilder = new ViolationsFromBreachesBuilder();
+        private ViolationsFromBreachesBuilder violationsFromBreachesBuilder = new ViolationsFromBreachesBuilder();
+
+        private String violationsUrl = System.getenv("VIOLATIONS_URL") != null ? System.getenv("VIOLATIONS_URL") : "http://localhost:8000/violations";
 
 	@Override
 	public List<IViolation> evaluate(
@@ -92,36 +103,57 @@ public class PoliciedServiceLevelEvaluator implements IServiceLevelEvaluator {
 		/*
 		 * Evaluate each policy
 		 */
-        for (IPolicy policy : policies) {
-            Date breachesBegin = calcBreachesBegin(agreement, now, kpiName, policy, metrics);
+                for (IPolicy policy : policies) {
+                    Date breachesBegin = calcBreachesBegin(agreement, now, kpiName, policy, metrics);
 
-			logger.debug("Evaluating policy({},{}s) in interval({}, {})", 
-					policy.getCount(), policy.getTimeInterval().getTime() / 1000, breachesBegin, now);
-			
-			List<IBreach> oldBreaches;
-			
-			if (withPolicies) {
-				oldBreaches = breachRepository.getBreachesByTimeRange(agreement, kpiName, breachesBegin, now);
-				logger.debug("Found {} breaches", oldBreaches.size());
-				
-				List<IBreach> breaches = new PoliciedServiceLevelEvaluator.CompositeList<IBreach>(
-						oldBreaches, newBreaches);
-				if (evaluatePolicy(policy, oldBreaches, newBreaches)) {
-                    List<IViolation> policyViolations = violationsFromBreachesBuilder.build(
+		    logger.debug("Evaluating policy({},{}s) in interval({}, {})", 
+			policy.getCount(), policy.getTimeInterval().getTime() / 1000, breachesBegin, now);
+		    
+		    List<IBreach> oldBreaches;
+		    
+		    if (withPolicies) {
+		        oldBreaches = breachRepository.getBreachesByTimeRange(agreement, kpiName, breachesBegin, now);
+		        logger.debug("Found {} breaches", oldBreaches.size());
+
+		        List<IBreach> breaches = new PoliciedServiceLevelEvaluator.CompositeList<IBreach>(oldBreaches, newBreaches);
+		        if (evaluatePolicy(policy, oldBreaches, newBreaches)) {
+                            List<IViolation> policyViolations = violationsFromBreachesBuilder.build(
                             agreement, term, kpiName, breaches, policy);
 
-                    newViolations.addAll(policyViolations);
-					logger.debug("Violation raised");
-				}
-			} 
-			else {
-				oldBreaches = Collections.emptyList();
-				for (IMonitoringMetric breach : newBreachMetrics) {
-					IViolation violation = newViolation(agreement, term, kpiName, breach);
-					newViolations.add(violation);
-					logger.debug("Violation raised");
-				}
+                            newViolations.addAll(policyViolations);
+	        	    logger.debug("Violation raised");
+		            /*
+		            * Send violation to violations handling server
+		            */
+                            Gson gson = new Gson();
+                            String json = gson.toJson(policyViolations);
+	        	    logger.debug("Violation raised JSON1 - Size: {} - {}", json.length(), json);
+                            HttpClient httpClient = HttpClientBuilder.create().build();
+                            try {
+                                HttpPost request = new HttpPost(violationsUrl);
+                                StringEntity params =new StringEntity(json);
+                                request.addHeader("content-type", "application/json");
+                                request.setEntity(params);
+                                HttpResponse response = httpClient.execute(request);
+                            } catch (Exception ex) {
+	        	        logger.debug("ERROR - sending Violation - {}", ex);
+                            }
 			}
+		    } 
+		    else {
+			oldBreaches = Collections.emptyList();
+	        	for (IMonitoringMetric breach : newBreachMetrics) {
+			    IViolation violation = newViolation(agreement, term, kpiName, breach);
+			    newViolations.add(violation);
+	        	    logger.debug("Violation raised");
+		            /*
+		            * Send violation to violations handling server
+		            */
+                            Gson gson = new Gson();
+                            String json = gson.toJson(violation);
+	        	    logger.debug("Violation raised JSON2 - {}", json);
+			}
+		    }
 		}
         if (withPolicies) {
             saveBreaches(newBreaches);

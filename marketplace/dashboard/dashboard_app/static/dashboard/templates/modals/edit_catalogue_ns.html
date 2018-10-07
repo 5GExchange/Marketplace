@@ -1,0 +1,101 @@
+<div class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" ng-click="close(false)" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title"><i class="fa fa-edit"></i> Catalogue item edition: #[[ EditCatalogueCtrl.item.id ]]</h4>
+            </div>
+            <div class="modal-body">
+				<div class="box-header">
+                	<h6 class="box-title">Basic Info</h6>
+                </div>
+                <div class="box-body">
+					<div class="row"> 
+						<div class="form-group col-md-12">
+                        	<label>Name</label>
+                            <input class="form-control" type="text" ng-model="EditCatalogueCtrl.item.name">
+                        </div>
+                        <div class="form-group col-md-12">
+                        	<label>Description</label>
+                            <textarea class="form-control" rows="2" ng-model="EditCatalogueCtrl.item.description"></textarea>
+                        </div>
+                        <div class="form-group col-md-4 col-sm-6">
+                            <label>Domain Id</label>
+                            <input class="form-control" type="text" ng-model="EditCatalogueCtrl.item.domainId" disabled>
+                        </div>
+                        <div class="form-group col-md-4 col-sm-6">
+                            <label>Type</label>
+                            <input class="form-control" type="text" ng-model="EditCatalogueCtrl.item.productType" disabled>
+                        </div>
+                        <div class="form-group col-md-4 col-sm-6">
+                            <label>Provider</label>
+                            <input class="form-control" type="text" ng-model="EditCatalogueCtrl.item.provider" disabled>
+                        </div>
+					</div>
+				</div>
+				<div class="box-header">
+                	<h6 class="box-title">SLA</h6>
+                </div>
+                <div class="box-body">
+					<div class="row"> 
+                        <div class="form-group col-md-12">
+                            <label>SLA</label>
+                            <input class="form-control" type="text" ng-model="EditCatalogueCtrl.item.sla">
+                        </div>
+					</div>
+				</div>
+				<div class="box-header">
+                	<h6 class="box-title">Pricing</h6>
+                </div>
+                <div class="box-body">
+					<div class="row"> 
+                        <div class="form-group col-md-3 col-sm-6">
+                            <label>Currency</label>
+                            <input class="form-control" type="text" ng-model="EditCatalogueCtrl.item.currency" disabled>
+                        </div>
+                        <div class="form-group col-md-3 col-sm-6">
+                            <label>Price per period</label>
+                            <input class="form-control" type="text" ng-model="EditCatalogueCtrl.item.price_per_period">
+                        </div>
+                        <div class="form-group col-md-3 col-sm-6">
+                            <label>Setup price</label>
+                            <input class="form-control" type="text" ng-model="EditCatalogueCtrl.item.price_setup">
+                        </div>
+                        <div class="form-group col-md-3 col-sm-6">
+                            <label>Period</label>
+                            <input class="form-control" type="text" ng-model="EditCatalogueCtrl.item.period">
+                        </div>
+                    </div>
+	
+				</div>
+				<div class="box-header">
+                	<h6 class="box-title">Sharing preferences</h6>
+                </div>
+                <div class="box-body">
+            		<div class="table-responsive" id="no-more-tables">
+                		<table class="table table-hover table-striped">
+                    		<tbody>
+                    		<tr>
+                        		<th>#Domain</th>
+                                <th class="box-tools pull-right">Select</th>
+                    		</tr>
+                        	<tr ng-repeat="domain in EditCatalogueCtrl.item.sharedWith">
+                        		<td data-title="ID">#[[domain.domainId]]</td>
+                                <td data-title="Action">
+                                	<div class="box-tools pull-right">
+                                    	<checkbox ng-model="domain.share"></checkbox>
+                                    </div>
+                                </td>
+                            </tr>
+                          	</tbody>
+                        </table>
+                    </div>
+				</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary pull-right" ng-click="EditCatalogueCtrl.saveItem(EditCatalogueCtrl.item)" data-dismiss="modal">Save</button>
+                <button type="button" ng-click="EditCatalogueCtrl.closeModal()" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

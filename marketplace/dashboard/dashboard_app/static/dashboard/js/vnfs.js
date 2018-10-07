@@ -4,14 +4,27 @@ angular.module('dashboard').controller('VNFListCtrl', ['Restangular', '$scope', 
 
 
 function VNFCreateCtrl(Restangular, $scope, $rootScope, $state, ModalService, alertService) {
+    
+    $scope.provider_id=0;
+
+    $scope.updateProvider = function(provider){
+        $scope.provider_id=provider;
+        console.log('Provider: ', provider);
+        if (provider == 1000)
+            $scope.vnfd.ImageType = 'docker';
+        else
+            $scope.vnfd.ImageType = 'openstack';
+    };
 
     $scope.vnf_types = [
         {code: "vTC", desc: "Traffic Classification"},
-        {code: "vSBC", desc: "Session Border Controller"},
-        {code: "vTU", desc: "Transcoder Unit"},
-        {code: "vHG", desc: "Home Gateway"},
-        {code: "vSA", desc: "Security Appliance"},
-        {code: "vPXAAS", desc: "Proxy"}
+        //{code: "vSBC", desc: "Session Border Controller"},
+        //{code: "vTU", desc: "Transcoder Unit"},
+        //{code: "vHG", desc: "Home Gateway"},
+        //{code: "vSA", desc: "Security Appliance"},
+        {code: "vPXAAS", desc: "Proxy"},
+        {code: "Robot", desc: "Robot VNF Group"},
+        {code: "vCDN", desc: "Content Delivery Network"}
     ];
 
     $scope.specific_monitoring_parameters = glob_vnf_metrics;
@@ -47,9 +60,7 @@ function VNFCreateCtrl(Restangular, $scope, $rootScope, $state, ModalService, al
     $scope.available_bandwidths = [
         "10Mbps",
         "100Mbps",
-        "1Gbps",
-        "10Gbps",
-        "Unlimited"
+        "1Gbps"
     ];
 
     $scope.billing_model_types = [
@@ -65,7 +76,9 @@ function VNFCreateCtrl(Restangular, $scope, $rootScope, $state, ModalService, al
     $scope.connection_link_types = [
         {type: 'E-LINE', description: 'Point-2-Point (E-LINE)'},
         {type: 'E-TREE', description: 'Point-2-Multipoint (E-TREE)'},
-        {type: 'E-LAN', description: 'Lan (E-LAN)'}
+        {type: 'E-LAN', description: 'Lan (E-LAN)'},
+        {type: 'INTERNET', description: 'INTERNET'},
+        {type: 'VPN', description: 'VPN Enhanced'}
     ];
 
     $scope.available_periods = [
@@ -76,6 +89,14 @@ function VNFCreateCtrl(Restangular, $scope, $rootScope, $state, ModalService, al
     ];
 
     $scope.generic_monitoring_parameters = [
+        {metric: "mem_used", desc: "Memory consumed", unit: 'Bytes'},
+        {metric: "mem_percent", desc: "Memory consumed", unit: '%'},
+        {metric: "cpu_percent", desc: "CPU", unit: '%'},
+        {metric: "tx_bytes", desc: "Bytes transmitted", unit: 'Bytes'},
+        {metric: "RTT", desc: "Rountrip time (ms)", unit: 'Bytes'},
+        {metric: "Throughput (kbps)", desc: "Throughput", unit: 'Bytes'},
+        {metric: "rx_bytes", desc: "Bytes received", unit: 'Bytes'}
+/*
         {metric: "cpuidle", desc: "CPU Idle", unit: '%'},
         {metric: "cpu_util", desc: "CPU Utilization", unit: '%'},
         {metric: "fsfree", desc: "Free Storage", unit: 'GB'},
@@ -91,6 +112,7 @@ function VNFCreateCtrl(Restangular, $scope, $rootScope, $state, ModalService, al
         {metric: "processes_sleeping", desc: "Sleeping Processes", unit: 'INT'},
         {metric: "processes_stopped", desc: "Stopped Processes", unit: 'INT'},
         {metric: "processes_zombie", desc: "Zombie Processes", unit: 'INT'}
+*/
     ];
 
     $scope.lifecycle_events_drivers = [
@@ -130,6 +152,24 @@ function VNFCreateCtrl(Restangular, $scope, $rootScope, $state, ModalService, al
     };
     $scope.loadImages();
 
+    $scope.vduControllerstateChanged = function (f, v) {
+
+        angular.forEach($scope.flavors, function (flavor, flavor_key) {
+
+            if (f == flavor) {
+
+                angular.forEach(flavor.data.vdu, function (flavor_vdu, vdu_key) {
+                    if (v == flavor_vdu && v.controller) {
+
+                    } else {
+                        flavor_vdu.controller = false;
+                    }
+                });
+            }
+        });
+
+    };
+
     // end of definitions
     $scope.loading_create_vnfd = false;
     $scope.vnfd = {};
@@ -138,7 +178,7 @@ function VNFCreateCtrl(Restangular, $scope, $rootScope, $state, ModalService, al
      * VNFD
      */
 
-    $scope.vnfd.release = 'T-NOVA'; //@ remove this...
+    $scope.vnfd.release = '5GEx'; //@ remove this...
     $scope.vnfd.name = '';
     $scope.vnfd.description = '';
     $scope.vnfd.descriptor_version = ''; //VNFD version
@@ -217,7 +257,8 @@ function VNFCreateCtrl(Restangular, $scope, $rootScope, $state, ModalService, al
             },
             monitoring_parameters: $scope.generic_monitoring_parameters,
             monitoring_parameters_specific: _.clone(specific_params),
-            networking_resources: "", // @REMOVE
+            networking_resources: "", // Ports list for Docker
+            variables: "VARIABLE1=value1\nVARIABLE2=value2", // variables list that should be present inside the container
             "scale_in_out": {
                 "minimum": 1,
                 "maximum": 1
@@ -253,7 +294,7 @@ function VNFCreateCtrl(Restangular, $scope, $rootScope, $state, ModalService, al
             connection_points_reference: [],
             vdu_reference: [],
             connection_points: [],
-            bandwidth: "Unlimited",
+            bandwidth: "1Gbps",
             type: {type: 'E-LINE', description: 'Point-2-Point (E-LINE)'}
         });
     };
@@ -320,7 +361,22 @@ function VNFCreateCtrl(Restangular, $scope, $rootScope, $state, ModalService, al
             visible: true,
             data: {
                 vdu: [],
-                virtual_links: [],
+                virtual_links: [{
+                    alias:"data",
+                    connection_points_reference: [],
+                    vdu_reference: [],
+                    connection_points: [],
+                    bandwidth: "1Gbps",
+                    type: {type: 'E-LINE', description: 'Point-2-Point (E-LINE)'},
+                    external_access:true
+                }, {
+                    alias:"management",
+                    connection_points_reference: [],
+                    vdu_reference: [],
+                    connection_points: [],
+                    bandwidth: "1Gbps",
+                    type: {type: 'E-LINE', description: 'Point-2-Point (E-LINE)'}
+                }],
                 assurance_parameters: []
             }
         },
@@ -475,7 +531,7 @@ function VNFCreateCtrl(Restangular, $scope, $rootScope, $state, ModalService, al
                         vdu_reference: vlink.vdu_reference,
                         root_requirement: vlink.bandwidth,
                         leaf_requirement: vlink.bandwidth,
-                        qos: "",
+                        qos: vlink.qos,
                         access: vlink.active, //test_access
                         dhcp: vlink.dhcp,
                         port_security_enabled: vlink.port_security_enabled,
@@ -612,6 +668,31 @@ function VNFCreateCtrl(Restangular, $scope, $rootScope, $state, ModalService, al
     };
 
     $scope.nextStep = function (target_step) {
+
+                    if ($scope.active_step==1){
+
+                        if($scope.vnfd.name.length == 0)
+                        {
+                            alertService.add('danger', "VNF name required.");
+                            return;
+                        }
+
+                        if ($scope.vnfd.version.length == 0) {
+                            alertService.add('danger', "VNF version required.");
+                            return;
+                        }
+
+                        if ($scope.vnfd.descriptor_version.length == 0) {
+                            alertService.add('danger', "VNF descriptor version required.");
+                            return;
+                        }
+
+                        if (!$scope.vnfd.type) {
+                            alertService.add('danger', "VNF type required.");
+                            return;
+                        }
+                    }
+
         if (target_step == target_step && $scope.active_step == target_step - 1) {
             $scope.steps[target_step].enable = true;
             $scope.active_step = target_step;

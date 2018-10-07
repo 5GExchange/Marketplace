@@ -1,0 +1,73 @@
+#Accounting entries:
+
+[ 
+   {
+        "instanceId": "service101",
+        "productId": "testvnf1",
+        "agreementId": "test_vnf_gold_instance101",
+        "relatives": "testns1",
+        "relative_instances": "test_ns_instance101",
+        "productType": "vnf",
+        "flavour": "gold",
+        "location": "ATOS",
+        "providerId": "ATOS",
+        "clientId": "ATOS",
+        "status": "running",
+        "billingModel": "PAYG",
+        "period": "P1M",
+        "priceUnit": "EUR",
+        "periodCost": 10.0,
+        "setupCost": 5.0,
+        "renew": true
+    },
+    {
+        "instanceId": "service102",
+        "productId": "testvnf2",
+        "agreementId": "test_vnf_gold_instance102",
+        "relatives": "testns1",
+        "relative_instances": "test_ns_instance101",
+        "productType": "vnf",
+        "flavour": "gold",
+        "location": "ATOS",
+        "providerId": "ATOS",
+        "clientId": "ATOS",
+        "status": "running",
+        "billingModel": "PAYG",
+        "period": "P1M",
+        "priceUnit": "EUR",
+        "periodCost": 10.0,
+        "setupCost": 5.0,
+        "renew": true
+    },
+    {
+        "instanceId": "test_ns_instance101",
+        "productId": "testns1",
+        "agreementId": "test_ns_gold_instance101",
+        "relatives": "testvnf1, testvnf2",
+        "relative_instances": "service101, service102",
+        "productType": "ns",
+        "flavour": "gold",
+        "location": "ATOS",
+        "providerId": "ATOS",
+        "clientId": "ATOS",
+        "status": "running",
+        "billingModel": "PAYG",
+        "period": "P1M",
+        "priceUnit": "EUR",
+        "periodCost": 10.0,
+        "setupCost": 5.0,
+        "renew": true
+    }
+]
+
+
+#Introducing values in the DB:
+
+curl -i -XPOST 'http://localhost:8086/write?db=fgx' --data-binary 'cpu_load,serviceid=service01,resourceid=resource01 value=0.32 1454055562000000000'
+
+
+#Read values from DB: 
+
+curl -G 'http://localhost:8086/query?pretty=true' --data-urlencode "db=fgx" --data-urlencode "epoch=ns" --data-urlencode "q=SELECT \"value\" FROM \"cpu.percent\" WHERE \"resourceid\"='vCDN_0_99069e9c-3fe5-11e7-ad7d-0242ac120005'"
+
+

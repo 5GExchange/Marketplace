@@ -7,7 +7,7 @@
             <ul class="sidebar">
                 <li class="sidebar-main">
                     <a ng-click="toggleSidebar()">
-                        5GEx Marketplace
+                        5GEx Dashboard
                         <i class="fa fa-bars menu-icon"></i>
                     </a>
                 </li>
@@ -32,11 +32,12 @@
                     <a href="javascript:void(0)" ng-click="$state.go('index.services.list')"
                        ng-class="{active: $state.includes('index.services')}"> <span ng-show="hasRole('Service Provider')">My</span> Services <span class="menu-icon fa fa-cogs"></span></a>
                 </li>
-
+		<!--
                 <li class="sidebar-list" ng-show="hasRole('Function Provider')">
                     <a href="javascript:void(0)" ng-click="$state.go('index.trade-requests')"
                        ng-class="{active: $state.includes('index.trade-requests')}"> Trade Requests <span class="label label-danger" ng-show="getPendingRequests()>0">[[ getPendingRequests() ]]</span> <span class="menu-icon fa fa-exchange"></span></a>
                 </li>
+		-->
 
                 <!--<li class="sidebar-list" ng-show="hasRole('Customer')||hasRole('Service Provider')">                                        -->
                 <!--    <a href="javascript:void(0)" ng-click="$state.go('index.monitoring')"                                                   -->
@@ -46,6 +47,11 @@
                 <li class="sidebar-list" ng-show="hasRole('Customer')||hasRole('Service Provider')">
                     <a href="javascript:void(0)" ng-click="$state.go('index.sla.list')"
                        ng-class="{active: $state.includes('index.sla')}"> SLA <span class="menu-icon fa fa-object-ungroup"></span></a>
+                </li>
+
+                <li class="sidebar-list" ng-show="hasRole('Service Provider')">
+                    <a href="javascript:void(0)" ng-click="$state.go('index.domains')"
+                       ng-class="{active: $state.includes('index.domains')}"> Domains <span class="menu-icon fa fa-object-group"></span></a>
                 </li>
 
                 <li class="sidebar-list" ng-show="hasRole('Customer')">
@@ -83,6 +89,9 @@
             <div class="sidebar-footer">
                 <div class="col-xs-12">
 
+                    <a href="http://www.pasiphae.eu" target="_blank">
+                        Powered by Pasiphae
+                    </a>
                 </div>
             </div>
         </div>

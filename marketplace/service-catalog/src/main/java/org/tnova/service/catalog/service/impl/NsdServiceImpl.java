@@ -106,6 +106,7 @@ public class NsdServiceImpl implements NsdService
     {
         logger.info( "Creating a network service {}", networkService );
         boolean operationSuccess = true;
+        boolean operationMdCSuccess = true;
         boolean success = false;
 
         if( networkServiceRepository.findByName( networkService.getNsd().getName() ).isPresent() )
@@ -122,11 +123,25 @@ public class NsdServiceImpl implements NsdService
                 + " to orchestrator.... !!! " );
             operationSuccess = orchestratorService.createNsdToOrchestrator( new NetworkService( nsd ) );
 
-            if ( !operationSuccess )
+            logger.info( "Publishing network service"
+                + " to MdCatalogue.... !!! " );
+            operationMdCSuccess = orchestratorService.createNsdToMdCatalogue( new NetworkService( nsd ) );
+
+            if ( !operationSuccess || !operationMdCSuccess)
             {
-                logger.error( "An Error occured during publishing network service with id = {} to orchestraror.",
-                     nsd.getId() );
-                throw new NetworkServiceOrchestratorException( "An error occurred during publishing the NSD to orchestrator. " );
+		if ( !operationSuccess )
+		{
+                    logger.error( "An Error occured during publishing network service with id = {} to orchestraror.",
+                        nsd.getId() );
+                    throw new NetworkServiceOrchestratorException( "An error occurred during publishing the NSD to orchestrator. " );
+		}
+		else
+		{
+                    logger.error( "An Error occured during publishing network service with id = {} to MdC.",
+                        nsd.getId() );
+                    throw new NetworkServiceOrchestratorException( "An error occurred during publishing the NSD to MdC. " );
+		
+		}
 
             }
             else

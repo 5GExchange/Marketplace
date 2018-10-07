@@ -1,4 +1,4 @@
-# Accounting Module User Guide #
+# Accounting/Aggregation Module User Guide #
 
 
 
@@ -8,7 +8,8 @@
 	* [Billing module](#Billing)
 	* [Service Selection module](#ServiceSelection)
 	* [Orchestrator](#Orchestrator)
-	* [Dashboard](#Ddashboard)
+	* [Dashboard](#Dashboard)
+	* [Aggregation](#Aggregation)
 * [License](#license)
 
 * Available *accounting.sql* file in the root directory of the project.
@@ -742,6 +743,93 @@ Retrieves the list of all running VNFs the user (service provider) is using.
 
 	curl -H "Accept: application/json" -X GET http://localhost:8000/vnflist/p5/
 
+
+
+#### <a name="Aggregation">Aggregator API</a> ####
+
+
+###GET /localmonitoring/?instanceId={instanceId}&kpi={kpi}&operator={operator}&start={start time in ns}&end={end time in ns}&max_values={max values}###
+
+API endpoint that returns the monitoring information of a time frame of a given KPI that belongs to a given running instance. Only a certain number of values is returned to avoid overload. 
+
+**Parameters:**
+
+* *intanceId*: Id of the instance that corresponds to the running VNF or NS.
+* *kpi*: Name of the KPI we want the monitoring information.
+* *operator*: Operator that will be applied during the aggregation process. Depending on this operator, the partial series will be shrinked in different manner.
+* *start*: Starting date of the monitoring information to retrieve (UNIX timestamp).
+* *end*: Ending date of the monitoring information to retrieve (UNIX timestamp).
+* *max_values*: Maximum number of values to return.
+
+
+
+**Error message*:**
+
+* 400 - Bad Request: When erroneous data is provided in the call
+
+**Request**
+
+	GET /localmonitoring/?instanceId=service102&kpi=cpu_load&operator=MAX&start=1434055171000000000&end=1434055992000000000&max_values=5    HTTP/1.1
+	
+
+
+**Response in JSON**
+
+	HTTP/1.1 200 OK
+	Content-Type: application/json
+	
+	[{...}, {...}, {...}]
+
+
+**Expected fields in the response**
+<kbd>value</kbd>, <kbd>time</kbd>
+
+**Curl example**
+
+        
+	curl -H "Accept: application/json" -X GET "http://172.16.0.20:8000/localmonitoring/?instanceId=service102&kpi=cpu_load&operator=MAX&start=1434055171000000000&end=1434055992000000000&max_values=5"
+
+
+###GET /aggregate/?agreementId={agreementId}&kpi={kpi}&formula={aggregation formula}&start={start time in ns}&end={end time in ns}&max_values={max values}###
+
+API endpoint that gathers and aggregates the monitoring information within a time frame of a given KPI that belongs to a given SLA agreement. Only a certain number of values is returned to avoid overload. 
+
+**Parameters:**
+
+* *agreementId*: Id of the SLA agreement that corresponds to a running VNF or NS.
+* *kpi*: Name of the KPI we want the monitoring information.
+* *Formula*: Aggregation formula.
+* *start*: Starting date of the monitoring information to retrieve (UNIX timestamp).
+* *end*: Ending date of the monitoring information to retrieve (UNIX timestamp).
+* *max_values*: Maximum number of values to return.
+
+
+
+**Error message*:**
+
+* 400 - Bad Request: When erroneous data is provided in the call
+
+**Request**
+
+	GET /aggregate/?agreementId=test_ns_gold_instance101&kpi=cpu_load&formula=AVG(vnf:testvnf1-0@ATOS*cpu_load,%20vnf:testvnf2-0@ATOS*cpu_load)&start=1434055171000000000&end=1434055893000000000&max_values=5  HTTP/1.1
+	
+
+
+**Response in JSON**
+
+	HTTP/1.1 200 OK
+	Content-Type: application/json
+	
+	[{...}, {...}, {...}]
+
+
+**Expected fields in the response**
+<kbd>value</kbd>, <kbd>time</kbd>
+
+**Curl example**
+
+        
+	curl -H "Accept: application/json" -X GET "http://172.16.0.20:8000/aggregate/?agreementId=test_ns_gold_instance101&kpi=cpu_load&formula=AVG(vnf:testvnf1-0@ATOS*cpu_load,%20vnf:testvnf2-0@ATOS*cpu_load)&start=1434055171000000000&end=1434055893000000000&max_values=5"
 
 
 

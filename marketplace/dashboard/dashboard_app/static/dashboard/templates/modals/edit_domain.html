@@ -1,0 +1,35 @@
+<div class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" ng-click="close(false)" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title"><i class="fa fa-edit"></i> Domain edition: #[[ DomainCtrl.domain.domain ]]</h4>
+            </div>
+            <div class="modal-body">
+                <div class="box-header">
+                    <h6 class="box-title">Basic Info</h6>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label>Domain ID</label>
+                            <input class="form-control" type="text" ng-model="DomainCtrl.domain.domain">
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label>Entry point</label>
+                            <input class="form-control" type="text" ng-model="DomainCtrl.domain.entryPoint">
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label>Date created</label>
+                            <input class="form-control" type="text" ng-model="DomainCtrl.domain.dateCreated" disabled>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary pull-right" ng-click="DomainCtrl.saveDomain(DomainCtrl.domain)" data-dismiss="modal">Save</button>
+                <button type="button" ng-click="DomainCtrl.closeModal()" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

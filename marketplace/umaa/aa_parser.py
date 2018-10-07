@@ -1,6 +1,7 @@
 __author__ = "George Alexiou (TEIC)"
 __email__ = "g.alexiou@pasiphae.eu"
 
+import os
 from yaml import load
 
 try:
@@ -56,6 +57,12 @@ def print_groups():
 def get_users():
     stream = file('init_users.yml', 'r')
     data = load(stream, Loader=Loader)
+    domainID='none'
+    if os.environ.get('DOMAIN_ID') is not None:
+        domainID= os.environ.get('DOMAIN_ID')
+    domainSP ={'username': domainID, 'email': domainID+'@5gex.eu', 'company_name': '5gex', 'password': '123456', 'groups': ['Service Provider', 'Function Provider', 'Customer']}
+    data.append(domainSP)
+    #print (data)
     return data
 
 

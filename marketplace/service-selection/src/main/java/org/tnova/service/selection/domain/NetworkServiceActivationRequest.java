@@ -5,13 +5,14 @@ import com.fasterxml.jackson.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
-@JsonInclude( JsonInclude.Include.NON_NULL )
+@JsonInclude( JsonInclude.Include.NON_DEFAULT )
 @JsonPropertyOrder( {
     "ns_id",
     "customer_id",
     "nap_id",
     "flavor_id",
-    "callbackUrl" } )
+    "callbackUrl",
+    "pop_id"} )
 public class NetworkServiceActivationRequest
 {
 
@@ -23,7 +24,8 @@ public class NetworkServiceActivationRequest
     private String napId;
     @JsonProperty( "flavor_id" )
     private String flavorId;
-
+    @JsonProperty( "pop_id" )
+    private int popId;
     @JsonProperty( "callbackUrl" )
     private String callbackUrl;
     @JsonIgnore
@@ -77,6 +79,22 @@ public class NetworkServiceActivationRequest
         this.flavorId = flavorId;
     }
 
+    @JsonProperty( "pop_id" )
+    public int getPopId()
+    {
+        return popId;
+    }
+
+    @JsonProperty( "pop_id" )
+    public void setPopId( int popId )
+    {
+        this.popId = popId;
+    }
+
+    public void setAdditionalProperties( Map<String, Object> additionalProperties )
+    {
+        this.additionalProperties = additionalProperties;
+    }
 
     @JsonProperty( "callbackUrl" )
     public String getCallbackUrl()

@@ -47,6 +47,8 @@ public class DummyMetricsRetriever implements IMetricsRetriever {
 	@Override
 	public List<IMonitoringMetric> getMetrics(String serviceId, String serviceScope,
 			final String variable, Date begin, final Date end, int maxResults) {
+		logger.debug("RESPONDIENDO DUMMY METRICS RETRIEVER ----------------------------");
+		logger.debug("DUMMY: AGgreement: " + serviceId + ", Scope: " + serviceScope +" variable: "+ variable + ", start: "+ begin +", end: "+ end + ", Max values: ", maxResults);
 
                 DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
                 DateFormat hourFormat = new SimpleDateFormat("HH:mm:ss");

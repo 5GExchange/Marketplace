@@ -1,6 +1,8 @@
 #FROM nodesource/node:trusty
 FROM nodesource/trusty:0.12.0
 MAINTAINER George Alexiou (TEIC)
+ARG GIT_REVISION=unknown
+LABEL git-revision=$GIT_REVISION    
 
 ENV PYTHONUNBUFFERED 1
 ENV DEBIAN_FRONTEND noninteractive

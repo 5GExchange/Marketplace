@@ -34,6 +34,7 @@ curl -X POST -H "Content-type: multipart/form-data" -H "MD5SUM: 1276481102f218c9
 
 sed -i "s/^ip=.*$/ip=$MARKETPLACE_HOST/" marketplace-cli.conf
 
+echo "Uploading VNFDs..."+$@
 for JSON in $@; do
     echo "Uploading VNF `basename $JSON`..."
     python marketplace-cli.py --upload vnfd $JSON

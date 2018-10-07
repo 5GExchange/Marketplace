@@ -9,7 +9,7 @@
                     <ul class="nav nav-pills nav-justified thumbnail">
                         <li ng-class="{'active': active_step==1, 'disabled': !steps[1].enable}"><a href="javascript:void(0)" ng-click="gotoStep(1)">
                             <h4 class="list-group-item-heading"><i class="fa fa-cubes"></i> Step 1</h4>
-                            <p class="list-group-item-text">VNF Selection</p>
+                            <p class="list-group-item-text">NS Components</p>
                         </a></li>
                         <li ng-class="{'active': active_step==2, 'disabled': !steps[2].enable}"><a href="javascript:void(0)" ng-click="gotoStep(2)">
                             <h4 class="list-group-item-heading"><i class="fa fa-info"></i> Step 2</h4>
@@ -23,21 +23,21 @@
                             <h4 class="list-group-item-heading"><i class="fa fa-share-alt"></i> Step 4</h4>
                             <p class="list-group-item-text">Networking</p>
                         </a></li>
+                        <!--<li ng-class="{'active': active_step==5, 'disabled': !steps[5].enable}"><a href="javascript:void(0)" ng-click="gotoStep(5)">-->
+                        <!--    <h4 class="list-group-item-heading"><i class="fa fa-arrows-alt"></i> Step 5</h4>-->
+                        <!--    <p class="list-group-item-text">Forwarding Graph</p>-->
+                        <!--</a></li>-->
                         <li ng-class="{'active': active_step==5, 'disabled': !steps[5].enable}"><a href="javascript:void(0)" ng-click="gotoStep(5)">
-                            <h4 class="list-group-item-heading"><i class="fa fa-arrows-alt"></i> Step 5</h4>
-                            <p class="list-group-item-text">Forwarding Graph</p>
-                        </a></li>
-                        <li ng-class="{'active': active_step==6, 'disabled': !steps[6].enable}"><a href="javascript:void(0)" ng-click="gotoStep(6)">
-                            <h4 class="list-group-item-heading"><i class="fa fa-refresh"></i> Step 6</h4>
+                            <h4 class="list-group-item-heading"><i class="fa fa-refresh"></i> Step 5</h4>
                             <p class="list-group-item-text">Lifecycle Events</p>
                         </a></li>
-                        <li ng-class="{'active': active_step==7, 'disabled': !steps[7].enable}"><a href="javascript:void(0)" ng-click="gotoStep(7)">
-                            <h4 class="list-group-item-heading"><i class="fa fa-object-ungroup"></i> Step 7</h4>
+                        <li ng-class="{'active': active_step==6, 'disabled': !steps[6].enable}"><a href="javascript:void(0)" ng-click="gotoStep(6)">
+                            <h4 class="list-group-item-heading"><i class="fa fa-object-ungroup"></i> Step 6</h4>
                             <p class="list-group-item-text">Assurance Parameters</p>
                         </a></li>
-                        <li ng-class="{'active': active_step==8, 'disabled': !steps[8].enable}"><a href="javascript:void(0)" ng-click="gotoStep(8)">
-                            <h4 class="list-group-item-heading"><i class="fa fa-money"></i> Step 8</h4>
-                            <p class="list-group-item-text">Billing</p>
+                        <li ng-class="{'active': active_step==7, 'disabled': !steps[7].enable}"><a href="javascript:void(0)" ng-click="gotoStep(7)">
+                            <h4 class="list-group-item-heading"><i class="fa fa-money"></i> Step 7</h4>
+                            <p class="list-group-item-text">Pricing</p>
                         </a></li>
                     </ul>
                 </div>
@@ -47,22 +47,22 @@
                     <div class="col-md-12 box thumbnail">
                         <div class="box-header">
                             <i class="fa fa-cubes"></i>
-                            <h3 class="box-title">1. VNF Selection</h3>
+                            <h3 class="box-title">1. NS components selection</h3>
                         </div>
                         <div class="box-body">
 
                             <div class="row">
                                 <h5><i class="fa fa-filter"></i> Filters</h5>
                                 <div class="col-md-12" >
-                                    <label >VNF Type</label>
+                                    <label >Origin domain</label>
                                     <ui-select class="form-group" ng-model="selected_vnf_filter_type" ng-disabled="disabled" on-select="updateFilteredVNFs($model)">
-                                        <ui-select-match placeholder="">[[$select.selected.desc]]</ui-select-match>
-                                        <ui-select-choices repeat="filter_type.code as filter_type in vnf_filter_types">
-                                            <span ng-bind-html="filter_type.desc"></span>
+                                        <ui-select-match placeholder="">[[$select.selected.domain]]</ui-select-match>
+                                        <ui-select-choices repeat="filter_type.domain as filter_type in domainList">
+                                            Domain <span ng-bind-html="filter_type.domain"></span>
                                         </ui-select-choices>
                                     </ui-select>
                                 </div>
-                                <div class="col-md-12" >
+				<div class="col-md-12" >
                                     <label>Price Range</label>
                                     <div range-slider min="0" max="300" model-min="selected_price_range.min" model-max="selected_price_range.max" show-values="true" attach-handle-values="true" on-handle-up="updateFilteredVNFs()"></div>
                                 </div>
@@ -72,37 +72,40 @@
                                 <table class="table table-hover table-striped">
                                     <tbody>
                                     <tr>
+                                        <!--
                                         <th>Trade</th>
+                                        -->
                                         <th>Name</th>
                                         <th style="max-width: 300px;">Description</th>
                                         <th>Provider</th>
                                         <th>Price</th>
                                         <th>Available SLAs</th>
-                                        <th class="box-tools pull-right">Selected VNFs</th>
+                        		<th>Type</th>
+                                        <th class="box-tools pull-right">Select</th>
                                     </tr>
                                     <tr ng-repeat="vnf in filtered_vnfs">
+                                        <!--
                                         <td data-title="Trade Options" >
                                             <span>
                                                 <checkbox ng-disabled="selected_vnf_filter_type=='ALL' || !vnf.trade" large ng-model="selected_vnfs_trade[vnf.id]"></checkbox>
                                                 <button ng-disabled="selected_vnf_filter_type=='ALL' || !vnf.trade" class="btn btn-default btn-sm" ng-click="showTrade(vnf.id)"><i class="fa fa-exchange"></i> Trade</button>
                                             </span>
                                         </td>
+                                        -->
                                         <td data-title="Name">[[vnf.name]]</td>
                                         <td data-title="Description" style="max-width: 300px;">[[vnf.description]]</td>
-                                        <td data-title="Provider">[[vnf.provider]]</td>
-                                        <td data-title="Price">
-                                            <span> &euro;[[vnf.billing_model.price.max_per_period]] </span>
+                                        <td data-title="Provider">[[vnf.provider]]@Domain[[vnf.domainId]]</td>
+                                        <td data-title="Price" style="max-width: 100px;">
+                                            <span> <small>Model: [[vnf.billing_model]]</small> </span>
+						<br>
+                                            <span> [[vnf.price_per_period]][[vnf.currency]]<small> ([[vnf.period]])</small></span>
                                             <span> + </span>
-                                            <span> &euro;[[vnf.billing_model.price.setup]] <small>Setup</small></span>
-                                            <div ng-show="trades[vnf.id]">
-                                                Trading Status: <span class="label label-[[ trades[vnf.id].status ]] ">[[ trades[vnf.id].status ]]</span>
-                                                <div ng-show="trades[vnf.id].status=='accepted'">
-                                                    <strong>New Price: &euro;[[ trades[vnf.id].price ]] + &euro;[[ trades[vnf.id].setup_price ]] <small>Setup</small></strong>
-                                                </div>
-                                            </div>
+                                            <span> [[vnf.price_setup]][[vnf.currency]] <small>Setup</small></span>
+
                                         </td>
 
                                         <td data-title="Available SLAs">
+                                            <!--
                                             <span ng-repeat="flavor in vnf.deployment_flavours" class="label label-[[flavor.flavour_key]]" uib-popover-template="dynamicPopover.templateUrl" popover-title="[[flavor.flavour_key | uppercase]] Flavor Info" popover-trigger="mouseenter">
                                                 [[flavor.flavour_key]] &euro;[[ getDeploymentCost(vnf,flavor.flavour_key) ]]/hour
                                                 <script type="text/ng-template" id="myPopoverTemplate.html">
@@ -114,7 +117,10 @@
                                                     </div>
                                                 </script>
                                             </span>
+                                            -->
+                                            <span> [[vnf.sla]] </span>
                                         </td>
+                        		<td data-title="type">[[vnf.productType | uppercase]]</td>
 
                                         <td data-title="Action">
                                             <div class="box-tools pull-right">
@@ -142,11 +148,11 @@
 
                             <div class="row">
                                 <div class="form-group col-md-12">
-                                    <label>NSD Name</label>
+                                    <label>NSD Name*</label>
                                     <input class="form-control" type="text" ng-model="nsd.name" ng-init="nsd.name=''">
                                 </div>
                                 <div class="form-group col-md-12">
-                                    <label>NSD Description</label>
+                                    <label>NSD Description*</label>
                                     <textarea class="form-control" rows="3" ng-model="nsd.description" ng-init="nsd.description=''"></textarea>
                                 </div>
                                 <div class="form-group col-md-4 col-sm-6">
@@ -204,7 +210,7 @@
 
                                                 <div class="form-group col-md-12 col-sm-12">
                                                     <label>SLA Name <small>(SLA Key)</small></label>
-                                                    <input class="form-control" type="text" ng-model="flavor.flavor_key">
+                                                    <input class="form-control" type="text" ng-model="flavor.flavor_key" ng-init="flavor.flavor_key='basic'">
                                                 </div>
 
                                              </div>
@@ -220,9 +226,10 @@
                                                         <div ng-repeat="vnf in flavor.constituent_vnf">
 
                                                             <ui-select class="form-group col-md-5" ng-model="vnf.vnf_reference">
-                                                                <ui-select-match placeholder="">[[$select.selected.name]] #[[$select.selected.id]]</ui-select-match>
-                                                                <ui-select-choices repeat="vnf_select.id as vnf_select in getSelectedVNFs()">
-                                                                    <span ng-bind-html="vnf_select.name"></span> #<small ng-bind-html="vnf_select.id"></small>
+                                                                <ui-select-match placeholder="">[[$select.selected.name]] #[[$select.selected.id]]@[[$select.selected.domain]]</ui-select-match>
+                                                                <ui-select-choices repeat="vnf_select.reference as vnf_select in getSelectedVNFs">
+                                                                    <span ng-bind-html="vnf_select.name"></span> #<small ng-bind-html="vnf_select.id"></small>@<small ng-bind-html="vnf_select.domain"></small>
+
                                                                 </ui-select-choices>
                                                             </ui-select>
 
@@ -354,7 +361,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div class="form-group col-md-12 col-sm-12">
+                                                    <div class="form-group col-md-6 col-sm6">
                                                         <label>Bandwidth</label>
                                                         <ui-select class="form-group" ng-model="virtual_link.bandwidth" ng-disabled="disabled">
                                                             <ui-select-match placeholder="">[[$select.selected]]</ui-select-match>
@@ -362,6 +369,11 @@
                                                                 <span ng-bind-html="link_bw"></span>
                                                             </ui-select-choices>
                                                         </ui-select>
+                                                    </div>
+
+                                                    <div class="form-group col-md-6 col-sm6">
+                                                        <label>Delay req.</label>
+                                                        <input class="form-control" type="text" ng-model="virtual_link.delay">
                                                     </div>
 
                                                     <div class="form-group col-md-6 col-sm6">
@@ -379,6 +391,16 @@
                                                         <input class="form-control" type="text" ng-model="virtual_link.net_segment">
                                                     </div>
 
+                                                    <div class="form-group col-md-12 col-sm-12">
+                                                        <label>Flowclass<small>(optional)</small></label>
+                                                        <input class="form-control" type="text" ng-model="virtual_link.flowclass">
+                                                    </div>
+
+						     <div class="form-group col-md-12 col-sm-12">
+						        <label>Link parameters <small>(optional)</small></label>
+							<input class="form-control" type="text" ng-model="virtual_link.qos_params">
+						     </div>
+
                                                 </div>
                                             </div>
                                         </div>
@@ -394,7 +416,7 @@
                     </div>
                 </div>
             </div>
-            <div class="row" id="vnf-step-5" ng-show="active_step==5">
+            <!--<div class="row" id="vnf-step-5" ng-show="active_step==5">
                 <div class="col-xs-12">
                     <div class="col-md-12 box thumbnail">
                         <div class="box-header">
@@ -403,17 +425,18 @@
                         </div>
                         <div class="box-body">
 
+
                         </div>
                         <button id="activate-step-5" class="btn btn-primary pull-right" ng-click="nextStep(6)">Next <i class="fa fa-caret-right"></i></button>
                     </div>
                 </div>
-            </div>
-            <div class="row" id="vnf-step-6" ng-show="active_step==6">
+            </div>-->
+            <div class="row" id="vnf-step-5" ng-show="active_step==5">
                 <div class="col-xs-12">
                     <div class="col-md-12 box thumbnail">
                         <div class="box-header">
                             <i class="fa fa-arrows-alt"></i>
-                            <h3 class="box-title">6. Lifecycle Events</h3>
+                            <h3 class="box-title">5. Lifecycle Events</h3>
                         </div>
                         <div class="box-body">
                           <div class="row">
@@ -459,16 +482,16 @@
                                 </div>
                             </div>
                         </div>
-                        <button id="activate-step-6" class="btn btn-primary pull-right" ng-click="nextStep(7)">Next <i class="fa fa-caret-right"></i></button>
+                        <button id="activate-step-5" class="btn btn-primary pull-right" ng-click="nextStep(6)">Next <i class="fa fa-caret-right"></i></button>
                     </div>
                 </div>
             </div>
-            <div class="row" id="vnf-step-7" ng-show="active_step==7">
+            <div class="row" id="vnf-step-6" ng-show="active_step==6">
                 <div class="col-xs-12">
                     <div class="col-md-12 box thumbnail">
                         <div class="box-header">
                             <i class="fa fa-object-ungroup"></i>
-                            <h3 class="box-title">7. Assurance Parameters</h3>
+                            <h3 class="box-title">6. Assurance Parameters</h3>
                         </div>
                         <div class="box-body">
 
@@ -540,9 +563,9 @@
                                                             <div class="row" ng-repeat="cvnf in assurance_param.constituent_vnfs">
 
                                                                 <ui-select class="form-group col-md-10" ng-model="cvnf.vnf">
-                                                                    <ui-select-match placeholder="">[[$select.selected.name]] (VNF:[[$select.selected.id]].[[assurance_param.monitoring_parameter.metric]])</ui-select-match>
-                                                                    <ui-select-choices repeat="vnf_select in getSelectedVNFs()">
-                                                                        <span ng-bind-html="vnf_select.name"></span> (<small>VNF:</small><small ng-bind-html="vnf_select.id"></small><small>.</small><small ng-bind-html="assurance_param.monitoring_parameter.metric"></small>)
+                                                                    <ui-select-match placeholder="">[[$select.selected.name]] ([[$select.selected.productType]]:[[$select.selected.id]]*[[assurance_param.monitoring_parameter.metric]])</ui-select-match>
+                                                                    <ui-select-choices repeat="vnf_select in getAllVNFs(flavor)">
+                                                                        <span ng-bind-html="vnf_select.name"></span> (<small ng-bind-html="vnf_select.productType"></small>:<small ng-bind-html="vnf_select.id"></small><small>*</small><small ng-bind-html="assurance_param.monitoring_parameter.metric"></small>)
                                                                     </ui-select-choices>
                                                                 </ui-select>
 
@@ -575,7 +598,8 @@
                                                         </div>
 
                                                         <div class="form-group col-md-12 col-sm-12">
-                                                            <label>Penalty Type</label>
+                                                            <label>Action Type</label>
+                                                            <!--<label>Penalty Type</label>-->
                                                             <ui-select class="form-group" ng-model="assurance_param.penalty.type" ng-disabled="disabled">
                                                                 <ui-select-match placeholder="">[[$select.selected.type]]</ui-select-match>
                                                                 <ui-select-choices repeat="penalty.type as penalty in penalty_types">
@@ -617,16 +641,16 @@
 
 
                         </div>
-                        <button id="activate-step-7" class="btn btn-primary pull-right" ng-click="nextStep(8)">Next <i class="fa fa-caret-right"></i></button>
+                        <button id="activate-step-6" class="btn btn-primary pull-right" ng-click="nextStep(7)">Next <i class="fa fa-caret-right"></i></button>
                     </div>
                 </div>
             </div>
-            <div class="row" id="vnf-step-8" ng-show="active_step==8">
+            <div class="row" id="vnf-step-7" ng-show="active_step==7">
                 <div class="col-xs-12">
                     <div class="col-md-12 box thumbnail">
                         <div class="box-header">
                             <i class="fa fa-money"></i>
-                            <h3 class="box-title">8. Billing</h3>
+                            <h3 class="box-title">7. Pricing</h3>
                         </div>
                         <div class="box-body">
                           <div class="row">
@@ -642,7 +666,7 @@
 
                                             <div class="row">
 
-                                               <h5>Billing Info</h5>
+                                               <h5>Pricing Info</h5>
                                                 <hr>
                                                 <div class="form-group col-md-12 col-sm-12">
                                                     <label>Billing Model</label>
@@ -698,7 +722,7 @@
                                 </div>
                             </div>
                         </div>
-                        <button id="activate-step-8" class="btn btn-primary pull-right" ng-click="createNSD()">Create <i class="fa fa-plus"></i></button>
+                        <button id="activate-step-7" class="btn btn-primary pull-right" ng-click="createNSD()">Create <i class="fa fa-plus"></i></button>
                     </div>
                 </div>
             </div>
@@ -709,3 +733,4 @@
         </div>
     </div>
 </div>
+

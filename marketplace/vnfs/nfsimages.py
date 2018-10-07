@@ -1,7 +1,9 @@
 import nfsapi
-import re
+import re, os
 import json
 
+
+DOCKER_HOST = os.environ["DOCKER_HOST"] 
 
 class NFSImageError(Exception):
     def __init__(self, error):
@@ -78,7 +80,7 @@ def get_images(provider_id=None):
             print "DOCKER_RESP: " + json.dumps(docker_list)
             for repo in docker_list:
                 for tag in repo['tags'] or []:
-                    images_list.append(NFSImage(1000, repo['name'], tag, repo['name']+':'+tag, []))
+                    images_list.append(NFSImage(1000, repo['name'], tag, DOCKER_HOST + '/' + repo['name']+':'+tag, []))
             return images_list
 
 

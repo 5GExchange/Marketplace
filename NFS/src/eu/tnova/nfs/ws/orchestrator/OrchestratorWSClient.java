@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,19 +37,34 @@ public class OrchestratorWSClient implements Serializable {
 
 	final static long CONNECTION_TIMEOUT = 15000L;
 	final static long RECEIVE_TIMEOUT = 10000L;
+	private final static int GET_LIST_SIZE = 100;
 	
 	OrchestratorWSClient () {
 	}
 
 	public Map<Integer,VNFDescriptor> get_VNFDescriptors(String userToken) 
 			throws ValidationException, Exception {
-		return get_VNFDescriptors(null, userToken);
-	}	
-	public Map<Integer,VNFDescriptor> get_VNFDescriptors(WebClient webClient, String userToken) 
-			throws ValidationException, Exception {
 		Map<Integer,VNFDescriptor> vnfds = new HashMap<Integer,VNFDescriptor>();
-		if ( webClient==null ) 
-			webClient = getClient(userToken);
+		int offset=0;
+		while (true) {
+			ArrayList<String> vnfdsList = get_VNFDescriptors(userToken, offset, GET_LIST_SIZE);
+			for ( String jsonVNFD : vnfdsList ) {
+				VNFDescriptor vnfd = new VNFDescriptor(jsonVNFD);
+				vnfd.setVnfCreated(true);
+				vnfds.put(vnfd.getId(), vnfd);
+			}
+			if ( vnfdsList.isEmpty() || vnfdsList.size() < GET_LIST_SIZE )
+				break;
+			offset += GET_LIST_SIZE;
+		}
+		return vnfds;
+	}
+	private ArrayList<String> get_VNFDescriptors(String userToken, int offset, int size) 
+			throws ValidationException, Exception  {
+		log.debug("get_VNFDescriptors : offset={}, limit={}",offset, size); 
+		ArrayList<String> vnfds = new ArrayList<String>();
+		WebClient webClient = getClient(userToken)
+				.query("offset", offset).query("limit", size);
 		if ( webClient==null )
 			return vnfds;
 		try {
@@ -59,18 +75,18 @@ public class OrchestratorWSClient implements Serializable {
 			String responseString = IOUtils.toString(responseStream, StandardCharsets.UTF_8);
 			Gson gson = new Gson();
 			JsonElement[] jsonVnfs = gson.fromJson(responseString, JsonElement[].class);
-			log.debug("Found {} vnf on Orchestrator",jsonVnfs.length); 
+			log.debug("Found {} vnf on Orchestrator from offest {}",jsonVnfs.length,offset); 			
 			for ( JsonElement jsonVnf : jsonVnfs ) {
 				JsonElement jsonVnfd = jsonVnf.getAsJsonObject().get("vnfd");
-				VNFDescriptor vnfd = new VNFDescriptor( gson.toJson(jsonVnfd) );
-				vnfd.setVnfCreated(true);
-				vnfds.put(vnfd.getId(), vnfd);
+				vnfds.add( gson.toJson(jsonVnfd) );
 			}
+			offset += 100;
 		} catch (ServerWebApplicationException e) {
 			throw new Exception("Wrong Response ("+e.getStatus()+") : "+e.getMessage());
 		} finally { 
 		   webClient.reset(); 
 		} 
+		log.debug("get_VNFDescriptors : found {} vnf\n{}", vnfds.size(), vnfds); 
 		return vnfds;
 	}
 	

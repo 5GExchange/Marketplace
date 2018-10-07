@@ -40,7 +40,7 @@
                         <div class="box-body">
                             <div class="row">
                                 <div class="form-group col-md-12">
-                                    <label>VNF Name</label>
+                                    <label>VNF Name</label> <span class="red-star">*</span>
                                     <input class="form-control" type="text" ng-model="vnfd.name" ng-init="vnfd.name=''">
                                 </div>
                                 <div class="form-group col-md-12">
@@ -48,20 +48,20 @@
                                     <textarea class="form-control" rows="3" ng-model="vnfd.description" ng-init="vnfd.description=''"></textarea>
                                 </div>
                                 <div class="form-group col-md-4 col-sm-6">
-                                    <label>VNF Version</label>
+                                    <label>VNF Version</label> <span class="red-star">*</span>
                                     <input class="form-control" type="text" ng-model="vnfd.version" ng-init="vnfd.version='1'">
                                 </div>
                                 <div class="form-group col-md-4 col-sm-6">
-                                    <label>VNF Descriptor Version</label>
+                                    <label>VNF Descriptor Version</label> <span class="red-star">*</span>
                                     <input class="form-control" type="text" ng-model="vnfd.descriptor_version" ng-init="vnfd.descriptor_version='1'">
                                 </div>
                                 <div class="form-group col-md-4 col-sm-12">
-                                    <label>VNF Type</label>
+                                    <label>VNF Type</label> <span class="red-star">*</span>
                                     <ui-select class="form-group" ng-model="vnfd.type" ng-disabled="disabled">
                                         <ui-select-match placeholder="">[[$select.selected.desc]]</ui-select-match>
                                         <ui-select-choices repeat="vnf_type.code as vnf_type in vnf_types">
                                             <span ng-bind-html="vnf_type.desc"></span>
-                                            <small ng-bind-html="vnf_type.code"></small>
+                                            (<small ng-bind-html="vnf_type.code"></small>)
                                         </ui-select-choices>
                                     </ui-select>
                                 </div>
@@ -144,10 +144,10 @@
                                     <div class="box-body flavor-container" ng-show="flavor.visible">
 
                                    <div class="box-header">
-                                        <h4>Virtual Machines (VDUs)</h4>
+                                        <h4>Virtual Machines / Containers (VDUs)</h4>
 
                                         <div class="box-tools pull-right">
-                                            <button class="btn btn-primary" ng-click="addVDU(flavor_name)"><i class="fa fa-plus"></i> Add Virtual Machine (VDU)
+                                            <button class="btn btn-primary" ng-click="addVDU(flavor_name)"><i class="fa fa-plus"></i> Add Virtual Machine / Container (VDU)
                                             </button>
                                         </div>
                                     </div>
@@ -156,7 +156,7 @@
                                         <div class="col-md-12 col-sm-12" ng-repeat="vdu in flavor.data.vdu">
                                             <div class="box box-primary">
                                                 <div class="box-header with-border">
-                                                    <h3 class="box-title">Virtual Machine [[ getIndexVDU(flavor_name, vdu) + 1 ]] (vdu[[ getIndexVDU(flavor_name, vdu) ]])</h3>
+                                                    <h3 class="box-title">Virtual Machine / Container [[ getIndexVDU(flavor_name, vdu) + 1 ]] (vdu[[ getIndexVDU(flavor_name, vdu) ]])</h3>
 
                                                     <div class="box-tools pull-right">
                                                         <button class="btn btn-box-tool" ng-click="removeVDU(flavor_name, vdu)"><i class="fa fa-times"></i></button>
@@ -176,7 +176,7 @@
 
                                                         <div class="form-group col-md-2 col-sm-2">
                                                              <label>Controller</label><br>
-                                                             <checkbox larger ng-model="vdu.controller"></checkbox>
+                                                             <checkbox larger ng-model="vdu.controller" ng-change="vduControllerstateChanged(flavor, vdu)"></checkbox>
                                                         </div>
 
                                                         <h5>Resources</h5>
@@ -208,6 +208,7 @@
                                                                 </ui-select>
                                                             </div>
                                                         </div>
+
 
                                                         <div class="form-group col-md-12 col-sm-12">
                                                             <div class="form-group col-md-4 col-sm-4">
@@ -244,7 +245,18 @@
                                                                 <input class="form-control" type="number" ng-model="vdu.scale_in_out.maximum">
                                                             </div>
                                                         </div>
+                                                        <h5 ng-if="image.provider_id == 1000">Custom config</h5>
+                                                        <hr>
 
+                                                        <div class="form-group col-md-10 col-sm-10" ng-if="provider_id == 1000">
+                                                            <label>Ports List</label>
+                                                            <input class="form-control" type="text" placeholder="Comma separated ports list" ng-model="vdu.networking_resources">
+                                                        </div>
+
+                                                        <div class="form-group col-md-10 col-sm-10" ng-if="provider_id == 1000">
+                                                            <label>Variables</label>
+                                                            <textarea class="form-control" rows="5" ng-model="vdu.variables"></textarea>
+                                                        </div>
                                                     </div>
 
 
@@ -258,7 +270,7 @@
                                                         </div>
                                                         <div class="form-group col-md-12 col-sm-12"> 
                                                             <label class="control-label">Select Image File</label>
-                                                            <ui-select class="form-group" ng-model="vdu.vm_image" ng-disabled="disabled">
+                                                            <ui-select class="form-group" ng-model="vdu.vm_image" ng-disabled="disabled" ng-change="updateProvider($select.selected.provider_id)">
                                                                 <ui-select-match placeholder="Select an image">[[$select.selected.image_name]]:[[$select.selected.version]]</ui-select-match>
                                                                 <ui-select-choices repeat="image.url as image in available_images">
                                                                     <div ng-bind-html="image.image_name"></div>
@@ -274,7 +286,7 @@
 
                                                         <div class="form-group col-md-12 col-sm-12">
                                                             <label>Monitoring Parameters (Generic)</label>
-                                                            <ui-select multiple class="form-group" ng-model="vdu.monitoring_parameters" ng-disabled="disabled">
+                                                            <ui-select multiple class="form-group" ng-model="vdu.monitoring_parameters" ng-disabled="false">
                                                                 <ui-select-match placeholder="">[[$item.desc]] ([[$item.unit]])</ui-select-match>
                                                                 <ui-select-choices repeat="mon_par in generic_monitoring_parameters">
                                                                     <span ng-bind-html="mon_par.desc"></span> (<span ng-bind-html="mon_par.unit"></span>)
@@ -319,12 +331,14 @@
 
                                                     </div>
 
-                                                    <div class="form-group col-md-12">
-                                                            <label>Bootstrap Script</label>
-                                                            <textarea class="form-control" rows="8" ng-model="vdu.bootstrap_script"></textarea>
+                                                    <div class="form-group col-md-12"  ng-switch on="provider_id">
+                                                            <label ng-switch-when=1000>Entry point script path</label>
+                                                            <label ng-switch-default>Bootstrap Script</label>
+                                                            <input class="form-control" type="text" ng-model="vdu.bootstrap_script" ng-switch-when=1000 placeholder="/sbin/entrypoint.sh">
+                                                            <textarea class="form-control" rows="8" ng-model="vdu.bootstrap_script" ng-switch-default></textarea>
                                                     </div>
-                                                    <div class="form-group col-md-12">
-                                                            <label>WC_Notify</label>
+                                                    <div class="form-group col-md-12" ng-if="provider_id != 1000">
+                                                            <label>Cloud Init Support</label>
                                                             <checkbox larger ng-model="vdu.wc_notify" ng-init="vdu.wc_notify=true"></checkbox>
                                                     </div>
 
@@ -431,6 +445,11 @@
                                                         <input class="form-control" type="text" ng-model="virtual_link.net_segment">
                                                     </div>
 
+                                                    <div class="form-group col-md-12 col-sm-12">
+                                                        <label>QoS <small>(optional)</small></label>
+                                                        <input class="form-control" type="text" ng-model="virtual_link.qos">
+                                                    </div>
+
                                                 </div>
                                             </div>
                                         </div>
@@ -482,7 +501,7 @@
 
                                                         <div class="form-group col-md-12 col-sm-12">
                                                             <label>Driver</label>
-                                                            <ui-select class="form-group" ng-model="flavor.data.lifecycle_events.driver" ng-disabled="disabled" on-select="onDriverSelectCallback($item, $model, flavor)">
+                                                            <ui-select class="form-group" ng-model="flavor.data.lifecycle_events.driver" ng-disabled="disabled" on-select="onDriverSelectCallback($item, $model, flavor)" ng-init="flavor.data.lifecycle_events.driver={driver: 'http', authentication_type: 'HTTPBasicAuth'}">
                                                                 <ui-select-match placeholder="">[[$select.selected.driver | uppercase]] <small>[[$select.selected.authentication_type]]</small></ui-select-match>
                                                                 <ui-select-choices repeat="driver in lifecycle_events_drivers">
                                                                     <span ng-bind-html="driver.driver | uppercase"></span>
@@ -807,12 +826,14 @@
                                     </ui-select>
                                 </div>
 
+				<!--
                                 <div class="form-group col-md-4 col-sm-12" ng-show="vnfd.trade==true">
-                                    <label>Min Price/Period</label>
+				     <label>Min <span ng-show="vnfd.billing_model.model=='PAYG'">Price/Period</span><span ng-show="vnfd.billing_model.model=='RS'">% of the revenues</span></label>
                                     <input class="form-control" type="number" ng-model="vnfd.billing_model.price.min_per_period">
                                 </div>
+				-->
                                 <div class="form-group col-md-4 col-sm-12">
-                                    <label><span ng-show="vnfd.trade==true">Max</span> Price/Period</label>
+				    <label><span ng-show="vnfd.billing_model.model=='PAYG'">Price/Period</span><span ng-show="vnfd.billing_model.model=='RS'">% of the revenues</span></label>
                                     <input class="form-control" type="number" ng-model="vnfd.billing_model.price.max_per_period">
                                 </div>
 
@@ -820,11 +841,12 @@
                                     <label>Setup Price</label>
                                     <input class="form-control" type="number" ng-model="vnfd.billing_model.price.setup">
                                 </div>
-
+				<!--
                                 <div class="form-group col-md-12 col-sm-12">
                                     <label>Trade Enable</label><br>
                                     <checkbox larger ng-model="vnfd.trade"></checkbox>
                                 </div>
+				-->
 
                             </div>
 

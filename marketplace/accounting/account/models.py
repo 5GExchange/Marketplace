@@ -39,6 +39,8 @@ class Account(models.Model):
    productType = models.CharField(max_length=10, default=None, blank=False) 
    #Name of the flavour of the product
    flavour = models.CharField(max_length=256, default=None, blank=False) 
+   #Physical location of the VNF after the deployment
+   location = models.CharField(max_length=256, default=None, blank=True) 
    #Date of the service start
    #startDate = models.DateTimeField(default=datetime.utcnow(), blank=False) 
    startDate = models.DateTimeField(auto_now_add=True)

@@ -1,4 +1,6 @@
 FROM openjdk:8-jre
+ARG GIT_REVISION=unknown
+LABEL git-revision=$GIT_REVISION    
 
 WORKDIR /opt/sla
 COPY sla-service/target/dependency/jetty-runner.jar ./

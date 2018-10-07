@@ -26,46 +26,22 @@ from rest_framework.response import Response
 from rest_framework import status
 #import eventChecker2
 from slaclient import restclient 
-import json, time
+import json, time, requests, re
+import urllib2
 
-#for the RabbitMQ handling
-import pika
+
+#for the influxDB and the time series
+from influxdb import InfluxDBClient
+import pandas as pd
+import numpy as np
 
 # Create your views here.
 
+DB_TIME_UNIT=settings.DB_TIME_UNIT
 
-AMQP_EXCHANGE_NAME = 'tnova'
-AMQP_ROUTING_KEY = 'event'
-AMQP_USER = 'acc_module'
-AMQP_PASSWORD = 'j7yunyBQ'
-AMQP_HOST = 'messaging.demonstrator.info'
-PORT = 5672
-AMQP_VHOST = '/'
-SLA_URL = "http://localhost:9040"
+#SLA_URL = "http://localhost:9040"
 #SLA_URL = "http://sla:9040"
 
-class send_msg(object):
-    '''
-    This is the rabbitmq sender module.
-    Arguments: exchange name, routing key, and message payload.
-    '''
-
-    def __init__(self, msg):
-        connection = None
-        try:
-            credentials = pika.PlainCredentials(settings.AMQP_USER, settings.AMQP_PASSWORD)
-            connection = pika.BlockingConnection(pika.ConnectionParameters(host=settings.AMQP_HOST, port=PORT, virtual_host=settings.AMQP_VHOST, credentials=credentials))
-            channel = connection.channel()
-            channel.basic_publish(exchange=settings.AMQP_EXCHANGE_NAME, routing_key=settings.AMQP_ROUTING_KEY, body=msg)
-            print " [x] Sent: %s" % msg
-        except KeyboardInterrupt:
-            print "  [CTRL+C] Interrupt received. Will terminate the sending process now."
-        except Exception:
-            print "  [ERROR] Caught exception in the code"
-            raise ReferenceError
-        finally:
-            if connection != None:
-                connection.close()
 
 class createAgreement(object):
     '''
@@ -124,24 +100,22 @@ class AccountList(APIView):
                     print ("  [ERROR] There is an entry already with that InstanceId (%s) for the same ProductType (%s)" % (request.data['instanceId'], request.data['productType']))
                     return Response(status=status.HTTP_400_BAD_REQUEST)
                 serializer.save()
-                #prepares and sends the message to the queue
-                message = {}
-                message['instanceId'] = request.data['instanceId']
-                message['event'] = request.data['status']
-                #send_msg(str(message))
-                send_msg(json.dumps(serializer.data))
 
                 #create the SLA agreements in the SLA module based on the already created templates
-                templateId = request.data['productType']+request.data['productId']+request.data['flavour']
+                #templateId = request.data['productType']+request.data['productId']+request.data['flavour']
+                templateId = request.data['productType']+ "@"+settings.DOMAIN_ID+"*"+request.data['productId']+request.data['flavour']
                 createAgreement(templateId, request.data['clientId'], request.data['agreementId'])
                 #start the Agreement enforcement
                 f = restclient.Factory(settings.SLA_URL)
                 a_enforcement = f.enforcements()
                 a_enforcement.start(request.data['agreementId']) 
+		#triggers IMoS monitoring sending the NS instance ID
+		if (request.data['agreementId'].startswith('ns')):
+                    print ("  [INFO] Contacting IMoS with url: %s" % (settings.IMOS_URL + request.data['instanceId']))
+		    requests.put(str(settings.IMOS_URL) + str(request.data['instanceId']), data=None)
+                    #Virtual Links agreements:
 
-            except ReferenceError:
-                print "  [ERROR] Could not update the messages queue"
-                return Response(status=status.HTTP_408_REQUEST_TIMEOUT)
+
             except Exception as e:
                 print "DEBUG: ", e
                 return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -472,7 +446,7 @@ class updateServiceStatus(APIView):
             #print "VNF2: ", json.dumps(vnfserializer.data)
             vnfSerializer.save()
             #Send the message to the billing module
-            send_msg(json.dumps(vnfSerializer.data))
+            #send_msg(json.dumps(vnfSerializer.data))
             #start/stop the SLA enforcement accordingly
             if (new_status == settings.STATUS_RUNNING):
                 self.startEnforcement(vnf.agreementId)
@@ -506,7 +480,7 @@ class updateServiceStatus(APIView):
                     message['instanceId'] = ns_instance
                     message['event'] = new_status
                     #print (json.dumps(serializer.data))
-                    send_msg(json.dumps(serializer.data))
+                    #send_msg(json.dumps(serializer.data))
 
                     #update the status of the participant VNFs
                     vnf_list = service.relative_instances.replace(" ", "").split(",")
@@ -545,8 +519,7 @@ class updateVNFStatus(APIView):
                         message = {}
                         message['instanceId'] = vnf_instance
                         message['event'] = new_status
-                        #send_msg(str(message))
-                        send_msg(json.dumps(serializer.data))
+                        #send_msg(json.dumps(serializer.data))
                         return Response(serializer.data, status=status.HTTP_201_CREATED)
                 except ReferenceError:
                     print "  [ERROR] Could not update the messages queue"
@@ -577,6 +550,7 @@ class SLAInformation(APIView):
         """
         clientId = self.request.query_params.get('clientId', None)
         kind = self.request.query_params.get('kind', None)
+        print "params: ", clientId, kind
         if (clientId is not None) and (kind is not None):
             f = restclient.Factory(settings.SLA_URL)
             queryset = Account.objects.filter(productType=kind, clientId=clientId)
@@ -657,9 +631,279 @@ class DashboardVNFList(APIView):
 
 
 
+
 '''
-class MonitorViewSet(viewsets.ModelViewSet):
-   #eventChecker2.eventDetection()
-   queryset = Monitor.objects.all()
-   serializer_class = MonitorSerializer
+================ AGGREGATOR API ====================
 '''
+
+class getLocalMonitoring(object):
+    """
+    Returns the local monitoring information for a given kpi shrinking it to a 'max_values' number of values. How this shrinking process is done depends on the aggregation operator that will be applied later on to the aggregated monitoring.
+    """
+    def __new__(cls, instanceId, kpi, operator, start, end, max_values):
+        '''
+        ---
+        Arguments:
+            -instanceId:
+            -kpi:
+            -operator: Operator that will be applied on the global aggregation
+            -start: start time (UNIX timestamp)
+            -end: end time (UNIX timestamp)
+            -max_values: maximum number of values to be returned in the sample
+        Examle:  
+            getLocalMonitoring('service01', 'cpu_load', 'MAX', 1254055562000000000, 1454055562000000000, 5)
+        Response example:(JSON object)                    
+            [
+                {
+                    "value": 0.76,
+                    "time": 1.434055892e+18
+                }
+            ]
+        '''
+        if end <= start:
+            print "   [DEBUG] Aggregator: Time frame not valid"
+            return []#, status.HTTP_400_BAD_REQUEST
+
+        client = InfluxDBClient('influxdb', settings.INFLUXDB_PORT, settings.INFLUXDB_USR, settings.INFLUXDB_PASS, settings.INFLUXDB_NAME)
+        #client = InfluxDBClient('localhost', 8086, 'root', 'root', 'fgx')
+        if start and end:
+            query = "SELECT time,value FROM " + kpi + " WHERE resourceid='" + instanceId + "' and time>=" + str(start) + DB_TIME_UNIT + " and time <=" + str(end) + DB_TIME_UNIT
+        else:
+            query = "SELECT time,value FROM " + kpi + " WHERE resourceid='" + instanceId + "'"
+        # Execute the query getting the timestamp values in nano seconds
+        df = pd.DataFrame(client.query(query, epoch=DB_TIME_UNIT, chunked=True, chunk_size=10000).get_points())
+        try:
+            print "  [INFO] Retrieving data from database (%s) from %s to %s - Sample size: %d" % (settings.INFLUXDB_NAME, start, end, df['time'].count())
+            # typecast the parameters
+            start = long(start)
+            end = long(end)
+            max_values = long(max_values)
+            interval = (end - start)/max_values
+            # group the series by intervals of size 'interval' and apply the operator to that interval
+            if operator == 'MAX':
+                df = df.groupby(pd.cut(df['time'], np.arange(start-1, end+interval+1, interval))).max()
+            elif operator == 'MIN':
+                df = df.groupby(pd.cut(df['time'], np.arange(start-1, end+interval+1, interval))).min()
+            elif operator == 'SUM':
+                df = df.groupby(pd.cut(df['time'], np.arange(start-1, end+interval+1, interval))).mean()
+            elif operator == 'AVG':
+                df = df.groupby(pd.cut(df['time'], np.arange(start-1, end+interval+1, interval))).mean()
+            else:
+                print "  [ERROR] Operator (%s) not valid" % (operator)
+                return []#, status.HTTP_400_BAD_REQUEST
+            # Keep only the rows with at least 1 non-nan values:
+            df = df.dropna(thresh=1)
+            # dataframe with timestamp and value of the requested kpi converted to json format
+            print "     [INFO] Sample size after shrinkage: %d" % (df['time'].count())
+        except KeyError as e:
+            print "   [DEBUG] Aggregator: No Values were found in the DB for these parameters: [instanceId: %s, KPI: %s, Start: %s, End: %s ] - %s" % (instanceId, kpi, str(start), str(end), e)
+            return []#, status.HTTP_200_OK
+        except Exception as e:
+            print "   [DEBUG] Aggregator: ", e
+            return []#, status.HTTP_400_BAD_REQUEST
+        result = json.loads(df.to_json(orient='records'))
+        return result#, status.HTTP_200_OK
+
+
+
+class LocalMonitoring(APIView):
+    """
+    API endpoint that returns the monitoring information of a time frame of a given KPI that belongs to a given running instance. Only a certain number of values is returned to avoid overload.
+    Format: 
+        /localmonitoring/?instanceId=<instanceId>&kpi=<kpi>&operator=<operator>&start=<start time in ns>&end=<end time in ns>&max_values=<max values>
+    Example:
+        /localmonitoring/?instanceId=service102&kpi=cpu_load&operator=MAX&start=1434055171000000000&end=1434055992000000000&max_values=5
+    """
+    def get(self, request, format=None):
+        '''
+        Arguments:
+            -instanceId: Id of the instance
+            -kpi: name of the KPI
+            -operator: Operatior that will be applied to the series when shrinking it
+            -start: start time (UNIX timestamp)
+            -end: end time (UNIX timestamp)
+            -max_values: max. number of valuues to be returned
+        Response example:                      
+            [
+                {
+                    "value": 0.76,
+                    "time": 1.434055892e+18
+                }
+            ]
+        '''
+        instanceId = self.request.query_params.get('instanceId', None)
+        kpi = self.request.query_params.get('kpi', None)
+        operator = self.request.query_params.get('operator', None)
+        start = self.request.query_params.get('start', None)
+        end = self.request.query_params.get('end', None)
+        max_values = self.request.query_params.get('max_values', 5)
+        '''
+        print "instance: ", instanceId
+        print "kpi: ", kpi
+        print "start: ", start
+        print "end: ", end
+        print "values: ", max_values
+        '''
+        #monitoring, status = getLocalMonitoring (instanceId, kpi, operator, start, end, max_values)
+        monitoring = getLocalMonitoring (instanceId, kpi, operator, start, end, max_values)
+
+        return Response(monitoring)#, status)
+
+
+
+class AggregateMonitoring(APIView):
+    """
+    API endpoint that gathers and aggregates the monitoring information within a time frame of a given KPI that belongs to a given SLA agreement. Only a certain number of values is returned to avoid overload. 
+    Format:
+        /aggregate/?agreementId=<agreement ID>&kpi=<KPI>&formula=<aggregation formula>&start=<start time>&end=<end time>&max_values=<max values>
+    Example:
+        /aggregate/?agreementId=test_ns_gold_instance101&kpi=cpu_load&formula=AVG(vnf:testvnf1-0@ATOS*cpu_load,%20vnf:testvnf2-0@ATOS*cpu_load)&start=1434055171000000000&end=1434055893000000000&max_values=5
+    """
+    def getDomainByLocation (self, location):
+        #Get domain the location (domainId)
+        domain = requests.get(str(settings.MDC_URL) + '/domain/' + str(location) + '/')
+        return domain.json()
+    
+    def parse_formula (self, formula):
+        # formula sample: "MAX(vnf:9-0@01*cpu,vnf:8-0@01*cpu,vnf:8-1@01*cpu)"
+        # remove all spaces in the formula
+        formula = formula.replace(" ", "")
+        # take what is between '(',')' and split it groups by ','
+        items = formula.partition('(')[-1].rpartition(')')[0].split(',') # ['vnf:9-0@01*cpu', 'vnf:8-0@01*cpu', 'vnf:8-1@01*cpu']
+        # get operator
+        operator = formula.split('(')[0]
+        return operator, items
+        
+    def get_vnf_entry (self, parent, vnf):
+        # vnf:9-0@01*cpu
+        delimiters = ":", "-", "@", "*"
+        try:
+            regexPattern = '|'.join(map(re.escape, delimiters))
+            element = re.split(regexPattern, str(vnf))
+            # ['vnf', '9', '0', '01', 'cpu'] --> [item type, item ID, instance number within the NS, domain ID, kpi]
+            vnf_entry = Account.objects.filter(productId=element[1], relative_instances=parent.instanceId)
+        except Exception as e:
+            print "     [ERROR] Malformed formula - %s" % (e)
+            return None, None
+        # if more than one entry is retrieved, pick the one indicated by the instance number within the NS: element[2]
+        return vnf_entry[int(element[2])], element[4]
+
+    def get_vnf_metric_monitoring (self, instanceId, kpi, location, operator, start, end, max_values):
+        #domain = self.getDomainByLocation(location)
+        if True: #domain['localDomain']:
+            #print "     [INFO] The KPI (%s) belongs to the local domain: %s" % (kpi, domain['domain'])
+            print "     [INFO] The KPI (%s) belongs to the local domain" % (kpi)
+            monitoring = getLocalMonitoring (instanceId, kpi, operator, start, end, max_values)
+        else:
+            # retrieve the monitoring from the remote domain
+            print "     [INFO] The KPI (%s) belongs to a remote domain: %s" % (kpi, domain['domain'])
+            monitoring = requests.get(str(domain['entryPoint']) + settings.AGGREGATOR_EP + '/localmonitoring/?instanceId='+ instanceId +'&kpi='+ kpi +'&operator='+ operator +'&start=' + str(start) + '&end='+ str(end) +'&max_values='+ str(max_values))
+        #print monitoring
+        return monitoring
+
+    def aggregate (self, series, operator, start, end, max_values):
+        #print "series: ", series 
+        print "  [INFO] Aggregating: Initial sample size: %d" % (len(series))
+        df = pd.read_json(json.dumps(series))
+        start = long(start)
+        end = long(end)
+        interval = long(end - start)/long(max_values)
+        # group the series by intervals of size 'interval' and apply the operator to that interval
+        if operator == 'MAX':
+            df = df.groupby(pd.cut(df['time'], np.arange(start-1, end+interval+1, interval))).max()
+        elif operator == 'MIN':
+            print "min"
+            df = df.groupby(pd.cut(df['time'], np.arange(start-1, end+interval+1, interval))).min()
+        elif operator == 'SUM':
+            df = df.groupby(pd.cut(df['time'], np.arange(start-1, end+interval+1, interval))).sum()
+        elif operator == 'AVG':
+            df = df.groupby(pd.cut(df['time'], np.arange(start-1, end+interval+1, interval))).mean()
+        else:
+            print "  [ERROR] Operator (%s) not valid" % (operator)
+            return status.HTTP_400_BAD_REQUEST
+        #Keep only the rows with at least 1 non-nan values:
+        df = df.dropna(thresh=1) 
+        print "  [INFO] Aggregating: Final sample size: %d" % (df['time'].count())
+        return json.loads(df.to_json(orient='records'))
+
+
+    def get(self, request, format=None):
+        """
+        ---
+        parameters:
+            - name: agreementId
+              description: ID of the SLA agreement
+              kind: string
+            - name: kpi
+              description: name of the KPI to aggregate the monitoring information
+              type: string
+            - name: formula
+              description: Formula to aggregate/calcuate the KPI monitoring
+              kind: string
+            - name: start
+              description: start timestamp
+              kind: string
+            - name: end
+              description: End timestamp
+              kind: string
+            - name: max_values
+              description: Maximum number of values to be returned
+              kind: int
+        serializer: None
+        """
+
+        #variable initialisation
+        agreementId = self.request.query_params.get('agreementId', None)
+        kpi = self.request.query_params.get('kpi', None)
+        formula = self.request.query_params.get('formula', None)
+        start = self.request.query_params.get('start', None)
+        end = self.request.query_params.get('end', None)
+        max_values = self.request.query_params.get('max_values', 5)
+
+        formula = urllib2.unquote(formula).decode('utf8')
+
+        print "instancia: ", agreementId 
+        print "kpi: ", kpi
+        print "formula: ", formula
+        print "start: ", start
+        print "end: ", end
+        print "values: ", max_values
+        if (agreementId is not None) and (kpi is not None) and (formula is not None):
+            # Retrieve the accounting entry with the AgreementId
+            item = Account.objects.filter(agreementId=agreementId)
+            if item:
+                item = item[0]
+            else:
+            	print "  [ERROR] SLA agreement (%s) doesn't exist" % (agreementId)
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+            if item.productType == settings.VNF:
+            	print "  [INFO] VNF KPI monitoring request"
+            	return Response(self.get_vnf_metric_monitoring (item.instanceId, kpi, item.location, 'AVG', start, end, max_values))
+            else:
+            	print "  [INFO] NS KPI monitoring request"
+                operator, vnfs_list = self.parse_formula(formula)
+            	print "  [INFO] Found %d components in the formula. Applying operator: %s" % (len(vnfs_list), operator)
+                series = []
+                try:
+                    for vnf in vnfs_list:
+            	        print "  [INFO] Analysing component: %s" % (vnf)
+                        vnf_entry, vnf_kpi = self.get_vnf_entry (item, vnf)
+                        if not vnf_entry:
+                            raise ValueError('Entry not found in the Accounting DB')
+                        partial_monitoring = self.get_vnf_metric_monitoring (vnf_entry.instanceId, vnf_kpi, vnf_entry.location, operator, start, end, max_values)
+                        # merge the partial monitoring with the previous ones
+                        series = series + partial_monitoring
+                    # apply aggregation formula (operator)
+                    result = self.aggregate(series, operator, start, end, max_values)
+                except ValueError as e:
+                    print "     [ERROR] Due to a malformed formula:  %s" % (e)
+                    return Response(None, status.HTTP_400_BAD_REQUEST)
+                except Exception as e:
+                    print "     [ERROR] %s" % (e)
+                    return Response(None, status.HTTP_400_BAD_REQUEST)
+                print "   [INFO] Results: ", json.dumps(result)
+                return Response(result)
+
+        print "  [ERROR] Parameters 'agreementId', 'kpi' and 'formula' cannot be Null"
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+

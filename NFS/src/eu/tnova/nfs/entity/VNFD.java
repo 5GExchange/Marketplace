@@ -5,9 +5,11 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+//import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 import javax.persistence.FetchType;
+//import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -31,6 +33,10 @@ public class VNFD implements Serializable {
 	@SerializedName("provider")	@XmlElement(name="provider")
 	private String provider;
 	@SerializedName("description") @XmlElement(name="description")
+//	@Lob
+//	@Column(columnDefinition = "TEXT", length = 65535)	
+//	@Size(max = 65535, message="Description lenght over 65553 bytes")
+	@Size(max = 256, message="Description length must be less than 256 char")
 	private String description;
 	@SerializedName("type")	@XmlElement(name="type")
 	private String type;

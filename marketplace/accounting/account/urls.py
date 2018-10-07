@@ -39,6 +39,9 @@ urlpatterns = [
     url(r'^servicelist/(?P<userId>\w+)/', views.DashboardServiceList.as_view()),
     url(r'^vnflist/(?P<userId>\w+)/', views.DashboardVNFList.as_view()),
     #url(r'^vnfstatus/(?P<ns_instance>\w+)/(?P<new_status>\w+)/', views.updateVNFStatus.as_view()),
+    #aggregator
+    url(r'^aggregate/$', views.AggregateMonitoring.as_view()),
+    url(r'^localmonitoring/$', views.LocalMonitoring.as_view()),
 
 ]
 

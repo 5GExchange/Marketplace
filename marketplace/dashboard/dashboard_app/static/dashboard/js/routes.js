@@ -82,6 +82,14 @@ angular.module('dashboard').config(function ($stateProvider, $urlRouterProvider)
             url: "/new",
             templateUrl: "/static/dashboard/templates/index.services.new.html"
         })
+        .state('index.services.exchange', {
+            url: "/exchange",
+            templateUrl: "/static/dashboard/templates/index.services.exchange.html"
+        })
+        .state('index.domains', {
+            url: "/domains",
+            templateUrl: "/static/dashboard/templates/index.domains.html"
+        })
         .state('index.buy-service', {
             url: "/buy-service",
             templateUrl: "/static/dashboard/templates/index.buy-service.html"

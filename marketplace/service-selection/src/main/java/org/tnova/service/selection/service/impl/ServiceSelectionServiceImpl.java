@@ -32,6 +32,8 @@ import java.util.*;
 public class ServiceSelectionServiceImpl
     implements ServiceSelectionService
 {
+    String domainId = System.getenv("DOMAIN_ID");
+
     private static final Logger logger = org.slf4j.LoggerFactory.getLogger( ServiceSelectionServiceImpl.class );
 
     @Value( "${tnova.orchestrator.host}" )
@@ -82,15 +84,6 @@ public class ServiceSelectionServiceImpl
         List<AccountingRequest> accountingRequests = new ArrayList<>();
         List<AccountingRequest> updatedRequests = new ArrayList<>();
 
-        logger.info( "Creating an accounting request for network service with id={}", networkService.getNsd().getId() );
-
-        AccountingRequest serviceReq = Helpers
-            .createAccountingRequestForNetworkService( networkService, reply, request );
-
-        if( serviceReq != null )
-        {
-            accountingRequests.add( serviceReq );
-        }
 
         for( Vnfr vnfr : reply.getVnfrs() )
         {
@@ -100,7 +93,8 @@ public class ServiceSelectionServiceImpl
                 networkService,
                 reply,
                 request, vnfDescriptor,
-                vnfr.getVnfrId()
+                vnfr.getVnfrId(),
+                vnfr.getPopId()
             );
 
             accountingRequests.add( vnfRequest );
@@ -116,6 +110,15 @@ public class ServiceSelectionServiceImpl
 //            }
         }
 
+        logger.info( "Creating an accounting request for network service with id={}", networkService.getNsd().getId() );
+
+        AccountingRequest serviceReq = Helpers
+            .createAccountingRequestForNetworkService( networkService, reply, request );
+
+        if( serviceReq != null )
+        {
+            accountingRequests.add( serviceReq );
+        }
 
         logger.info( "{} found in order to be published in Accounting module. Start sending.... ",
             accountingRequests.size() );
@@ -216,26 +219,34 @@ public class ServiceSelectionServiceImpl
                 if( sla.getId().equalsIgnoreCase( request.getFlavorId() ) )
                 {
                     requestToOrch.setAdditionalProperty( "flavour", sla.getSlaKey() );
+                    request.setAdditionalProperty( "flavour", sla.getSlaKey() );
                 }
                 else
                 {
                     logger.info( "Sla Key not found for flavorID = {}. Using flavorId...", request.getFlavorId() );
                     requestToOrch.setAdditionalProperty( "flavour", request.getFlavorId() );
+                    request.setAdditionalProperty( "flavour", request.getFlavorId() );
                 }
             }
 
             requestToOrch.setCallbackUrl( mrkPlaceCallbackUri );
+            request.setCallbackUrl( mrkPlaceCallbackUri );
             requestToOrch.setCustomerId( request.getCustomerId() );
             requestToOrch.setNsId( request.getNsId() );
             requestToOrch.setNapId( request.getNapId() );
+            requestToOrch.setPopId( request.getPopId() );
 
             ObjectMapper mapper = new ObjectMapper();
-            HttpEntity<String> entity = new HttpEntity<>( mapper.writeValueAsString( requestToOrch ), headers );
+            //HttpEntity<String> entity = new HttpEntity<>( mapper.writeValueAsString( requestToOrch ), headers );
+            HttpEntity<String> entity = new HttpEntity<>( mapper.writeValueAsString( request ), headers );
+	    logger.info("REQEUIST TO ORCHE: {}", entity);
+            //HttpEntity<String> entity2 = new HttpEntity<>( mapper.writeValueAsString( requestToOrch ), headers );
+	    //logger.info("REQEUIST TO ORCHE_constructued: {}", entity2);
 
             ResponseEntity<String> responseEntity = restTemplate
                 .exchange( orchestratorUrl_instantiation, HttpMethod.POST, entity, String.class );
 
-            if( responseEntity.getStatusCode() == HttpStatus.OK )
+            if( responseEntity.getStatusCode() == HttpStatus.OK || responseEntity.getStatusCode() == HttpStatus.CREATED )
             {
                 logger.info( "Request send it to orchestrator. Waiting for response" );
                 return "SUCCESS";
@@ -290,6 +301,8 @@ public class ServiceSelectionServiceImpl
         serviceRequest.setInstanceId( reply.getId().toString() );
         serviceRequest.setProductId( networkService.getNsd().getId() );
         serviceRequest.setAgreementId( "ns" + reply.getId().toString() );
+        //serviceRequest.setLocation( "LocalDomain" );
+        serviceRequest.setLocation( domainId );
         List<String> relatives = new ArrayList<>();
 
         for( Vnf vnf : reply.getVnfs() )
@@ -349,6 +362,7 @@ public class ServiceSelectionServiceImpl
 
             vnfRequest.setProviderId( String.valueOf( vnfDescriptor.getProviderId() ) );
             vnfRequest.setClientId( networkService.getNsd().getProviderId() );
+            vnfRequest.setLocation( "we are on it" );
             vnfRequest.setStatus( "RUNNING" );
             vnfRequest.setBillingModel( vnfDescriptor.getBillingModel().getModel() );
             vnfRequest.setPeriodCost( vnfDescriptor.getBillingModel().getPrice().getMaxPerPeriod() );
@@ -489,6 +503,48 @@ public class ServiceSelectionServiceImpl
 
         return instances;
     }
+
+    @Override
+    @SuppressWarnings( "unchecked" )
+    public NetworkServiceInstantiateReply getNsInstanceById( String id )
+    {
+        logger.info( "Retrieve ns instances from orchestrator with id=<{}>", id );
+        RestTemplate restTemplate = new RestTemplate();
+        ObjectMapper mapper = new ObjectMapper();
+        List<NetworkServiceInstantiateReply> instances = new ArrayList<>();
+        NetworkServiceInstantiateReply instance = null;
+
+        if( isOrchestratorModuleEnabled != null && isOrchestratorModuleEnabled.equalsIgnoreCase( "disabled" ) )
+        {
+            logger.info( "No connection to Orchestrator. Empty content http status" );
+            throw new NsInstancesEmptyListException( "No reply from orchestrator, empty ns instance" );
+
+        }
+
+        final ResponseEntity<String> response = restTemplate.getForEntity( orchestratorUrl + "/" + id, String.class );
+
+        if( response != null && response.getStatusCode() == HttpStatus.OK )
+        {
+            logger.info( "Received OK from orchestrator" );
+            try
+            {
+
+                instance = mapper.readValue( response.getBody(), NetworkServiceInstantiateReply.class);
+
+            }
+            catch( Exception ex )
+            {
+                logger.error( "An exception occurred during retrieving ns instances from orchestrator" );
+                logger.error( ex.getMessage() );
+            }
+        }
+//
+//        if( instances.isEmpty() )
+//            throw new NsInstancesEmptyListException();
+
+        return instance;
+    }
+
 
     @Override
     public List<AccountingRequest> getAccountingRequests()

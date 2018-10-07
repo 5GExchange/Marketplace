@@ -4,3 +4,6 @@
 target
 /c:/*
 *.*~
+*.log
+*.log.1
+*.csv

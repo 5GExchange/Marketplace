@@ -114,7 +114,7 @@ public class ServiceSelectionRestController
             }
 
 
-            if ( response.getStatus() != null && response.getStatus().equalsIgnoreCase( "INSTANTIATED" ))
+            if ( response.getStatus() != null && response.getStatus().equalsIgnoreCase( "START" ))
             {
                 logger.info( "NS instantiated successfully with id = {}", response.getId() );
                 success = serviceSelection.publishingToAccountingAsync( networkService, response, request );
@@ -195,6 +195,30 @@ public class ServiceSelectionRestController
         {
             logger.info( "{} network instances found in orchestrator.", nsInstances.size() );
         }
+
+        ObjectMapper mapper = new ObjectMapper();
+        try
+        {
+            mapper.writerWithDefaultPrettyPrinter().writeValueAsString( nsInstances );
+        } catch( Exception ex )
+        {
+            ex.printStackTrace();
+        }
+
+
+        return nsInstances;
+    }
+
+    @RequestMapping( method = RequestMethod.GET, value = "/{id}")
+    public NetworkServiceInstantiateReply getNetworkInstanceById( @PathVariable String id )
+    {
+        logger.info( "Retrieve ns instance from orchestrator with id=<{}>", id );
+        NetworkServiceInstantiateReply nsInstances = serviceSelection.getNsInstanceById( id );
+
+//        if ( nsInstances != null )
+//        {
+//            logger.info( "{} network instances found in orchestrator.", nsInstances.size() );
+//        }
 
         ObjectMapper mapper = new ObjectMapper();
         try

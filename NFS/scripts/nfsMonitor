@@ -49,6 +49,7 @@ MANAGER_PASSWD=nfsmngscrpwd
 TOMCAT_PROC_NAME=Bootstrap
 WAIT_CHECK_TOMCAT_ALIVE=300
 #------ config info
+#NFS_DB_FILE=$VAR_DB_DIR/nfs
 if [ -f $NFS_CONF_FILE ]; then
     source $NFS_CONF_FILE
 fi
@@ -74,7 +75,15 @@ fi
 if [ -z "$TOMCAT_HTTPS_PORT" ]; then
     TOMCAT_HTTPS_PORT=443
 fi
+NFS_LOG_FILE=$TOMCAT_LOG_DIR/nfs.log
+#LOG_LEVEL=notice
+#NFS_STORE_PATH=/usr/local/store
+#TOMCAT_PROTOCOL=https
+#TOMCAT_IP=0.0.0.0
+#TOMCAT_HTTP_PORT=80
+#TOMCAT_HTTPS_PORT=443
 #------ external configuration
+#source $NFS_CONF_FILE
 if [ $TOMCAT_PROTOCOL == "https" ]; then
 	TOMCAT_PORT=$TOMCAT_HTTPS_PORT
 else

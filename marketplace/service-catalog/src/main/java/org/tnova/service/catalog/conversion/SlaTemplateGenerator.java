@@ -27,10 +27,16 @@ import java.util.List;
 
 public class SlaTemplateGenerator
 {
+    //@Value( "${5gex.domainId}" )
+    //private String domainId;
+    
     private static Logger logger = LoggerFactory.getLogger( SlaTemplateGenerator.class );
 
     public static List<SlaTemplate> convertNetorkServiceToSlaTemplate( Nsd networkService )
     {
+        String domainId = System.getenv("DOMAIN_ID");
+
+        
         if( networkService  == null )
         {
             logger.error( "Network Service is null" );
@@ -58,15 +64,26 @@ public class SlaTemplateGenerator
                     new StringBuilder( networkService.getName() )
                         .append( sla.getSlaKey() ).toString() );
 
-                StringBuilder templateId = new StringBuilder( "ns" );
+                StringBuilder templateId = new StringBuilder( "ns@" );
+                templateId.append( domainId );
+                templateId.append ( "*" );
                 templateId.append( networkService.getId() ).append( sla.getSlaKey() );
 
                 logger.info( "Creating sla template with templateId = {}", templateId.toString() );
                 slaTemplate.setTemplateId( templateId.toString() );
 
+                /*
                 slaTemplate.setContext(
                     new Context( null,
                         networkService.getVendor(),
+                        networkService.getName() + networkService.getVersion(),
+                        "AgreementResponder",
+                        templateId.toString()
+                ) );
+                */
+                slaTemplate.setContext(
+                    new Context( null,
+                        domainId,
                         networkService.getName() + networkService.getVersion(),
                         "AgreementResponder",
                         templateId.toString()
@@ -172,7 +189,8 @@ public class SlaTemplateGenerator
             {
                 Variable variable = new Variable();
                 variable.setName( assuranceParameters.getName() );
-                variable.setMetric( "xs:double" );
+                //variable.setMetric( "xs:double" );
+                variable.setMetric( assuranceParameters.getFormula() );
                 variable.setLocation( "/monitor/" + assuranceParameters.getName() );
 
                 variables.add( variable );

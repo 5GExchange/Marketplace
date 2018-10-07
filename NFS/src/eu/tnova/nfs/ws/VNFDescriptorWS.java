@@ -51,9 +51,11 @@ public class VNFDescriptorWS implements VNFDescriptorWSInterface {
 		log.debug("vnfd = {}",vnfd);
 		try {
 			VNFDescriptor vnfDescriptor = service.createVNFDescriptor(vnfd);
+			log.info("Justo antes de enviar al orquestrador");
 			service.sendNotificationToOrchestrator(
 					OrchestratorOperationTypeEnum.CREATE, vnfDescriptor, getAuthToken(headers) );
 			VNFDResponse resp = new VNFDResponse(vnfDescriptor);
+			log.info("procesando la resuestas");
 			String jsonResp = new Gson().toJson(resp);
 			log.debug("{}",jsonResp);
 			Response response = Response.status(Status.CREATED).entity(jsonResp).build();
@@ -92,7 +94,7 @@ public class VNFDescriptorWS implements VNFDescriptorWSInterface {
 		log.info("Get VNF Descriptor : {}",vnfdId);
 		try {
 			String vnfd = service.getVNFDescriptor(vnfdId).getJson();
-			log.debug("{}",vnfd);
+//			log.debug("{}",vnfd);
 			return Response.status(Status.OK).entity(vnfd).build();				
 		} catch (ValidationException e) {
 			log.error(e.getMessage());
@@ -132,8 +134,10 @@ public class VNFDescriptorWS implements VNFDescriptorWSInterface {
 	public Response get_VNFDescriptor_list() {
 		log.info("Get VNF Descriptor list");
 		try {
-			VNFDListResponse resp = new VNFDListResponse(service.getVNFDescriptors());
-			log.debug("{}",resp.getJson());
+			List<VNFDescriptor> vnfds = service.getVNFDescriptors();
+			log.info("Found {} VNF Descriptors", vnfds.size());
+			VNFDListResponse resp = new VNFDListResponse(vnfds);
+//			log.debug("{}",resp.getJson());
 			return Response.status(Status.OK).entity(resp.getJson()).build();
 		} catch (Exception e) {
 			log.error(e.getMessage());

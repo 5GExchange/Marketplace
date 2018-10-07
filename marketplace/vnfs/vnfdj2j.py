@@ -1,16 +1,20 @@
 import json
+import re, os
 import requests
 
+
+DOMAIN_ID=os.environ["DOMAIN_ID"] 
 
 class SlaTemplateEncoder:
     def __init__(self, objFlavour, objVDUs, vnfName, vnfId, vnfType, vnfProvider):
         self.name = vnfName + "_" + str(objFlavour['flavour_key'])
-        self.templateId = "vnf" + str(vnfId) + str(objFlavour['flavour_key'])
+        self.templateId = "vnf@" + str(DOMAIN_ID) + "*" + str(vnfId) + str(objFlavour['flavour_key'])
         self.context = {
             "agreementInitiator": None,
-            "agreementResponder": str(vnfProvider),
+            #"agreementResponder": str(vnfProvider),
+            "agreementResponder": str(DOMAIN_ID),
             "serviceProvider": "AgreementResponder",
-            "templateId": "vnf" + str(vnfId) + str(objFlavour['flavour_key']),
+            "templateId": "vnf@" + str(DOMAIN_ID) + "*" + str(vnfId) + str(objFlavour['flavour_key']),
             "service": vnfType
         }
         self.terms = {
@@ -40,7 +44,8 @@ def getVariables(obj):
     for var in obj['assurance_parameters']:
         item = {}
         item['name'] = var['id']
-        item['metric'] = "xs:double"
+        #item['metric'] = "xs:double"
+        item['metric'] = var['formula']
         item['location'] = "/monitor/" + str(var['id'])
         result.append(item)
     return result

@@ -27,7 +27,7 @@ import java.util.List;
 public class Helpers
 {
     private static final String NETWORK_SERVICE_NAME = "network-service-";
-    private static final String VENDOR = "T-NOVA";
+    //private static final String VENDOR = "T-NOVA";
     private static final String NETWORK_SERVICE_VERSION = "1.0";
 
     public Helpers()

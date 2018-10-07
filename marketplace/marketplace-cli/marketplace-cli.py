@@ -48,6 +48,9 @@ if args.upload == "vnfd":
     if os.path.isfile(VNFD_FILE):
         VNFD_TEMPLATE = open(VNFD_FILE).read()
         vnfd_json = json.loads(VNFD_TEMPLATE)
+        if os.environ.get('DOMAIN_ID') is not None:
+            vnfd_json['provider'] = os.environ.get('DOMAIN_ID')
+            vnfd_json['domain'] = os.environ.get('DOMAIN_ID')
         get = requests.get(_get_call_url('vnfs/'), headers={"Authorization": "JWT " + FP_AUTH_TOKEN, 'Content-Type': 'application/json'})
         vnf_list = json.loads(get.text)
         if _vnf_present(vnf_list, vnfd_json):
@@ -63,6 +66,8 @@ if args.upload == "vnfd":
             exit(1)
         else:
             print "VNFD succesfully uploaded."
+            v = r.json()
+            print "VNFD_ID:%s" % v['id']
     else:
         print "VNFD template not found."
         exit(1)

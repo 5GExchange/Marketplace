@@ -42,7 +42,7 @@ DEBUG = True
 TEMPLATE_DEBUG = True
 
 #ALLOWED_HOSTS = []
-ALLOWED_HOSTS = ['192.168.56.102', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['192.168.56.102', 'localhost', '127.0.0.1', '*']
 
 
 # Application definition
@@ -87,17 +87,28 @@ WSGI_APPLICATION = 'mdcatalogue.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'mdc2',
-        'USER': 'mdcatalogue_usr',
-        'PASSWORD': 'mdcatalogue_usr',
-        #'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
-        'HOST': 'mysql',   # Or an IP Address that your DB is hosted on
-        'PORT': '3306',
+if os.environ.get('DOCKER_ENV') is not None:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'mdc2',
+            'USER': 'mdcatalogue_usr',
+            'PASSWORD': 'mdcatalogue_usr',
+            'HOST': 'mysql',   # Or an IP Address that your DB is hosted on
+            'PORT': '3306',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'mdc2',
+            'USER': 'mdcatalogue_usr',
+            'PASSWORD': 'mdcatalogue_usr',
+            'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
+            'PORT': '3307',
+        }
+    }
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
@@ -124,14 +135,28 @@ CRONJOBS = [
 
 CORS_ORIGIN_ALLOW_ALL = True
 
-
-#SLA_URL = 'http://sla.docker:9040'
-BSC_URL = 'http://10.254.0.17:42050/service/catalog'
-#NFS_VNFD_URL = 'http://10.254.0.17:8080/NFS/vnfds'
-NFS_VNFD_URL = 'http://192.168.56.102:8080/NFS/vnfds'
-#NFS_HOST = '10.254.0.17'
-NFS_HOST = '192.168.56.102'
-NFS_PORT = '8080'
+if os.environ.get('DOCKER_ENV') is not None:
+    BSC_URL = os.environ["BSC_URL"]
+    NFS_VNFD_URL = os.environ["NFS_VNFD_URL"]
+    NFS_HOST = os.environ["NFS_HOST"]
+    NFS_PORT = os.environ["NFS_PORT"]
+    MDC_PORT = os.environ["MDC_PORT"]
+    BSC_EP = os.environ["BSC_EP"]
+    NFS_VNFD_EP = os.environ["NFS_VNFD_EP"]
+    MDC_EP = os.environ["MDC_EP"] 
+    ENTRY_POINT = os.environ["ENTRY_POINT"]
+    DOMAIN_ID = os.environ["DOMAIN_ID"]
+else:
+    BSC_URL = 'http://172.16.0.20:42050/service/catalog'
+    NFS_VNFD_URL = 'http://172.16.0.20:8080/NFS/vnfds'
+    NFS_HOST = '172.16.0.20'
+    NFS_PORT = '8080'
+    MDC_PORT = ':8500'
+    BSC_EP= '/service-catalog/service/catalog'
+    NFS_VNFD_EP= ':8080/NFS/vnfds'
+    MDC_EP= '/mdc/'
+    ENTRY_POINT = 'http://172.16.0.20'
+    DOMAIN_ID = '002'
 
 NFS_USE_HTTPS = False
 
@@ -141,10 +166,6 @@ NFS_USE_HTTPS = False
 #constant to define a service or a VNF
 NETWORK_SERVICE = 'ns'
 VNF = 'vnf'
-
-#Possible status of an instance
-STATUS_RUNNING = 'running'
-STATUS_STOPPED = 'stopped'
 
 
 

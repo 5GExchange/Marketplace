@@ -26,4 +26,6 @@ public interface OrchestratorService
     boolean modifyNsdToOrchestrator( NetworkService networkService );
 
     boolean deleteNsdToOrchestrator( NetworkService networkService );
+
+    boolean createNsdToMdCatalogue( NetworkService networkService );
 }

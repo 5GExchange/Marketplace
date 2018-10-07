@@ -11,6 +11,8 @@
                         <th style="width: 10px">#Instance ID</th>
                         <th>Service Name</th>
                         <th>Status</th>
+                        <th>Created At</th>
+                        <th>Access</th>
                         <th></th>
                     </tr>
                     <tr ng-repeat="service in services">
@@ -18,6 +20,19 @@
                         <td data-title="Name">[[service.name]]</td>
                         <td data-title="Status">
                             <span class="label label-[[service.status | lowercase]]" >[[service.status]]</span>
+                        </td>
+                        <td data-title="Created At">[[service.created_at]]</td>
+                        <td data-title="Access">
+			    <ul>
+                            <li ng-repeat="(vnfr, nets) in service.vnf_addresses">
+				[[vnfr]]
+				<ul>
+                                <li ng-repeat="(net, ip) in nets">
+                                    [[net]]: [[ip]]
+                                </li>
+				</ul>
+                            </li>
+                            </ul>
                         </td>
                         <td data-title="Action">
                             <div class="box-tools pull-right">

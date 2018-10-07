@@ -22,11 +22,16 @@ from mdc import views
 urlpatterns = [
     #Domains
     url(r'^domain/$', views.DomainList.as_view()),
-    url(r'^domain/(?P<pk>[0-9]+)/$', views.DomainDetail.as_view()),
+    url(r'^domain/neighbours/$', views.NeighbourDomainList.as_view()),
+    url(r'^domain/(?P<pk>[\x20-\x7E]+)/$', views.DomainDetail.as_view()),
     #catalogue
     url(r'^mdc/$', views.MdcList.as_view()),
     url(r'^mdc/(?P<pk>[0-9]+)/$', views.MdcDetail.as_view()),
+    url(r'^mdc/delete/(?P<pk>\w+)/', views.MdcDelete.as_view()),
+    url(r'^mdc/sharedwith/(?P<domainX>[\x20-\x7E]+)/$', views.SharedItems.as_view()),
     #Element sharing
+    url(r'^external/descriptor/(?P<pk>[0-9]+)/$', views.Descriptors.as_view()),
+    url(r'^external/sharedwithme/$', views.SharedWithMe.as_view()),
 
 ]
 

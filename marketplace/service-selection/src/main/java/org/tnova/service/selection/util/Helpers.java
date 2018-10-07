@@ -51,7 +51,8 @@ public class Helpers
         NetworkServiceInstantiateReply reply,
         NetworkServiceActivationRequest request,
         VnfDescriptor vnfDescriptor,
-        String vnfInstanceId
+        String vnfInstanceId, 
+        String location
     )
     {
         logger.info( "Creating an accounting request for vnf with id={}", vnfDescriptor.getId() );
@@ -60,8 +61,9 @@ public class Helpers
         accountingRequest.setInstanceId( vnfInstanceId );
         accountingRequest.setAgreementId( "vnf" + vnfInstanceId );
         accountingRequest.setProductId( vnfDescriptor.getId().toString() );
-        accountingRequest.setProviderId( vnfDescriptor.getProviderId().toString() );
-        accountingRequest.setClientId( networkService.getNsd().getProviderId() );
+        //accountingRequest.setProviderId( vnfDescriptor.getProviderId().toString() );
+        accountingRequest.setProviderId( vnfDescriptor.getDomain().toString() );
+        accountingRequest.setClientId( networkService.getNsd().getVendor() );
         accountingRequest.setStatus( "running" );
         accountingRequest.setBillingModel( vnfDescriptor.getBillingModel().getModel() );
         accountingRequest.setPeriodCost( vnfDescriptor.getBillingModel().getPrice().getMaxPerPeriod() );
@@ -71,6 +73,8 @@ public class Helpers
         accountingRequest.setPeriod( "P1M" );
         accountingRequest.setRelatives( networkService.getNsd().getId() );
         accountingRequest.setRenew( true );
+        accountingRequest.setRelativeInstances( reply.getId() );
+        accountingRequest.setLocation( location );
 
         for( Sla sla : networkService.getNsd().getSla() )
         {
@@ -78,9 +82,15 @@ public class Helpers
             {
                 for( ConstituentVnfSla constituentVnfSla : sla.getConstituentVnf() )
                 {
-                    if( constituentVnfSla.getVnfReference().equalsIgnoreCase( vnfDescriptor.getId().toString() ) )
+                    logger.info( "VNFs to be added to the accounting: {}, flavour: {} ", vnfDescriptor.getId().toString(), constituentVnfSla.getVnfReference() );
+                    if( constituentVnfSla.getVnfReference().equalsIgnoreCase( vnfDescriptor.getId().toString() + "@" + vnfDescriptor.getDomain().toString() ) )
                     {
+                        logger.info( "VNFs flavour: {} ", constituentVnfSla.getVnfFlavourIdReference() );
                         accountingRequest.setFlavour( constituentVnfSla.getVnfFlavourIdReference() );
+                    }
+		    else 
+                    {
+                        accountingRequest.setFlavour( "gold" );
                     }
                 }
             }
@@ -118,13 +128,14 @@ public class Helpers
                 accountingRequest.setFlavour( sla.getSlaKey() );
             }
         }
-        accountingRequest.setProviderId(  service.getNsd().getProviderId() );
+        accountingRequest.setProviderId(  service.getNsd().getVendor() );
         accountingRequest.setInstanceId( reply.getId() );
         accountingRequest.setProductId( service.getNsd().getId() );
         accountingRequest.setAgreementId( "ns" + reply.getId() );
         accountingRequest.setProductType( "ns" );
         accountingRequest.setClientId( request.getCustomerId() );
-        if ( reply.getStatus().equalsIgnoreCase( "INSTANTIATED" ) )
+        accountingRequest.setLocation( "localDomain" );
+        if ( reply.getStatus().equalsIgnoreCase( "START" ) )
         {
             accountingRequest.setStatus( "running" );
         }
@@ -136,11 +147,16 @@ public class Helpers
         accountingRequest.setRenew( true );
 
         List<String> relatives = new ArrayList<>();
+        List<String> relativesInstances =new ArrayList<>();
         for( Vnfr vnfr : reply.getVnfrs() )
         {
             relatives.add( vnfr.getVnfdId() );
+            relativesInstances.add( vnfr.getVnfrId() );
         }
         accountingRequest.setRelatives( relatives.toString().replace( "[", "" ).replace( "]", "" )  );
+
+
+        accountingRequest.setRelativeInstances( relativesInstances.toString().replace( "[", "" ).replace( "]", "" )  );
 
         logger.info( "Accounting Request for network service was created" );
         try

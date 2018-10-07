@@ -152,7 +152,6 @@ function SLACtrl(Restangular, NoSuffixRestangular, $scope, $rootScope) {
     $scope.loadSLA = function () {
         $scope.loading_sla = true;
 
-        //http://marketplace.tnova.eu/accounting/sla-info/?clientId=p1&kind=vnf
         var curl;
         if ($scope.hasRole('Customer')) {
              curl = '/accounting/sla-info/?clientId='+$scope.user_profile.id+'&kind=ns';
@@ -193,14 +192,15 @@ function SLAChartsCtrl(Restangular, NoSuffixRestangular, $scope, $rootScope, $st
     Restangular.one('service-catalog/service/catalog', $scope.productID).get().then(
 
         function (response) {
-
+            var valueRegexp = /^.*\((.*)\)$/i;
             $scope.nsd = response;
 
             console.log("GetNSD " + $scope.productID);
 
             $.each($scope.nsd.nsd.sla[0].assurance_parameters, function (as_key, as_param) {
                 var instance_id = $scope.agreementID.replace(/^ns/, "");
-                NoSuffixRestangular.all('/orchestrator/instances/'+instance_id+'/monitoring-data/?instance_type=ns&metric='+as_param.id).getList().then(
+                //NoSuffixRestangular.all('/orchestrator/instances/'+instance_id+'/monitoring-data/?instance_type=ns&metric='+as_param.id).getList().then(
+                NoSuffixRestangular.all('/accounting/localmonitoring/?instanceId='+ instance_id +'&kpi='+as_param.id+ '&operator=MAX&max_values=100').getList().then(
                     function (response) {
 
                         var highchart = {
@@ -239,8 +239,8 @@ function SLAChartsCtrl(Restangular, NoSuffixRestangular, $scope, $rootScope, $st
 
                         //$scope.mon_data = response;
                         $.each(response, function(key, value) {
-                            highchart.series[0].data.push([parseInt(value.date)*1000, parseInt(value.value)]);
-                            highchart.series[1].data.push([parseInt(value.date)*1000, 100]);
+                            highchart.series[0].data.push([parseInt(value.time)*1000, parseInt(value.value)]);
+                            highchart.series[1].data.push([parseInt(value.time)*1000, parseInt(/\d+/.exec(as_param.value)[0])]);
                         });
 
                         $scope.graphs.push(highchart);
@@ -281,7 +281,8 @@ function SLAChartsCtrl(Restangular, NoSuffixRestangular, $scope, $rootScope, $st
 
             $.each($scope.vnfd.deployment_flavours[0].assurance_parameters, function (as_key, as_param) {
                 var instance_id = $scope.agreementID.replace(/^vnf/, "");
-                NoSuffixRestangular.all('/orchestrator/instances/'+instance_id+'/monitoring-data/?instance_type=vnf&metric='+as_param.id).getList().then(
+                //NoSuffixRestangular.all('/orchestrator/instances/'+instance_id+'/monitoring-data/?instance_type=vnf&metric='+as_param.id).getList().then(
+                NoSuffixRestangular.all('/accounting/localmonitoring/?instanceId='+ $scope.agreementID +'&kpi='+as_param.id+ '&operator=MAX&max_values=100').getList().then(
                     function (response) {
 
                         var highchart = {
@@ -320,8 +321,8 @@ function SLAChartsCtrl(Restangular, NoSuffixRestangular, $scope, $rootScope, $st
 
                         //$scope.mon_data = response;
                         $.each(response, function(key, value) {
-                            highchart.series[0].data.push([parseInt(value.date)*1000, parseInt(value.value)]);
-                            highchart.series[1].data.push([parseInt(value.date)*1000, as_param.value]);
+                            highchart.series[0].data.push([parseInt(value.time)*1000, parseInt(value.value)]);
+                            highchart.series[1].data.push([parseInt(value.time)*1000, as_param.value]);
                         });
 
                         $scope.graphs.push(highchart);
@@ -361,7 +362,7 @@ function SLAChartsCtrl(Restangular, NoSuffixRestangular, $scope, $rootScope, $st
                         //$scope.mon_data = response;
                         $.each(response, function (key, value) {
                             $scope.graphs[as_key].series[0].data.push([parseInt(value.date) * 1000, parseInt(value.value)]);
-                            $scope.graphs[as_key].series[1].data.push([parseInt(value.date) * 1000, 100]);
+                            $scope.graphs[as_key].series[1].data.push([parseInt(value.date) * 1000, parseInt(/\d+/.exec(as_param.value)[0])]);
                         });
 
                         console.log("Monitoring Data found metric:" + as_param.id + " size:" + response.length);

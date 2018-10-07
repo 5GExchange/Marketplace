@@ -94,6 +94,8 @@ public class Nsd {
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
+    String domainId = System.getenv("DOMAIN_ID");
+
     /**
      * No args constructor for use in serialization
      * 
@@ -125,7 +127,7 @@ public class Nsd {
     public Nsd(String id, String name, String vendor, String version, List<String> vnfds, Vnffgd vnffgd, LifecycleEvents lifecycleEvents, List<Object> vnfDepedency, List<MonitoringParameter> monitoringParameters, Vld vld, List<Sla> sla, AutoScalePolicy autoScalePolicy, List<Object> connectionPoints, List<Object> vnfDependency, String provider, String description, String providerId, String descriptorVersion) {
         this.id = id;
         this.name = name;
-        this.vendor = vendor;
+        this.vendor = domainId;
         this.version = version;
         this.vnfds = vnfds;
         this.vnffgd = vnffgd;

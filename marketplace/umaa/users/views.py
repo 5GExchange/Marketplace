@@ -57,7 +57,8 @@ class UserList(APIView):
 
                     # create SLA provider (SLA module)
                     if user.groups.filter(name__in=['Service Provider', 'Function Provider']).exists():
-                        sla_response = requests.post('http://sla.docker:9040/providers', auth=('user', 'password'), json={"uuid": user.id, "name": user.username})
+                        #sla_response = requests.post('http://sla.docker:9040/providers', auth=('user', 'password'), json={"uuid": user.id, "name": user.username})
+                        sla_response = requests.post('http://sla.docker:9040/providers', auth=('user', 'password'), json={"uuid": user.username, "name": user.username})
                         if sla_response.status_code == 201:
                             print 'SLA provider created %s-%s' % (user.id, user.username)
                         else:
@@ -88,7 +89,8 @@ class UserRegister(APIView):
                 try:
                     # create SLA provider (SLA module)
                     if user.groups.filter(name__in=['Service Provider', 'Function Provider']).exists():
-                        sla_response = requests.post('http://sla.docker:9040/providers', auth=('user', 'password'), json={"uuid": user.id, "name": user.username})
+                        #sla_response = requests.post('http://sla.docker:9040/providers', auth=('user', 'password'), json={"uuid": user.id, "name": user.username})
+                        sla_response = requests.post('http://sla.docker:9040/providers', auth=('user', 'password'), json={"uuid": user.username, "name": user.username})
                         if sla_response.status_code == 201:
                             print 'SLA provider created %s-%s' % (user.id, user.username)
                         else:

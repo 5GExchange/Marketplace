@@ -31,7 +31,8 @@ class MdcSerializer(serializers.ModelSerializer):
     sharedWith = DomainShareSerializer(many=True)
     class Meta:
         model = Mdc
-        fields = ('id', 'domainId', 'productId', 'productType', 'name', 'description', 'provider', 'descriptorLink', 'imageLink', 'sla', 'price', 'sharedWith', 'shareWithAll', 'dateCreated', 'dateModified')
+        #fields = ('id', 'domainId', 'productId', 'productType', 'name', 'description', 'provider', 'descriptorLink', 'imageLink', 'sla', 'price', 'sharedWith', 'shareWithAll', 'dateCreated', 'dateModified')
+	fields = ('id', 'domainId', 'productId', 'productType', 'name', 'description', 'kind', 'provider', 'descriptorLink', 'imageLink', 'sla', 'billing_model', 'price_per_period', 'price_setup', 'period', 'currency', 'sharedWith', 'shareWithAll', 'dateCreated', 'dateModified')
         read_only_fields = ('dateCreated', )
 
     def create(self, validated_data):
@@ -46,12 +47,18 @@ class MdcSerializer(serializers.ModelSerializer):
         instance.productId= validated_data.get('productId', instance.productId)
         instance.productType= validated_data.get('productType', instance.productType)
         instance.name= validated_data.get('name', instance.name)
+	instance.kind= validated_data.get('kind', instance.kind)
         instance.provider= validated_data.get('provider', instance.provider)
         instance.description= validated_data.get('description', instance.description)
         instance.descriptorLink= validated_data.get('descriptorLink', instance.descriptorLink)
         instance.imageLink= validated_data.get('imageLink', instance.imageLink)
         instance.sla= validated_data.get('sla', instance.sla)
-        instance.price= validated_data.get('price', instance.price)
+        #instance.price= validated_data.get('price', instance.price)
+        instance.billing_model= validated_data.get('billing_model', instance.billing_model)
+	instance.price_per_period = validated_data.get('price_per_period', instance.price_per_period)
+	instance.price_setup= validated_data.get('price_setup', instance.price_setup)
+	instance.period= validated_data.get('period', instance.period)
+	instance.currency= validated_data.get('currency', instance.currency)
         instance.shareWithAll= validated_data.get('shareWithAll', instance.shareWithAll)
         instance.save()
 
@@ -68,10 +75,25 @@ class MdcSerializer(serializers.ModelSerializer):
                     DomainShare.objects.create(element=instance, **new_domain)
         return instance
 
+
+class MdCSharedSerializer(serializers.ModelSerializer):
+    #sharedWith = DomainShareSerializer(many=True)
+    class Meta:
+        model = Mdc
+	fields = ('domainId', 'productId', 'productType', 'name', 'description', 'kind', 'provider', 'descriptorLink', 'imageLink', 'sla', 'billing_model', 'price_per_period', 'price_setup', 'period', 'currency')
+
+
+
 class DomainSerializer(serializers.ModelSerializer):
     class Meta:
         model = Domain
-        fields = ('domain', 'localDomain', 'dateCreated')
+        fields = ('domain', 'localDomain', 'entryPoint', 'dateCreated')
         read_only_fields = ('dateCreated', )
+
+
+class SharedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DomainShare
+        fields = ('domainId', 'share', 'element')
 
 

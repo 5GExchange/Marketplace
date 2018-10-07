@@ -1,4 +1,4 @@
-<project name="NFS" default="rpm" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="NFS" default="rpm" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:sonar="antlib:org.sonar.ant">
 
 	<property name="product.name" value="NFS" />
 
@@ -46,6 +46,14 @@
 	<property name="conf.TomEE" value="${conf.dir}/tomee" />
 	<property name="conf.certs" value="${conf.dir}/certs" />
 	<property name="conf.nfs" value="${conf.dir}/nfs" />
+
+	<!-- Define the SonarQube project properties -->
+	<property name="sonar.projectKey" value="org.sonarqube:sonarqube-scanner-ant" />
+	<property name="sonar.projectName" value="NFS" />
+	<property name="sonar.projectVersion" value="1.0" />
+	<property name="sonar.sources" value="src" />
+	<property name="sonar.java.binaries" value="build" />
+	<property name="sonar.java.libraries" value="lib/*.jar" />
 
 	<loadproperties srcFile="${conf.build}/env.rpm.properties" />
 
@@ -275,6 +283,12 @@
 		  	<rpmfileset prefix="/etc/init.d" file="${scripts.dir}/nfs" filemode="777" />
 			<!-- 	<depends name="java" version=">= 1.7"/>		-->
 		</build-rpm>
+	</target>
+
+	<!-- Define SonarQube Scanner for Ant Target -->
+	<target name="sonar">
+		<!-- Execute SonarQube Scanner for Ant Analysis -->
+		<sonar:sonar />
 	</target>
 
 	<target name="all" depends="client,rpm"/>

@@ -15,6 +15,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 
 import eu.atos.sla.datamodel.IAgreement;
+import eu.atos.sla.datamodel.IServiceProperty; //5gex
+import eu.atos.sla.datamodel.IServiceProperties; //5gex
+import eu.atos.sla.datamodel.IVariable; //5gex
 import eu.atos.sla.datamodel.IGuaranteeTerm;
 import eu.atos.sla.datamodel.IViolation;
 import eu.atos.sla.evaluation.AgreementEvaluator;
@@ -41,6 +44,7 @@ import eu.atos.sla.notification.INotifierManager;
  * <li>maxRetrievedResults: maximum number of values for each metric to retrieve. It has a default value of 
  * <code>MAX_RETRIEVED_RESULTS</code>. 
  * 
+ B
  * 
  * <br/>Usage:
  * <pre>
@@ -258,13 +262,25 @@ public class AgreementEnforcement {
 			Map<IGuaranteeTerm, IMetricsRetrieverV2.RetrievalItem> retrievalItems) {
 		logger.debug("getMetrics");
 		
+                //Create list of KPI aggregation formulas added only for 5GEx project
+                List<String> formula = new ArrayList<String>();
+		for (IServiceProperties term : agreement.getServiceProperties()) {
+		    for (IVariable v : term.getVariableSet()) {
+                        formula.add(v.getMetric());
+                    }
+                }
+
+
+
 		Map<IGuaranteeTerm, List<IMonitoringMetric>> result = new HashMap<IGuaranteeTerm, List<IMonitoringMetric>>();
+                int i=0; //5gex
 		for (IGuaranteeTerm term : agreement.getGuaranteeTerms()) {
 			IMetricsRetrieverV2.RetrievalItem item = retrievalItems.get(term);
 			if (item!=null){
 				List<IMonitoringMetric> metrics = retriever.getMetrics(
 						agreement.getAgreementId(), 
-						term.getServiceScope(), 
+						//term.getServiceScope(), 
+                                                formula.get(i), //5gex
 						item.getVariable(),
 						item.getBegin(), 
 						item.getEnd(),
@@ -272,6 +288,7 @@ public class AgreementEnforcement {
 				
 				result.put(term, metrics);
 			}
+                        i++; //5gex
 		}
 		return result;
 	}

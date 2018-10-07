@@ -17,6 +17,7 @@ import java.util.Map;
     "relatives",
     "productType",
     "flavour",
+    "location",
     "providerId",
     "clientId",
     "status",
@@ -42,6 +43,8 @@ public class AccountingRequest
     private String productType;
     @JsonProperty( "flavour" )
     private String flavour;
+    @JsonProperty( "location" )
+    private String location;
     @JsonProperty( "providerId" )
     private String providerId;
     @JsonProperty( "clientId" )
@@ -69,7 +72,7 @@ public class AccountingRequest
     public AccountingRequest() {}
 
     public AccountingRequest( String instanceId, String productId, String agreementId, String relatives,
-        String productType, String flavour, String providerId, String clientId, String status, String billingModel,
+        String productType, String flavour, String location, String providerId, String clientId, String status, String billingModel,
         String period, String priceUnit, double periodCost, double setupCost, boolean renew, String relativeInstances )
     {
         this.instanceId = instanceId;
@@ -78,6 +81,7 @@ public class AccountingRequest
         this.relatives = relatives;
         this.productType = productType;
         this.flavour = flavour;
+        this.location = location;
         this.providerId = providerId;
         this.clientId = clientId;
         this.status = status;
@@ -199,6 +203,28 @@ public class AccountingRequest
     public AccountingRequest withFlavour( String flavour )
     {
         this.flavour = flavour;
+        return this;
+    }
+
+
+    @JsonProperty( "location" )
+    public String getLocation()
+    {
+        return location;
+    }
+
+    /**
+     * @param location The location
+     */
+    @JsonProperty( "location" )
+    public void setLocation( String location )
+    {
+        this.location = location;
+    }
+
+    public AccountingRequest withLocation( String location )
+    {
+        this.location = location;
         return this;
     }
 
@@ -458,7 +484,7 @@ public class AccountingRequest
     public int hashCode()
     {
         return new HashCodeBuilder().append( instanceId ).append( productId ).append( agreementId ).append( relatives )
-            .append( productType ).append( flavour ).append( providerId ).append( clientId ).append( status )
+            .append( productType ).append( flavour ).append( location ).append( providerId ).append( clientId ).append( status )
             .append( billingModel ).append( period ).append( priceUnit ).append( periodCost ).append( setupCost )
             .append( renew ).append( additionalProperties ).toHashCode();
     }
@@ -477,7 +503,7 @@ public class AccountingRequest
         AccountingRequest rhs = ( (AccountingRequest) other );
         return new EqualsBuilder().append( instanceId, rhs.instanceId ).append( productId, rhs.productId )
             .append( agreementId, rhs.agreementId ).append( relatives, rhs.relatives )
-            .append( productType, rhs.productType ).append( flavour, rhs.flavour ).append( providerId, rhs.providerId )
+            .append( productType, rhs.productType ).append( flavour, rhs.flavour ).append( location, rhs.location ).append( providerId, rhs.providerId )
             .append( clientId, rhs.clientId ).append( status, rhs.status ).append( billingModel, rhs.billingModel )
             .append( period, rhs.period ).append( priceUnit, rhs.priceUnit ).append( periodCost, rhs.periodCost )
             .append( setupCost, rhs.setupCost ).append( renew, rhs.renew )

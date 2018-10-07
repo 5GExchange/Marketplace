@@ -13,6 +13,7 @@ class InitialData(BaseInitialData):
     def update_initial_data(self):
 
         # create permissions
+        print 'Creating permissions'
         permissions = aa_parser.get_permissions()
         for permission in permissions:
             content_type_obj, created = upsert(ContentType.objects, app_label=permission['content_type'], name='user', model='user')
@@ -23,6 +24,7 @@ class InitialData(BaseInitialData):
                 print 'New permission created, "%s"' % perm_obj.codename
 
         # create groups
+        print 'Creating groups'
         groups = aa_parser.get_groups()
         for group, group_permissions in groups.iteritems():
             group_obj, created = upsert(Group.objects, name=group)
@@ -36,6 +38,7 @@ class InitialData(BaseInitialData):
                     print 'Permission "%s" assigned to group "%s"' % (perm.codename, group_obj.name)
 
         # create users
+        print 'Creating users'
         users = aa_parser.get_users()
         for user in users:
             user_obj, created = upsert(User.objects, username=user['username'], email=user['email'], company_name=user['company_name'])
@@ -51,7 +54,8 @@ class InitialData(BaseInitialData):
 
             if user_obj.groups.filter(name__in=['Service Provider', 'Function Provider']).exists():
                 try:
-                    sla_response = requests.post('http://sla.docker:9040/providers', auth=('user', 'password'), json={"uuid": user_obj.id, "name": user_obj.username})
+                    #sla_response = requests.post('http://sla.docker:9040/providers', auth=('user', 'password'), json={"uuid": user_obj.id, "name": user_obj.username})
+                    sla_response = requests.post('http://sla.docker:9040/providers', auth=('user', 'password'), json={"uuid": user_obj.username, "name": user_obj.username})
                     if sla_response.status_code == 201:
                         print 'SLA provider created %s-%s' % (user_obj.id, user_obj.username)
                     else:
